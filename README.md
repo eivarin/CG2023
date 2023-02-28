@@ -1,2 +1,2 @@
 # CG2023
-Repositório do trabalhode CG
+Repositório do trabalho de CG
