@@ -7,13 +7,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include <iostream>
-#include <vector>
-#include <string.h>
-
-#include <stdio.h>
+#include <fstream>
 #include <map>
-using namespace std;
+#include <vector>
+#include <string>
 
 typedef struct
 {
@@ -22,42 +19,37 @@ typedef struct
 	float z;
 } VERTEX_COORDS;
 
-typedef struct
+struct vertex_texture
 {
 	float x;
 	float y;
-} VERTEX_TEXTURE;
+};
 
-typedef struct
-{
+struct vertex_normal {
 	float x;
 	float y;
 	float z;
-} VERTEX_NORMAL;
+};
 
-typedef struct
-{
+struct vertex_ref {
 	int c;
 	int t;
 	int n;
-} vertex_ref;
+};
 
 typedef struct face
 {
 	vertex_ref v[3];
 } face;
 
-typedef struct
-{
-	vector<VERTEX_COORDS> vs;
-	vector<VERTEX_TEXTURE> ts;
-	vector<VERTEX_NORMAL> ns;
-	vector<face> fs;
-} model;
+struct model {
+	std::vector<VERTEX_COORDS> vs;
+	std::vector<vertex_texture> ts;
+	std::vector<vertex_normal> ns;
+	std::vector<face> fs;
+};
 
-void changeSize(int w, int h)
-{
-
+void changeSize(int w, int h) {
 	// Prevent a divide by zero, when window is too short
 	// (you cant make a window with zero width).
 	if (h == 0)
@@ -84,10 +76,9 @@ void changeSize(int w, int h)
 model m1;
 int i = 0;
 int j = 3;
-map<VERTEX_COORDS, int> dbls;
+std::map<VERTEX_COORDS, int> dbls;
 
-void aux(VERTEX_COORDS v)
-{
+void aux(VERTEX_COORDS v) {
 	glVertex3f(v.x, v.y, v.z);
 	int index;
 	if (j > 2)
@@ -178,13 +169,11 @@ float px = 0.0f;
 float py = 0.0f;
 float pz = -5.0f;
 
-bool operator<(const VERTEX_COORDS l, const VERTEX_COORDS r)
-{
+bool operator<(const VERTEX_COORDS l, const VERTEX_COORDS r) {
 	return true;
 }
 
-void recalcDirection()
-{
+void recalcDirection() {
 	float step = (M_PI / (steps * 2));
 	float a = ai * step;
 	float b = bi * step;
@@ -194,30 +183,27 @@ void recalcDirection()
 }
 
 
-model loadModel(std::string fname){
-	FILE * file = fopen(fname.c_str(), "r");
+model loadModel(std::string_view fname) {
+	std::ifstream file;
+	file.open(fname.cbegin());
 	model m;
-	while( 1 ){
-		char lineHeader[9999];
-		// read the first word of the line
-		int res = fscanf(file, "%s", lineHeader);
-		if (res == EOF)
-			break; // EOF = End Of File. Quit the loop.
-		if ( strcmp( lineHeader, "v" ) == 0 ){
+	// read the first word of the line
+	for(std::string line_header; file >> line_header; ) {
+		if(line_header.compare("v") == 0) {
 			VERTEX_COORDS v;
-			fscanf(file, "%f %f %f\n", &v.x, &v.y, &v.z );
+			file >> v.x >> v.y >> v.z;
 			m.vs.push_back(v);
-		}else if ( strcmp( lineHeader, "vt" ) == 0 ){
-			VERTEX_TEXTURE t;
-			fscanf(file, "%f %f\n", &t.x, &t.y);
+		} else if(line_header.compare("vt") == 0) {
+			vertex_texture t;
+			file >> t.x >> t.y;
 			m.ts.push_back(t);
-		} else if ( strcmp( lineHeader, "vn" ) == 0 ){
-			VERTEX_NORMAL n;
-			fscanf(file, "%f %f %f\n", &n.x, &n.y, &n.z );
+		} else if (line_header.compare("vn") == 0 ) {
+			vertex_normal n;
+			file >> n.x >> n.y >> n.z;
 			m.ns.push_back(n);
-		}else if ( strcmp( lineHeader, "f" ) == 0 ){
-			face f;
-			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &f.v[0].c, &f.v[0].t, &f.v[0].n, &f.v[1].c, &f.v[1].t, &f.v[1].n, &f.v[2].c, &f.v[2].t, &f.v[2].n );
+		} else if (line_header.compare("f") == 0 ) {
+			face f = {0};
+			file >> f.v[0].c >> f.v[0].t >> f.v[0].n >> f.v[1].c >> f.v[1].t >> f.v[1].n >> f.v[2].c >> f.v[2].t >> f.v[2].n;
 			m.fs.push_back(f);
 		}
 	}
@@ -235,7 +221,7 @@ void drawModel(model m){
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 0.0f, 0.0f);
-	for(face f : m.fs) {
+	for(face& f : m.fs) {
 		drawVertex(m,f.v[0]);
 		drawVertex(m,f.v[1]);
 		drawVertex(m,f.v[2]);
@@ -243,9 +229,7 @@ void drawModel(model m){
 	glEnd();
 }
 model m2;
-void renderScene(void)
-{
-
+void renderScene(void) {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -261,8 +245,7 @@ void renderScene(void)
 	glutSwapBuffers();
 }
 
-void processKeys(unsigned char c, int xx, int yy)
-{
+void processKeys(unsigned char c, int xx, int yy) {
 	bool changed = true;
 	switch (c)
 	{
@@ -290,8 +273,7 @@ void processKeys(unsigned char c, int xx, int yy)
 	glutPostRedisplay();
 }
 
-void processSpecialKeys(int key, int xx, int yy)
-{
+void processSpecialKeys(int key, int xx, int yy) {
 	switch (key)
 	{
 	case GLUT_KEY_UP:
@@ -322,9 +304,7 @@ void processSpecialKeys(int key, int xx, int yy)
 	glutPostRedisplay();
 }
 
-int main(int argc, char **argv)
-{
-
+int main(int argc, char **argv) {
 	// init GLUT and the window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -344,7 +324,7 @@ int main(int argc, char **argv)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	std::string s = "m1.obj";
+	std::string_view s = "m1.obj";
 	m2 = loadModel(s);
 
 	// enter GLUT's main cycle
