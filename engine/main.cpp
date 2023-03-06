@@ -12,15 +12,13 @@
 rapidxml::xml_document<> doc;
 
 
-struct vertex_coords
-{
+struct vertex_coords {
 	float x;
 	float y;
 	float z;
 };
 
-struct vertex_texture
-{
+struct vertex_texture {
 	float x;
 	float y;
 };
