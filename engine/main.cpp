@@ -160,7 +160,7 @@ void drawCylinder(float radius, float height, int slices, float px, float py, fl
 
 int ai = 0;
 int bi = 0;
-int steps = 16;
+int halfRotationSteps = 75;
 float r = 1.0f;
 
 float dx = 0.0f;
@@ -171,14 +171,17 @@ float px = 0.0f;
 float py = 0.0f;
 float pz = -5.0f;
 
+bool wasd[4];
+bool setas[4];
+
 bool operator<(const vertex_coords l, const vertex_coords r) {
 	return true;
 }
 
 void recalcDirection() {
-	float step = (M_PI / (steps * 2));
-	float a = ai * step;
-	float b = bi * step;
+	float fullRotationSteps = (M_PI / (halfRotationSteps * 2));
+	float a = ai * fullRotationSteps;
+	float b = bi * fullRotationSteps;
 	dx = r * cos(b) * sin(a);
 	dy = r * sin(b);
 	dz = r * cos(b) * cos(a);
@@ -229,10 +232,46 @@ void drawModel(model m){
 	}
 	glEnd();
 }
+
+void processPressedKeys(){
+	if(setas[0]){
+		px += 0.05 * dx;
+		py += 0.05 * dy;
+		pz += 0.05 * dz;
+	}
+	if(setas[1]){
+		px -= 0.05 * dx;
+		py -= 0.05 * dy;
+		pz -= 0.05 * dz;
+	}
+	if(setas[2]){
+		px += 0.05 * -dz;
+		pz += 0.05 * dx;
+	}
+	if(setas[3]){
+		px -= 0.05 * -dz;
+		pz -= 0.05 * dx;
+	}
+	if(wasd[0]){
+		bi = ((bi + 1) < halfRotationSteps) ? bi += 1 : bi;
+	}
+	if(wasd[1]){
+		bi = ((bi - 1) > -halfRotationSteps) ? bi -= 1 : bi;
+	}
+	if(wasd[2]){
+		ai += 1;
+	}
+	if(wasd[3]){
+		ai -= 1;
+	}
+}
+
 model m2;
 void renderScene(void) {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	processPressedKeys();
 
 	// set the camera
 	glLoadIdentity();
@@ -240,8 +279,8 @@ void renderScene(void) {
 			  px + dx, py + dy, pz + dz,
 			  0.0f, 1.0f, 0.0f);
 
-	// drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
-	drawModel(m2);
+	drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
+	// drawModel(m2);
 	// End of frame
 	glutSwapBuffers();
 }
@@ -251,20 +290,42 @@ void processKeys(unsigned char c, int xx, int yy) {
 	switch (c)
 	{
 	case 'w':
-		bi = ((bi + 1) < steps) ? bi += 1 : bi;
+		wasd[0] = true;
 		break;
 	case 's':
-		bi = ((bi - 1) > -steps) ? bi -= 1 : bi;
+		wasd[1] = true;
 		break;
-
 	case 'a':
-		ai += 1;
+		wasd[2] = true;
 		break;
-
 	case 'd':
-		ai -= 1;
+		wasd[3] = true;
 		break;
+	default:
+		changed = false;
+		break;
+	}
+	if (changed)
+		recalcDirection();
+	glutPostRedisplay();
+}
 
+void processUpKeys(unsigned char c, int xx, int yy) {
+	bool changed = true;
+	switch (c)
+	{
+	case 'w':
+		wasd[0] = false;
+		break;
+	case 's':
+		wasd[1] = false;
+		break;
+	case 'a':
+		wasd[2] = false;
+		break;
+	case 'd':
+		wasd[3] = false;
+		break;
 	default:
 		changed = false;
 		break;
@@ -278,25 +339,19 @@ void processSpecialKeys(int key, int xx, int yy) {
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		px += dx;
-		py += dy;
-		pz += dz;
+		setas[0] = true;
 		break;
 
 	case GLUT_KEY_DOWN:
-		px -= dx;
-		py -= dy;
-		pz -= dz;
+		setas[1] = true;
 		break;
 
 	case GLUT_KEY_RIGHT:
-		px += -dz;
-		pz += dx;
+		setas[2] = true;
 		break;
 
 	case GLUT_KEY_LEFT:
-		px -= -dz;
-		pz -= dx;
+		setas[3] = true;
 		break;
 
 	default:
@@ -304,6 +359,32 @@ void processSpecialKeys(int key, int xx, int yy) {
 	}
 	glutPostRedisplay();
 }
+
+void processSpecialUpKeys(int key, int xx, int yy) {
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		setas[0] = false;
+		break;
+
+	case GLUT_KEY_DOWN:
+		setas[1] = false;
+		break;
+
+	case GLUT_KEY_RIGHT:
+		setas[2] = false;
+		break;
+
+	case GLUT_KEY_LEFT:
+		setas[3] = false;
+		break;
+
+	default:
+		break;
+	}
+	glutPostRedisplay();
+}
+
 
 int main(int argc, char **argv) {
 	// init GLUT and the window
@@ -319,7 +400,9 @@ int main(int argc, char **argv) {
 
 	// Callback registration for keyboard processing
 	glutKeyboardFunc(processKeys);
+	glutKeyboardUpFunc(processUpKeys);
 	glutSpecialFunc(processSpecialKeys);
+	glutSpecialUpFunc(processSpecialUpKeys);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
