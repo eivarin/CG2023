@@ -1,8 +1,4 @@
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
 #include <GL/glut.h>
-#endif
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -11,7 +7,10 @@
 #include <map>
 #include <vector>
 #include <string>
-// #include <string_view>
+
+#include "rapidxml.hpp"
+rapidxml::xml_document<> doc;
+
 
 struct vertex_coords
 {
@@ -47,6 +46,14 @@ struct model {
 	std::vector<vertex_texture> ts;
 	std::vector<vertex_normal> ns;
 	std::vector<face> fs;
+};
+
+struct camera{
+	vertex_coords c;
+};
+
+struct scene {
+	vertex_coords c;
 };
 
 void changeSize(int w, int h) {
@@ -207,11 +214,16 @@ model loadModel(std::string const& fname) {
 			m.ns.push_back(n);
 		} else if (line_header.compare("f") == 0 ) {
 			face f = {0};
-			file >> f.v[0].c >> f.v[0].t >> f.v[0].n >> f.v[1].c >> f.v[1].t >> f.v[1].n >> f.v[2].c >> f.v[2].t >> f.v[2].n;
+			char ignore;
+			file >> f.v[0].c >> ignore >> f.v[0].t >> ignore >> f.v[0].n >> f.v[1].c >> ignore >> f.v[1].t >> ignore >> f.v[1].n >> f.v[2].c >> ignore >> f.v[2].t >> ignore >> f.v[2].n;
 			m.fs.push_back(f);
 		}
 	}
 	return m;
+}
+
+void loadScene(std::string const& fname){
+
 }
 
 void drawVertex(model m, vertex_ref v_ref){
@@ -225,7 +237,9 @@ void drawModel(model m){
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0f, 0.0f, 0.0f);
+	int i = 0;
 	for(face& f : m.fs) {
+		i++;
 		drawVertex(m,f.v[0]);
 		drawVertex(m,f.v[1]);
 		drawVertex(m,f.v[2]);
@@ -234,36 +248,61 @@ void drawModel(model m){
 }
 
 void processPressedKeys(){
+	bool changed = false;
 	if(setas[0]){
 		px += 0.05 * dx;
 		py += 0.05 * dy;
 		pz += 0.05 * dz;
+		changed = true;
 	}
 	if(setas[1]){
 		px -= 0.05 * dx;
 		py -= 0.05 * dy;
 		pz -= 0.05 * dz;
+		changed = true;
 	}
 	if(setas[2]){
 		px += 0.05 * -dz;
 		pz += 0.05 * dx;
+		changed = true;
 	}
 	if(setas[3]){
 		px -= 0.05 * -dz;
 		pz -= 0.05 * dx;
+		changed = true;
 	}
 	if(wasd[0]){
 		bi = ((bi + 1) < halfRotationSteps) ? bi += 1 : bi;
+		changed = true;
 	}
 	if(wasd[1]){
-		bi = ((bi - 1) > -halfRotationSteps) ? bi -= 1 : bi;
+		bi = ((bi - 1) > -halfRotationSteps) ? bi -= 1 : bi;\
+		changed = true;
 	}
 	if(wasd[2]){
 		ai += 1;
+		changed = true;
 	}
 	if(wasd[3]){
 		ai -= 1;
+		changed = true;
 	}
+	if (changed)
+		recalcDirection();
+}
+
+void drawAxis(){
+	glBegin(GL_LINES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(-100.0f, 0.0f, 0.0f);
+	glVertex3f( 100.0f, 0.0f, 0.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f,-100.0f, 0.0f);
+	glVertex3f(0.0f, 100.0f, 0.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.0f, 0.0f,-100.0f);
+	glVertex3f(0.0f, 0.0f, 100.0f);
+	glEnd();
 }
 
 model m2;
@@ -278,15 +317,14 @@ void renderScene(void) {
 	gluLookAt(px, py, pz,
 			  px + dx, py + dy, pz + dz,
 			  0.0f, 1.0f, 0.0f);
-
-	drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
-	// drawModel(m2);
+	drawAxis();
+	// drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
+	drawModel(m2);
 	// End of frame
 	glutSwapBuffers();
 }
 
 void processKeys(unsigned char c, int xx, int yy) {
-	bool changed = true;
 	switch (c)
 	{
 	case 'w':
@@ -302,16 +340,12 @@ void processKeys(unsigned char c, int xx, int yy) {
 		wasd[3] = true;
 		break;
 	default:
-		changed = false;
 		break;
 	}
-	if (changed)
-		recalcDirection();
 	glutPostRedisplay();
 }
 
 void processUpKeys(unsigned char c, int xx, int yy) {
-	bool changed = true;
 	switch (c)
 	{
 	case 'w':
@@ -327,11 +361,8 @@ void processUpKeys(unsigned char c, int xx, int yy) {
 		wasd[3] = false;
 		break;
 	default:
-		changed = false;
 		break;
 	}
-	if (changed)
-		recalcDirection();
 	glutPostRedisplay();
 }
 
@@ -403,6 +434,9 @@ int main(int argc, char **argv) {
 	glutKeyboardUpFunc(processUpKeys);
 	glutSpecialFunc(processSpecialKeys);
 	glutSpecialUpFunc(processSpecialUpKeys);
+
+
+	// doc.parse<0>(text);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
