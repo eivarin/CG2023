@@ -73,7 +73,7 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
 
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
         for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[divisions] << ' ' << base_points[i] << ' ' << (0-base_points[j]) << '\n';
+            f << "v " << std::setprecision(6) << base_points[divisions] << ' ' << base_points[i] << ' ' << (0-base_points[j]) << '\n';       // Têm de estar escondidas
         }
     }
     
@@ -85,8 +85,8 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
 
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
         for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' ' << (0-base_points[j]) << ' ' << base_points[divisions] << '\n';
-        }
+            f << "v " << std::setprecision(6) << base_points[i] << ' ' << (0-base_points[j]) << ' ' << base_points[divisions] << '\n';         // Têm de estar escondidas
+        } 
     }
   
    
