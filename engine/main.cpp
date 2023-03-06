@@ -11,13 +11,14 @@
 #include <map>
 #include <vector>
 #include <string>
+// #include <string_view>
 
-typedef struct
+struct vertex_coords
 {
 	float x;
 	float y;
 	float z;
-} VERTEX_COORDS;
+};
 
 struct vertex_texture
 {
@@ -37,13 +38,12 @@ struct vertex_ref {
 	int n;
 };
 
-typedef struct face
-{
+struct face {
 	vertex_ref v[3];
-} face;
+};
 
 struct model {
-	std::vector<VERTEX_COORDS> vs;
+	std::vector<vertex_coords> vs;
 	std::vector<vertex_texture> ts;
 	std::vector<vertex_normal> ns;
 	std::vector<face> fs;
@@ -76,9 +76,9 @@ void changeSize(int w, int h) {
 model m1;
 int i = 0;
 int j = 3;
-std::map<VERTEX_COORDS, int> dbls;
+std::map<vertex_coords, int> dbls;
 
-void aux(VERTEX_COORDS v) {
+void aux(vertex_coords v) {
 	glVertex3f(v.x, v.y, v.z);
 	int index;
 	if (j > 2)
@@ -88,7 +88,7 @@ void aux(VERTEX_COORDS v) {
 	}
 	if (dbls.find(v) == dbls.end())
 	{
-		std::pair<VERTEX_COORDS, int> p = std::pair<VERTEX_COORDS, int>(v, i);
+		std::pair<vertex_coords, int> p = std::pair<vertex_coords, int>(v, i);
 		dbls.insert(p);
 		m1.vs.push_back(v);
 		index = i++;
@@ -102,23 +102,25 @@ void aux(VERTEX_COORDS v) {
 
 bool writen = false;
 
-void printModel()
-{
-	if (!writen)
-	{
-		FILE *file = fopen("cilinder.3d", "w");
-		for (VERTEX_COORDS v : m1.vs)
-			fprintf(file, "v %f %f %f\n", v.x, v.y, v.z);
-		for (face f : m1.fs)
-		{
-			fprintf(file, "f %d/%d/%d", f.v[0].c, f.v[0].t, f.v[0].n);
-			fprintf(file, " %d/%d/%d", f.v[1].c, f.v[1].t, f.v[1].n);
-			fprintf(file, " %d/%d/%d\n", f.v[2].c, f.v[2].t, f.v[2].n);
-		}
-		fclose(file);
-		writen = true;
-	}
-}
+// void printModel()
+// {
+// 	if (!writen)
+// 	{
+// 		FILE *file = fopen("cilinder.3d", "w");
+// 		std::ofstream file;
+// 		for (vertex_coords const& v : m1.vs)
+// 			// fprintf(file, "v %f %f %f\n", v.x, v.y, v.z);
+// 			file << "v " << v.x << ' ' << v.y << ' ' << v.z;
+// 		for (face const& f : m1.fs)
+// 		{
+// 			fprintf(file, "f %d/%d/%d", f.v[0].c, f.v[0].t, f.v[0].n);
+// 			fprintf(file, " %d/%d/%d", f.v[1].c, f.v[1].t, f.v[1].n);
+// 			fprintf(file, " %d/%d/%d\n", f.v[2].c, f.v[2].t, f.v[2].n);
+// 		}
+// 		fclose(file);
+// 		writen = true;
+// 	}
+// }
 
 void drawCylinder(float radius, float height, int slices, float px, float py, float pz)
 {
@@ -134,26 +136,26 @@ void drawCylinder(float radius, float height, int slices, float px, float py, fl
 		float px1 = px + (radius * sin(aCil)), py1 = pz + (radius * cos(aCil));
 		float px2 = px + (radius * sin(aCil + delta)), py2 = pz + (radius * cos(aCil + delta));
 
-		aux((VERTEX_COORDS){.x = px, .y = height, .z = pz});
-		aux((VERTEX_COORDS){.x = px1, .y = height, .z = py1});
-		aux((VERTEX_COORDS){.x = px2, .y = height, .z = py2});
+		aux((vertex_coords){.x = px, .y = height, .z = pz});
+		aux((vertex_coords){.x = px1, .y = height, .z = py1});
+		aux((vertex_coords){.x = px2, .y = height, .z = py2});
 
-		aux((VERTEX_COORDS){.x = px1, .y = height, .z = py1});
-		aux((VERTEX_COORDS){.x = px1, .y = -height, .z = py1});
-		aux((VERTEX_COORDS){.x = px2, .y = -height, .z = py2});
+		aux((vertex_coords){.x = px1, .y = height, .z = py1});
+		aux((vertex_coords){.x = px1, .y = -height, .z = py1});
+		aux((vertex_coords){.x = px2, .y = -height, .z = py2});
 
-		aux((VERTEX_COORDS){.x = px1, .y = height, .z = py1});
-		aux((VERTEX_COORDS){.x = px2, .y = -height, .z = py2});
-		aux((VERTEX_COORDS){.x = px2, .y = height, .z = py2});
+		aux((vertex_coords){.x = px1, .y = height, .z = py1});
+		aux((vertex_coords){.x = px2, .y = -height, .z = py2});
+		aux((vertex_coords){.x = px2, .y = height, .z = py2});
 
-		aux((VERTEX_COORDS){.x = px, .y = -height, .z = pz});
-		aux((VERTEX_COORDS){.x = px2, .y = -height, .z = py2});
-		aux((VERTEX_COORDS){.x = px1, .y = -height, .z = py1});
+		aux((vertex_coords){.x = px, .y = -height, .z = pz});
+		aux((vertex_coords){.x = px2, .y = -height, .z = py2});
+		aux((vertex_coords){.x = px1, .y = -height, .z = py1});
 		aCil += delta;
 	}
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glEnd();
-	printModel();
+	// printModel();
 }
 
 int ai = 0;
@@ -169,7 +171,7 @@ float px = 0.0f;
 float py = 0.0f;
 float pz = -5.0f;
 
-bool operator<(const VERTEX_COORDS l, const VERTEX_COORDS r) {
+bool operator<(const vertex_coords l, const vertex_coords r) {
 	return true;
 }
 
@@ -182,15 +184,14 @@ void recalcDirection() {
 	dz = r * cos(b) * cos(a);
 }
 
-
-model loadModel(std::string_view fname) {
+model loadModel(std::string const& fname) {
 	std::ifstream file;
-	file.open(fname.cbegin());
+	file.open(fname);
 	model m;
 	// read the first word of the line
 	for(std::string line_header; file >> line_header; ) {
 		if(line_header.compare("v") == 0) {
-			VERTEX_COORDS v;
+			vertex_coords v;
 			file >> v.x >> v.y >> v.z;
 			m.vs.push_back(v);
 		} else if(line_header.compare("vt") == 0) {
@@ -211,7 +212,7 @@ model loadModel(std::string_view fname) {
 }
 
 void drawVertex(model m, vertex_ref v_ref){
-	VERTEX_COORDS c = m.vs.at(v_ref.c-1);
+	vertex_coords c = m.vs.at(v_ref.c-1);
 	// VERTEX_TEXTURE t = m.ts.at(v_ref.t-1);
 	// VERTEX_NORMAL n = m.ns.at(v_ref.n-1);
 	glVertex3f(c.x, c.y, c.z);
@@ -324,13 +325,13 @@ int main(int argc, char **argv) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	std::string_view s = "m1.obj";
+	std::string s = "m1.obj";
 	m2 = loadModel(s);
 
 	// enter GLUT's main cycle
 	glutMainLoop();
 
-	printModel();
+	// printModel();
 
 	return 1;
 }
