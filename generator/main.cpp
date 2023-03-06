@@ -52,7 +52,7 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
     float right_most = (length * divisions) / 2.;
     std::vector<float> base_points;
     //Base
-    for(auto i = 0; i <= divisions; ++i) {
+    for(auto i = 0; i <= divisions; ++i) {                            // 0 - Têm de estar escondidos 
         base_points.push_back(right_most - (length * i));
     }
 
@@ -66,32 +66,32 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
     //Topo
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
         for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' ' << -(base_points[divisions]) << ' ' << (0-base_points[j]) << '\n';
+            f << "v " << std::setprecision(6) << base_points[i] << ' ' << -(base_points[divisions]) << ' ' << (0-base_points[j]) << '\n';  //1
         }
     }
    
 
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
         for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[divisions] << ' ' << base_points[i] << ' ' << (0-base_points[j]) << '\n';       // Têm de estar escondidas
+            f << "v " << std::setprecision(6) << base_points[divisions] << ' ' << base_points[i] << ' ' << (0-base_points[j]) << '\n';       //2 - Têm de estar escondidas
         }
     }
     
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
         for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[0] << ' ' << base_points[i] << ' ' << (0-base_points[j]) << '\n';
+            f << "v " << std::setprecision(6) << base_points[0] << ' ' << base_points[i] << ' ' << (0-base_points[j]) << '\n';            // 3
         }
     }
 
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
         for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' ' << (0-base_points[j]) << ' ' << base_points[divisions] << '\n';         // Têm de estar escondidas
+            f << "v " << std::setprecision(6) << base_points[i] << ' ' << (0-base_points[j]) << ' ' << base_points[divisions] << '\n';         //4- Têm de estar escondidas
         } 
     }
   
    
     for(auto i = 0; i <= divisions; ++i) { // -O2, melhora-me isto
-        for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
+        for(auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto                                                                      // 5 
             f << "v " << std::setprecision(6) << base_points[i] << ' ' << (0-base_points[j]) << ' ' << base_points[0] << '\n';
         }
     }
@@ -110,15 +110,30 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
 
     */
    for (auto k=0;k<6;++k){
-        for(auto i = 0; i < divisions; ++i) {
-            for(auto j = 1; j <= divisions; ++j) {
-                auto index = (divisions+1) * i + j + k*(divisions+1)*(divisions+1);
-                f << "f " << index << "/0/0 ";
-                f << index + divisions + 1 << "/0/0 ";
-                f << index + 1 << "/0/0\n";
-                f << "f " << index+1 << "/0/0 ";
-                f << index + divisions + 1 << "/0/0 ";
-                f << index + divisions + 2 << "/0/0\n";
+        if (k%2 == 0){
+            for(auto i = 0; i < divisions; ++i) {
+                for(auto j = 1; j <= divisions; ++j) {
+                    auto index = (divisions+1) * i + j + k*(divisions+1)*(divisions+1);
+                    f << "f " << index << "/0/0 ";
+                    f << index + 1 << "/0/0 ";
+                    f << index + divisions + 1 << "/0/0\n";
+                    f << "f " << index+1 << "/0/0 ";
+                    f << index + divisions + 2 << "/0/0 ";
+                    f << index + divisions + 1 << "/0/0\n";
+                }
+            }
+        }
+        else {
+            for(auto i = 0; i < divisions; ++i) {
+                for(auto j = 1; j <= divisions; ++j) {
+                    auto index = (divisions+1) * i + j + k*(divisions+1)*(divisions+1);
+                    f << "f " << index << "/0/0 ";
+                    f << index + divisions + 1 << "/0/0 ";
+                    f << index + 1 << "/0/0\n";
+                    f << "f " << index+1 << "/0/0 ";
+                    f << index + divisions + 1 << "/0/0 ";
+                    f << index + divisions + 2 << "/0/0\n";
+                }
             }
         }
    }
