@@ -7,9 +7,9 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "rapidxml.hpp"
-rapidxml::xml_document<> doc;
 
 
 struct vertex_coords {
@@ -47,12 +47,28 @@ struct model {
 };
 
 struct camera{
-	vertex_coords c;
+	vertex_coords position;
+	vertex_coords look_at;
+	vertex_coords up;
+	float fov;
+	float ratio;
+	float near;
+	float far;
+	int halfRotationSteps;
+	int alpha;
+	int beta;
 };
 
 struct scene {
-	vertex_coords c;
+	camera cam;
+	std::vector<model> ms;
+	int wHeight;
+	int wWidth;
+	bool wasd[4];
+	bool setas[4];
 };
+
+scene cena;
 
 void changeSize(int w, int h) {
 	// Prevent a divide by zero, when window is too short
@@ -163,33 +179,17 @@ void drawCylinder(float radius, float height, int slices, float px, float py, fl
 	// printModel();
 }
 
-int ai = 0;
-int bi = 0;
-int halfRotationSteps = 75;
-float r = 1.0f;
-
-float dx = 0.0f;
-float dy = 0.0f;
-float dz = 0.0f;
-
-float px = 0.0f;
-float py = 0.0f;
-float pz = -5.0f;
-
-bool wasd[4];
-bool setas[4];
-
 bool operator<(const vertex_coords l, const vertex_coords r) {
 	return true;
 }
 
 void recalcDirection() {
-	float fullRotationSteps = (M_PI / (halfRotationSteps * 2));
-	float a = ai * fullRotationSteps;
-	float b = bi * fullRotationSteps;
-	dx = r * cos(b) * sin(a);
-	dy = r * sin(b);
-	dz = r * cos(b) * cos(a);
+	float fullRotationSteps = (M_PI / (cena.cam.halfRotationSteps * 2));
+	float a = cena.cam.alpha * fullRotationSteps;
+	float b = cena.cam.beta * fullRotationSteps;
+	cena.cam.look_at.x = cos(b) * sin(a);
+	cena.cam.look_at.y = sin(b);
+	cena.cam.look_at.z = cos(b) * cos(a);
 }
 
 model loadModel(std::string const& fname) {
@@ -220,8 +220,54 @@ model loadModel(std::string const& fname) {
 	return m;
 }
 
-void loadScene(std::string const& fname){
-
+scene loadScene(std::string const& fname){
+	std::ifstream file(fname, std::ios::binary | std::ios::ate);
+	std::streamsize size = file.tellg();
+	file.seekg(0, std::ios::beg);
+	std::vector<char> buffer(size);
+	file.read(buffer.data(), size);
+	
+	rapidxml::xml_document<> doc;
+	doc.parse<0>(reinterpret_cast<char*>(buffer.data()));
+	rapidxml::xml_node<> *world = doc.first_node("world");
+	rapidxml::xml_node<> *window = world->first_node("window");
+	rapidxml::xml_node<> *projection = world->first_node("camera")->first_node("projection");
+	rapidxml::xml_node<> *position = world->first_node("camera")->first_node("position");
+	rapidxml::xml_node<> *look_at = world->first_node("camera")->first_node("lookAt");
+	rapidxml::xml_node<> *up = world->first_node("camera")->first_node("up");
+	rapidxml::xml_node<> *models = world->first_node("group")->first_node("models");
+	scene s;
+	s.wHeight = std::stol(window->first_attribute("height")->value());
+	s.wWidth = std::stol(window->first_attribute("width")->value());
+	s.cam = { 
+		.position = {
+			.x = std::stof(position->first_attribute("x")->value()),
+			.y = std::stof(position->first_attribute("y")->value()),
+			.z = std::stof(position->first_attribute("z")->value())
+		},
+		.look_at = {
+			.x = std::stof(look_at->first_attribute("x")->value()),
+			.y = std::stof(look_at->first_attribute("y")->value()),
+			.z = std::stof(look_at->first_attribute("z")->value())
+		},
+		.up = {
+			.x = std::stof(up->first_attribute("x")->value()),
+			.y = std::stof(up->first_attribute("y")->value()),
+			.z = std::stof(up->first_attribute("z")->value())
+		},
+		.fov = std::stof(projection->first_attribute("fov")->value()),
+		.ratio = (float) s.wWidth / (float) s.wHeight,
+		.near = std::stof(projection->first_attribute("near")->value()),
+		.far = std::stof(projection->first_attribute("far")->value()),
+		.halfRotationSteps = 75,
+		.alpha = 0, 
+		.beta = 0
+		};
+	for (rapidxml::xml_node<> *model = models->first_node(); model; model = model->next_sibling())
+	{
+		s.ms.push_back(loadModel(model->first_attribute("file")->value()));
+	}
+	return s;
 }
 
 void drawVertex(model m, vertex_ref v_ref){
@@ -234,7 +280,7 @@ void drawVertex(model m, vertex_ref v_ref){
 void drawModel(model m){
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 1.0f, 0.0f);
 	int i = 0;
 	for(face& f : m.fs) {
 		i++;
@@ -247,42 +293,42 @@ void drawModel(model m){
 
 void processPressedKeys(){
 	bool changed = false;
-	if(setas[0]){
-		px += 0.05 * dx;
-		py += 0.05 * dy;
-		pz += 0.05 * dz;
+	if(cena.setas[0]){
+		cena.cam.position.x += 0.05 * cena.cam.look_at.x;
+		cena.cam.position.y += 0.05 * cena.cam.look_at.y;
+		cena.cam.position.z += 0.05 * cena.cam.look_at.z;
 		changed = true;
 	}
-	if(setas[1]){
-		px -= 0.05 * dx;
-		py -= 0.05 * dy;
-		pz -= 0.05 * dz;
+	if(cena.setas[1]){
+		cena.cam.position.x -= 0.05 * cena.cam.look_at.x;
+		cena.cam.position.y -= 0.05 * cena.cam.look_at.y;
+		cena.cam.position.z -= 0.05 * cena.cam.look_at.z;
 		changed = true;
 	}
-	if(setas[2]){
-		px += 0.05 * -dz;
-		pz += 0.05 * dx;
+	if(cena.setas[2]){
+		cena.cam.position.x += 0.05 * -cena.cam.look_at.z;
+		cena.cam.position.z += 0.05 * cena.cam.look_at.x;
 		changed = true;
 	}
-	if(setas[3]){
-		px -= 0.05 * -dz;
-		pz -= 0.05 * dx;
+	if(cena.setas[3]){
+		cena.cam.position.x -= 0.05 * -cena.cam.look_at.z;
+		cena.cam.position.z -= 0.05 * cena.cam.look_at.x;
 		changed = true;
 	}
-	if(wasd[0]){
-		bi = ((bi + 1) < halfRotationSteps) ? bi += 1 : bi;
+	if(cena.wasd[0]){
+		cena.cam.beta = ((cena.cam.beta + 1) < cena.cam.halfRotationSteps) ? cena.cam.beta += 1 : cena.cam.beta;
 		changed = true;
 	}
-	if(wasd[1]){
-		bi = ((bi - 1) > -halfRotationSteps) ? bi -= 1 : bi;\
+	if(cena.wasd[1]){
+		cena.cam.beta = ((cena.cam.beta - 1) > -cena.cam.halfRotationSteps) ? cena.cam.beta -= 1 : cena.cam.beta;
 		changed = true;
 	}
-	if(wasd[2]){
-		ai += 1;
+	if(cena.wasd[2]){
+		cena.cam.alpha += 1;
 		changed = true;
 	}
-	if(wasd[3]){
-		ai -= 1;
+	if(cena.wasd[3]){
+		cena.cam.alpha -= 1;
 		changed = true;
 	}
 	if (changed)
@@ -303,21 +349,144 @@ void drawAxis(){
 	glEnd();
 }
 
-model m2;
+void drawCone(int height, int radius, int slices, int stacks)
+{
+    float delta = (2*M_PI) / (float)slices;
+    float stack_h = height / (float)stacks;
+    float curr_h = height;
+    float stack_r = radius / (float)stacks;
+    float curr_r = 0;
+    int i = 0;
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glBegin(GL_TRIANGLES);
+    curr_r += stack_r;
+    while (i < slices)
+    {
+        float aCil = delta*i;
+        float px1 = (sin(aCil)), py1 = (cos(aCil));
+        float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        glVertex3f(0.0f, curr_h, 0.0f);
+        glVertex3f(px1 * curr_r, curr_h - stack_h, py1  * curr_r);
+        glVertex3f(px2 * curr_r, curr_h - stack_h, py2  * curr_r);
+        i++;
+    }
+    curr_h-=stack_h;
+    while (curr_h > 0)
+    {
+        i = 0;
+        while (i < slices)
+        {
+            float aCil = delta*i;
+            float px1 = (sin(aCil)), py1 = (cos(aCil));
+            float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+            
+            glVertex3f(px1 * curr_r, curr_h, py1 * curr_r);
+            glVertex3f(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r));
+            glVertex3f(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r));
+
+            glVertex3f(px2 * curr_r, curr_h, py2 * curr_r);
+            glVertex3f(px1 * curr_r, curr_h, py1 * curr_r);
+            glVertex3f(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r));
+            i++;
+        }
+        curr_h-=stack_h;
+        curr_r+=stack_r;
+    }
+    i=0;
+    while (i < slices)
+    {
+        float aCil = delta*i;
+        float px1 = (sin(aCil)), py1 = (cos(aCil));
+        float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        glVertex3f(px2 * curr_r, curr_h, py2  * curr_r);
+        glVertex3f(px1 * curr_r, curr_h, py1  * curr_r);
+        glVertex3f(0.0f, curr_h, 0.0f);
+        i++;
+    }
+    
+    glEnd();
+}
+
+void drawSphere(int radius, int slices, int stacks)
+{
+    float delta = (2*M_PI) / (float)slices;
+	float stack = M_PI / (float)stacks;
+    int curr_delta = 0;
+	int curr_stack = 1;
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glBegin(GL_TRIANGLES);
+	while (curr_delta < slices)
+	{
+		float alpha = delta*curr_delta;
+		float beta = (stack*curr_stack) - (M_PI/2);
+		float px1 = radius * cos(beta) * sin(alpha); float py1 = (radius * sin(beta)) + radius; float pz1 = radius * cos(beta) * cos(alpha);
+		float px2 = radius * cos(beta) * sin(alpha+delta); float py2 = (radius * sin(beta)) + radius; float pz2 = radius * cos(beta) * cos(alpha+delta);
+		float px3,px4,py3,py4,pz3,pz4;
+		glColor3f(1.0f, 0.0f, 1.0f);
+		glVertex3f(px2,py2,pz2);
+		glVertex3f(px1,py1,pz1);
+		glVertex3f(0.0f,0.0f,0.0f);
+
+		while (curr_stack < stacks)
+		{
+			beta = (stack*curr_stack) - (M_PI/2);
+			px1 = radius * cos(beta - stack) * sin(alpha); 
+			py1 = (radius * sin(beta - stack)) + radius; 
+			pz1 = radius * cos(beta - stack) * cos(alpha);
+			
+			px2 = radius * cos(beta) * sin(alpha); 
+			py2 = (radius * sin(beta)) + radius; 
+			pz2 = radius * cos(beta) * cos(alpha);
+
+			px3 = radius *  cos(beta - stack) * sin(alpha+delta); 
+			py3 = (radius * sin(beta - stack)) + radius; 
+			pz3 = radius *  cos(beta - stack) * cos(alpha+delta);
+
+			px4 = radius * cos(beta) * sin(alpha+delta); 
+			py4 = (radius * sin(beta)) + radius; 
+			pz4 = radius * cos(beta) * cos(alpha+delta);
+
+			glVertex3f(px1,py1,pz1);
+			glVertex3f(px4,py4,pz4);
+			glVertex3f(px2,py2,pz2);
+
+			glVertex3f(px4,py4,pz4);
+			glVertex3f(px1,py1,pz1);
+			glVertex3f(px3,py3,pz3);
+
+			curr_stack++;
+		}
+		curr_stack--;
+		beta = (stack*curr_stack) - (M_PI/2);
+		px1 = radius * cos(beta) * sin(alpha); py1 = (radius * sin(beta)) + radius; pz1 = radius * cos(beta) * cos(alpha);
+		px2 = radius * cos(beta) * sin(alpha+delta); py2 = (radius * sin(beta)) + radius; pz2 = radius * cos(beta) * cos(alpha+delta);
+		glVertex3f(0.0f,2*radius,0.0f);
+		glVertex3f(px1,py1,pz1);
+		glVertex3f(px2,py2,pz2);
+
+		curr_delta++;
+		curr_stack = 1;
+	}
+	
+    glEnd();
+}
+
 void renderScene(void) {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	processPressedKeys();
-
 	// set the camera
 	glLoadIdentity();
-	gluLookAt(px, py, pz,
-			  px + dx, py + dy, pz + dz,
+	gluLookAt(cena.cam.position.x, cena.cam.position.y, cena.cam.position.z,
+			  cena.cam.position.x + cena.cam.look_at.x, cena.cam.position.y + cena.cam.look_at.y, cena.cam.position.z + cena.cam.look_at.z,
 			  0.0f, 1.0f, 0.0f);
 	drawAxis();
-	// drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
-	drawModel(m2);
+	drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
+	drawSphere(1, 100, 100);
+	// drawModel(m2);
+	for(auto& m : cena.ms){
+		drawModel(m);
+	}
 	// End of frame
 	glutSwapBuffers();
 }
@@ -326,16 +495,16 @@ void processKeys(unsigned char c, int xx, int yy) {
 	switch (c)
 	{
 	case 'w':
-		wasd[0] = true;
+		cena.wasd[0] = true;
 		break;
 	case 's':
-		wasd[1] = true;
+		cena.wasd[1] = true;
 		break;
 	case 'a':
-		wasd[2] = true;
+		cena.wasd[2] = true;
 		break;
 	case 'd':
-		wasd[3] = true;
+		cena.wasd[3] = true;
 		break;
 	default:
 		break;
@@ -347,16 +516,16 @@ void processUpKeys(unsigned char c, int xx, int yy) {
 	switch (c)
 	{
 	case 'w':
-		wasd[0] = false;
+		cena.wasd[0] = false;
 		break;
 	case 's':
-		wasd[1] = false;
+		cena.wasd[1] = false;
 		break;
 	case 'a':
-		wasd[2] = false;
+		cena.wasd[2] = false;
 		break;
 	case 'd':
-		wasd[3] = false;
+		cena.wasd[3] = false;
 		break;
 	default:
 		break;
@@ -368,19 +537,19 @@ void processSpecialKeys(int key, int xx, int yy) {
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		setas[0] = true;
+		cena.setas[0] = true;
 		break;
 
 	case GLUT_KEY_DOWN:
-		setas[1] = true;
+		cena.setas[1] = true;
 		break;
 
 	case GLUT_KEY_RIGHT:
-		setas[2] = true;
+		cena.setas[2] = true;
 		break;
 
 	case GLUT_KEY_LEFT:
-		setas[3] = true;
+		cena.setas[3] = true;
 		break;
 
 	default:
@@ -393,19 +562,19 @@ void processSpecialUpKeys(int key, int xx, int yy) {
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		setas[0] = false;
+		cena.setas[0] = false;
 		break;
 
 	case GLUT_KEY_DOWN:
-		setas[1] = false;
+		cena.setas[1] = false;
 		break;
 
 	case GLUT_KEY_RIGHT:
-		setas[2] = false;
+		cena.setas[2] = false;
 		break;
 
 	case GLUT_KEY_LEFT:
-		setas[3] = false;
+		cena.setas[3] = false;
 		break;
 
 	default:
@@ -414,18 +583,25 @@ void processSpecialUpKeys(int key, int xx, int yy) {
 	glutPostRedisplay();
 }
 
+void update(int t)
+{
+    processPressedKeys();
+    glutTimerFunc(16, update, 0);
+    glutPostRedisplay();
+}
 
 int main(int argc, char **argv) {
 	// init GLUT and the window
+	cena = loadScene("example.xml");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(800, 800);
+	glutInitWindowSize(cena.wWidth, cena.wHeight);
 	glutCreateWindow("CG@DI-UM");
-	recalcDirection();
 	// Required callback registry
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
+	glutTimerFunc(0, update, 0);
 
 	// Callback registration for keyboard processing
 	glutKeyboardFunc(processKeys);
@@ -433,20 +609,14 @@ int main(int argc, char **argv) {
 	glutSpecialFunc(processSpecialKeys);
 	glutSpecialUpFunc(processSpecialUpKeys);
 
-
-	// doc.parse<0>(text);
-
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	std::string s = "m1.obj";
-	m2 = loadModel(s);
 
 	// enter GLUT's main cycle
 	glutMainLoop();
 
-	// printModel();
 
 	return 1;
 }
