@@ -1,4 +1,6 @@
-# mine
+# ours
+.editorconfig
+*.3d
 generator
 engine
 
