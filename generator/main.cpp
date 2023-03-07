@@ -175,9 +175,11 @@ void draw_sphere(std::string const& fname, std::size_t radius, std::size_t slice
         P(sin(alpha) * r, STACK * ((float)radius / stacks) - radius, cos(beta) * r)
     */
     float slice_size = ((float) radius) / stacks;
+    f << "v 0 " << -radius << " 0\n";
     for (std::size_t i = 1; i < stacks; ++i) {
-        continue;
+        
     }
+    f << "v 0 " << radius << " 0\n";
 }
 
 int main(int argc, char** argv) {
