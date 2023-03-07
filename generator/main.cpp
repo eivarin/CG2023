@@ -165,18 +165,57 @@ void drawBox(std::string const& file, std::size_t length,
     f.close();
 }
 
-void draw_sphere(std::string const& fname, std::size_t radius, std::size_t slices, std::size_t stacks) {
-    std::ofstream f(fname, std::ofstream::out);
-    float alpha = -M_PI / 2;
-    float beta = 0.;
+void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, std::size_t stacks) {
+    std::ofstream f;
+    f.open(fname);
+    float alpha = -(M_PI / 2.);
+    f << "v " << 0 << ' ' << (-radius) << ' ' << 0 << '\n';
+    float stack_angle = M_PI / stacks;
+    float slice_angle = (2 * M_PI) / slices;
+    for (std::size_t i = 1; i < slices; ++i) {
+        float cur_slice = slice_angle * i;
+        for (std::size_t j = 0; j < stacks; ++j) {
+            f << "v " << sin(cur_slice) * radius << ' ' << sin(alpha + (stack_angle * j)) * radius << ' ' << cos(cur_slice) * radius << '\n';
+        }
+    }
+    f << "v " << 0 << ' ' << radius << ' ' << 0 << '\n';
+
     /*
-    é exatamente igual ao cilindro, mas mudam-se 2 ângulos em vez de se mudar apenas 1
-    coordenadas a qualquer momento:
-        P(sin(alpha) * r, STACK * ((float)radius / stacks) - radius, cos(beta) * r)
+    esfera 1 4 4
+    14
+    13 12 11 10
+     9  8  7  6
+     5  4  3  2
+              1
     */
-    float slice_size = ((float) radius) / stacks;
-    for (std::size_t i = 1; i < stacks; ++i) {
-        continue;
+    // "base" 1
+    for(std::size_t i = 0; i < slices; ++i) {
+        f << "f " << 1 << "/0/0 ";
+        f << ((i+1)%slices) + 2 << "/0/0 ";
+        f << (i%slices) + 2 << "/0/0\n";
+    }
+    // "faces"
+    for(std::size_t i = 0; i < stacks - 2; ++i) {
+        for(std::size_t j = 0; j < slices; ++j) {
+            std::size_t r = (j%slices) + 2 + (i * slices);
+            std::size_t l = ((j+1)%slices) + 2 + (i * slices);
+            // \|
+            f << "f " << r << "/0/0 ";
+            f << l + slices << "/0/0 ";
+            f << l << "/0/0\n";
+            // /|
+            f << "f " << r << "/0/0 ";
+            f << l << "/0/0 ";
+            f << l + slices << "/0/0\n";
+
+        }
+    }
+    // "base" 2
+    std::size_t top_most = slices*(stacks-1)+2;
+    for(std::size_t i = 0; i < slices; ++i) {
+        f << "f " << top_most << "/0/0 ";
+        f << top_most - slices - (i%slices) << "/0/0 ";
+        f << top_most - slices - ((i+1)%slices) << "/0/0\n";
     }
 }
 
@@ -198,8 +237,10 @@ int main(int argc, char** argv) {
         std::size_t divisions = std::stoul(argv[3]);
         drawBox(argv[4], length, divisions); // Plano de baixo da box
     }
-    else if (argc == 6 && std::string("sphere").compare(argv[1])) {
-        std::size_t radius = std::stoul(argv[2]);
+    // input line to draw a sphere: ./generator sphere radius slices stacks
+    // NameofFileToOutput
+    else if (argc == 6 && std::string("sphere").compare(argv[1]) == 0) {
+        ssize_t radius = std::stol(argv[2]);
         std::size_t slices = std::stoul(argv[3]);
         std::size_t stacks = std::stoul(argv[4]);
         draw_sphere(argv[5], radius, slices, stacks);
