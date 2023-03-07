@@ -121,20 +121,11 @@ void drawBox(std::string const& file, std::size_t length,
     36  31  26  21
 
     */
-<<<<<<< Updated upstream
    for (auto k=0;k<6;++k){
         if (k % 2 !=0  && k !=1 || k == 0 ){
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-=======
-    for (auto k = 0; k < 6; ++k) {
-        if (k % 2 == 0) {
-            for (auto i = 0; i < divisions; ++i) {
-                for (auto j = 1; j <= divisions; ++j) {
-                    auto index =
-                        (divisions + 1) * i + j + k * (divisions + 1) * (divisions + 1);
->>>>>>> Stashed changes
                     f << "f " << index << "/0/0 ";
                     f << index + 1 << "/0/0 ";
                     f << index + divisions + 1 << "/0/0\n";
@@ -144,18 +135,10 @@ void drawBox(std::string const& file, std::size_t length,
                 }
             }
         }
-<<<<<<< Updated upstream
         else if (k==1){
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-=======
-        else {
-            for (auto i = 0; i < divisions; ++i) {
-                for (auto j = 1; j <= divisions; ++j) {
-                    auto index =
-                        (divisions + 1) * i + j + k * (divisions + 1) * (divisions + 1);
->>>>>>> Stashed changes
                     f << "f " << index << "/0/0 ";
                     f << index + divisions + 1 << "/0/0 ";
                     f << index + 1 << "/0/0\n";
@@ -165,7 +148,6 @@ void drawBox(std::string const& file, std::size_t length,
                 }
             }
         }
-<<<<<<< Updated upstream
         else{
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
@@ -179,8 +161,6 @@ void drawBox(std::string const& file, std::size_t length,
                 }
             }
         }
-=======
->>>>>>> Stashed changes
     }
     f.close();
 }
