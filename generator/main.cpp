@@ -110,10 +110,10 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
 
     */
    for (auto k=0;k<6;++k){
-        if (k%2 == 0){
+        if (k % 2 !=0  && k !=1 || k == 0 ){
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
-                    auto index = (divisions+1) * i + j + k*(divisions+1)*(divisions+1);
+                    auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
                     f << "f " << index << "/0/0 ";
                     f << index + 1 << "/0/0 ";
                     f << index + divisions + 1 << "/0/0\n";
@@ -123,10 +123,10 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
                 }
             }
         }
-        else {
+        else if (k==1){
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
-                    auto index = (divisions+1) * i + j + k*(divisions+1)*(divisions+1);
+                    auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
                     f << "f " << index << "/0/0 ";
                     f << index + divisions + 1 << "/0/0 ";
                     f << index + 1 << "/0/0\n";
@@ -136,7 +136,20 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
                 }
             }
         }
-   }
+        else{
+            for(auto i = 0; i < divisions; ++i) {
+                for(auto j = 1; j <= divisions; ++j) {
+                    auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
+                    f << "f " << index << "/0/0 ";
+                    f << index + divisions + 1 << "/0/0 ";
+                    f << index + 1 << "/0/0\n";
+                    f << "f " << index+1 << "/0/0 ";
+                    f << index + divisions + 1 << "/0/0 ";
+                    f << index + divisions + 2 << "/0/0\n";
+                }
+            }
+        }
+    }
     f.close();
 }
 int main(int argc, char **argv) {
