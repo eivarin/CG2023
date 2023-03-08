@@ -20,6 +20,20 @@ class camera{
         int halfRotationSteps;
         int alpha;
         int beta;
+        void reverseCalc(){
+            float dx = look_at.x - position.x;
+            float dy = look_at.y - position.y;
+            float dz = look_at.z - position.z;
+            float vLen = sqrtf64(dx*dx+dy*dy+dz*dz);
+            dx = dx / vLen;
+            dy = dy / vLen;
+            dz = dz / vLen;
+            float b = asin(dy);
+            float a = asin(dx/cos(b));
+            float fullRotationSteps = (M_PI / (halfRotationSteps * 2));
+            alpha = a/fullRotationSteps;
+            beta = b/fullRotationSteps;
+        }
     public:
         float ratio;
         camera(){
@@ -69,8 +83,7 @@ class camera{
             near = std::stof(projection->first_attribute("near")->value());
             far = std::stof(projection->first_attribute("far")->value());
             halfRotationSteps = 75;
-            alpha = 0;
-            beta = 0;
+            reverseCalc();
             this->recalcDirection();
         }
         void setPerspective(){
