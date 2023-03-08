@@ -64,8 +64,8 @@ struct scene {
 	std::vector<model> ms;
 	int wHeight;
 	int wWidth;
-	bool wasd[4];
-	bool setas[4];
+	bool normal_keys[256];
+	bool special_keys[1024];
 };
 
 scene cena;
@@ -84,11 +84,14 @@ void changeSize(int w, int h) {
 	// Load Identity Matrix
 	glLoadIdentity();
 
+	cena.wHeight = h;
+	cena.wWidth = w;
+
 	// Set the viewport to be the entire window
 	glViewport(0, 0, w, h);
 
 	// Set perspective
-	gluPerspective(45.0f, ratio, 1.0f, 1000.0f);
+	gluPerspective(cena.cam.fov, ratio, cena.cam.near, cena.cam.far);
 
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
@@ -236,7 +239,7 @@ scene loadScene(std::string const& fname){
 	rapidxml::xml_node<> *look_at = world->first_node("camera")->first_node("lookAt");
 	rapidxml::xml_node<> *up = world->first_node("camera")->first_node("up");
 	rapidxml::xml_node<> *models = world->first_node("group")->first_node("models");
-	scene s;
+	scene s = {0};
 	s.wHeight = std::stol(window->first_attribute("height")->value());
 	s.wWidth = std::stol(window->first_attribute("width")->value());
 	s.cam = { 
@@ -293,41 +296,41 @@ void drawModel(model m){
 
 void processPressedKeys(){
 	bool changed = false;
-	if(cena.setas[0]){
+	if(cena.special_keys[GLUT_KEY_UP]){
 		cena.cam.position.x += 0.05 * cena.cam.look_at.x;
 		cena.cam.position.y += 0.05 * cena.cam.look_at.y;
 		cena.cam.position.z += 0.05 * cena.cam.look_at.z;
 		changed = true;
 	}
-	if(cena.setas[1]){
+	if(cena.special_keys[GLUT_KEY_DOWN]){
 		cena.cam.position.x -= 0.05 * cena.cam.look_at.x;
 		cena.cam.position.y -= 0.05 * cena.cam.look_at.y;
 		cena.cam.position.z -= 0.05 * cena.cam.look_at.z;
 		changed = true;
 	}
-	if(cena.setas[2]){
+	if(cena.special_keys[GLUT_KEY_RIGHT]){
 		cena.cam.position.x += 0.05 * -cena.cam.look_at.z;
 		cena.cam.position.z += 0.05 * cena.cam.look_at.x;
 		changed = true;
 	}
-	if(cena.setas[3]){
+	if(cena.special_keys[GLUT_KEY_LEFT]){
 		cena.cam.position.x -= 0.05 * -cena.cam.look_at.z;
 		cena.cam.position.z -= 0.05 * cena.cam.look_at.x;
 		changed = true;
 	}
-	if(cena.wasd[0]){
+	if(cena.normal_keys['w']){
 		cena.cam.beta = ((cena.cam.beta + 1) < cena.cam.halfRotationSteps) ? cena.cam.beta += 1 : cena.cam.beta;
 		changed = true;
 	}
-	if(cena.wasd[1]){
+	if(cena.normal_keys['s']){
 		cena.cam.beta = ((cena.cam.beta - 1) > -cena.cam.halfRotationSteps) ? cena.cam.beta -= 1 : cena.cam.beta;
 		changed = true;
 	}
-	if(cena.wasd[2]){
+	if(cena.normal_keys['a']){
 		cena.cam.alpha += 1;
 		changed = true;
 	}
-	if(cena.wasd[3]){
+	if(cena.normal_keys['d']){
 		cena.cam.alpha -= 1;
 		changed = true;
 	}
@@ -338,14 +341,14 @@ void processPressedKeys(){
 void drawAxis(){
 	glBegin(GL_LINES);
 	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(-100.0f, 0.0f, 0.0f);
-	glVertex3f( 100.0f, 0.0f, 0.0f);
+	glVertex3f(-1000.0f, 0.0f, 0.0f);
+	glVertex3f( 1000.0f, 0.0f, 0.0f);
 	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f,-100.0f, 0.0f);
-	glVertex3f(0.0f, 100.0f, 0.0f);
+	glVertex3f(0.0f,-1000.0f, 0.0f);
+	glVertex3f(0.0f, 1000.0f, 0.0f);
 	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f,-100.0f);
-	glVertex3f(0.0f, 0.0f, 100.0f);
+	glVertex3f(0.0f, 0.0f,-1000.0f);
+	glVertex3f(0.0f, 0.0f, 1000.0f);
 	glEnd();
 }
 
@@ -492,95 +495,19 @@ void renderScene(void) {
 }
 
 void processKeys(unsigned char c, int xx, int yy) {
-	switch (c)
-	{
-	case 'w':
-		cena.wasd[0] = true;
-		break;
-	case 's':
-		cena.wasd[1] = true;
-		break;
-	case 'a':
-		cena.wasd[2] = true;
-		break;
-	case 'd':
-		cena.wasd[3] = true;
-		break;
-	default:
-		break;
-	}
-	glutPostRedisplay();
+	cena.normal_keys[c] = true;
 }
 
 void processUpKeys(unsigned char c, int xx, int yy) {
-	switch (c)
-	{
-	case 'w':
-		cena.wasd[0] = false;
-		break;
-	case 's':
-		cena.wasd[1] = false;
-		break;
-	case 'a':
-		cena.wasd[2] = false;
-		break;
-	case 'd':
-		cena.wasd[3] = false;
-		break;
-	default:
-		break;
-	}
-	glutPostRedisplay();
+	cena.normal_keys[c] = false;
 }
 
 void processSpecialKeys(int key, int xx, int yy) {
-	switch (key)
-	{
-	case GLUT_KEY_UP:
-		cena.setas[0] = true;
-		break;
-
-	case GLUT_KEY_DOWN:
-		cena.setas[1] = true;
-		break;
-
-	case GLUT_KEY_RIGHT:
-		cena.setas[2] = true;
-		break;
-
-	case GLUT_KEY_LEFT:
-		cena.setas[3] = true;
-		break;
-
-	default:
-		break;
-	}
-	glutPostRedisplay();
+	cena.special_keys[key] = true;
 }
 
 void processSpecialUpKeys(int key, int xx, int yy) {
-	switch (key)
-	{
-	case GLUT_KEY_UP:
-		cena.setas[0] = false;
-		break;
-
-	case GLUT_KEY_DOWN:
-		cena.setas[1] = false;
-		break;
-
-	case GLUT_KEY_RIGHT:
-		cena.setas[2] = false;
-		break;
-
-	case GLUT_KEY_LEFT:
-		cena.setas[3] = false;
-		break;
-
-	default:
-		break;
-	}
-	glutPostRedisplay();
+	cena.special_keys[key] = false;
 }
 
 void update(int t)
@@ -592,7 +519,12 @@ void update(int t)
 
 int main(int argc, char **argv) {
 	// init GLUT and the window
-	cena = loadScene("../test_1_1.xml");
+	std::string fname;
+	if (argc == 2) fname = argv[1];
+	else fname = "example.xml";
+	
+	cena = loadScene(fname);
+	recalcDirection();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
