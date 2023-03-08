@@ -1,8 +1,7 @@
 # ours
 .editorconfig
 *.3d
-generator
-engine
+triangle.*
 
 # Cmake
 CMakeCache.txt

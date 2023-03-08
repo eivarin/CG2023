@@ -174,7 +174,6 @@ void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, s
     f << "v " << 0 << ' ' << radius << ' ' << 0 << '\n';
     for (std::size_t i = 1; i < stacks; ++i) {
         for (std::size_t j = 0; j < slices; ++j) {
-            std::cout << stack_angle * i << '\n' << slice_angle * j << '\n';
             float sinb = sin((i * M_PI) / stacks);
             f << "v " << std::noshowpoint << std::fixed << std::setprecision(6)
                 << sin(j * (2 * M_PI / slices)) * sinb * radius
@@ -215,11 +214,11 @@ void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, s
         }
     }
     // "base" 2
-    std::size_t top_most = slices*(stacks-1)+2;
+    std::size_t bottom_most = slices*(stacks-1)+2;
     for(std::size_t i = 0; i < slices; ++i) {
-        f << "f " << top_most << "/0/0 ";
-        f << top_most - slices - (i%slices) << "/0/0 ";
-        f << top_most - slices - ((i+1)%slices) << "/0/0\n";
+        f << "f " << bottom_most << "/0/0 ";
+        f << bottom_most - slices + (i+1)%slices << "/0/0 ";
+        f << bottom_most - slices + (i%slices) << "/0/0\n";
     }
 }
 void drawCone(std::string const& file,int height, int radius, int slices, int stacks)

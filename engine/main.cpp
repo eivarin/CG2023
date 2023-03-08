@@ -481,8 +481,8 @@ void renderScene(void) {
 			  cena.cam.position.x + cena.cam.look_at.x, cena.cam.position.y + cena.cam.look_at.y, cena.cam.position.z + cena.cam.look_at.z,
 			  0.0f, 1.0f, 0.0f);
 	drawAxis();
-	drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
-	drawSphere(1, 100, 100);
+	//drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
+	//drawSphere(1, 100, 100);
 	// drawModel(m2);
 	for(auto& m : cena.ms){
 		drawModel(m);
@@ -592,7 +592,7 @@ void update(int t)
 
 int main(int argc, char **argv) {
 	// init GLUT and the window
-	cena = loadScene("example.xml");
+	cena = loadScene("../test_1_1.xml");
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
