@@ -21,7 +21,8 @@ void drawPlane(std::string const& file, std::size_t length,
     float right_most = (length * divisions) / 2.;
     std::vector<float> base_points;
     for (auto i = 0; i <= divisions; ++i) {
-        base_points.push_back(right_most - (length * i));
+        float chunk = (float) length/(float)divisions;
+        base_points.push_back(right_most - (chunk)*i);
     }
 
     std::ofstream f;
@@ -57,55 +58,56 @@ void drawBox(std::string const& file, std::size_t length,
     std::size_t divisions) {
     float right_most = (length * divisions) / 2.;
     std::vector<float> base_points;
+    float chunk = (float) length/(float)divisions;
     // Base
     for (auto i = 0; i <= divisions; ++i) { // 0 - Têm de estar escondidos
-        base_points.push_back(right_most - (length * i));
+        base_points.push_back(right_most - ((length) * i));
     }
 
     std::ofstream f;
     f.open(file);
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' '
-                << base_points[divisions] << ' ' << (0 - base_points[j]) << '\n';
+            f << "v " << std::setprecision(6) << base_points[i]*chunk << ' '
+                << base_points[divisions]*chunk << ' ' << (0 - base_points[j])*chunk<< '\n';
         }
     }
     // Topo
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' '
-                << -(base_points[divisions]) << ' ' << (0 - base_points[j])
+            f << "v " << std::setprecision(6) << base_points[i]*chunk << ' '
+                << -(base_points[divisions])*chunk<< ' ' << (0 - base_points[j])*chunk
                 << '\n'; // 1
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[divisions] << ' '
-                << base_points[i] << ' ' << (0 - base_points[j])
+            f << "v " << std::setprecision(6) << base_points[divisions]*chunk << ' '
+                << base_points[i]*chunk << ' ' << (0 - base_points[j])*chunk
                 << '\n'; // 2 - Têm de estar escondidas
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[0] << ' '
-                << base_points[i] << ' ' << (0 - base_points[j]) << '\n'; // 3
+            f << "v " << std::setprecision(6) << base_points[0]*chunk << ' '
+                << base_points[i]*chunk << ' ' << (0 - base_points[j])*chunk << '\n'; // 3
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' '
-                << (0 - base_points[j]) << ' ' << base_points[divisions]
+            f << "v " << std::setprecision(6) << base_points[i]*chunk << ' '
+                << (0 - base_points[j])*chunk << ' ' << base_points[divisions]*chunk
                 << '\n'; // 4- Têm de estar escondidas
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto // 5
-            f << "v " << std::setprecision(6) << base_points[i] << ' '
-                << (0 - base_points[j]) << ' ' << base_points[0] << '\n';
+            f << "v " << std::setprecision(6) << base_points[i]*chunk << ' '
+                << (0 - base_points[j])*chunk << ' ' << base_points[0]*chunk << '\n';
         }
     }
     /* Base
