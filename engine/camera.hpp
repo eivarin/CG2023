@@ -29,7 +29,15 @@ class camera{
             dy = dy / vLen;
             dz = dz / vLen;
             float b = asin(dy);
-            float a = asin(dx/cos(b));
+            float sin_a = dx / cos(b);
+            float cos_a = dz / cos(b);
+
+            float a = 0.0;
+            if (sin_a >= 0.0) {
+                a = acos(cos_a);
+            } else {
+                a = -acos(cos_a);
+            }
             float fullRotationSteps = (M_PI / (halfRotationSteps * 2));
             alpha = a/fullRotationSteps;
             beta = b/fullRotationSteps;
