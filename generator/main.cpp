@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 // #include <unordered_map>
 #include <string>
 #include <vector>
@@ -168,44 +169,47 @@ void drawBox(std::string const& file, std::size_t length,
 void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, std::size_t stacks) {
     std::ofstream f;
     f.open(fname);
-    float alpha = -(M_PI / 2.);
-    f << "v " << 0 << ' ' << (-radius) << ' ' << 0 << '\n';
     float stack_angle = M_PI / stacks;
     float slice_angle = (2 * M_PI) / slices;
-    for (std::size_t i = 1; i < slices; ++i) {
-        float cur_slice = slice_angle * i;
-        for (std::size_t j = 0; j < stacks; ++j) {
-            f << "v " << sin(cur_slice) * radius << ' ' << sin(alpha + (stack_angle * j)) * radius << ' ' << cos(cur_slice) * radius << '\n';
+    f << "v " << 0 << ' ' << radius << ' ' << 0 << '\n';
+    for (std::size_t i = 1; i < stacks; ++i) {
+        for (std::size_t j = 0; j < slices; ++j) {
+            std::cout << stack_angle * i << '\n' << slice_angle * j << '\n';
+            float sinb = sin((i * M_PI) / stacks);
+            f << "v " << std::noshowpoint << std::fixed << std::setprecision(6)
+                << sin(j * (2 * M_PI / slices)) * sinb * radius
+                << ' ' << cos((i * M_PI) / stacks) * radius
+                << ' ' << cos(j * (2 * M_PI / slices)) * sinb * radius << '\n';
         }
     }
-    f << "v " << 0 << ' ' << radius << ' ' << 0 << '\n';
+    f << "v " << 0 << ' ' << -radius << ' ' << 0 << '\n';
 
     /*
     esfera 1 4 4
-    14
-    13 12 11 10
-     9  8  7  6
-     5  4  3  2
               1
+     5  4  3  2
+     9  8  7  6
+    13 12 11 10
+    14
     */
     // "base" 1
     for(std::size_t i = 0; i < slices; ++i) {
         f << "f " << 1 << "/0/0 ";
-        f << ((i+1)%slices) + 2 << "/0/0 ";
-        f << (i%slices) + 2 << "/0/0\n";
+        f << (i%slices) + 2 << "/0/0 ";
+        f << ((i+1)%slices) + 2 << "/0/0\n";
     }
     // "faces"
     for(std::size_t i = 0; i < stacks - 2; ++i) {
         for(std::size_t j = 0; j < slices; ++j) {
             std::size_t r = (j%slices) + 2 + (i * slices);
             std::size_t l = ((j+1)%slices) + 2 + (i * slices);
-            // \|
+            // |/
             f << "f " << r << "/0/0 ";
             f << l + slices << "/0/0 ";
             f << l << "/0/0\n";
-            // /|
+            // \|
             f << "f " << r << "/0/0 ";
-            f << l << "/0/0 ";
+            f << r + slices << "/0/0 ";
             f << l + slices << "/0/0\n";
 
         }
