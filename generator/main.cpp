@@ -301,7 +301,7 @@ void drawCone(std::string const& file,int height, int radius, int slices, int st
         i++;
     }
 
-    for (auto i=1;i+3<=points;++i){
+    for (auto i=1;i+3<=points;i=i+3){
         f << "f " << i <<"/0/0 ";
         f << i+1 <<"/0/0 ";
         f << i+2 <<"/0/0\n";
