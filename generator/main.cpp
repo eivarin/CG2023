@@ -222,7 +222,93 @@ void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, s
         f << top_most - slices - ((i+1)%slices) << "/0/0\n";
     }
 }
+void drawCone(std::string const& file,int height, int radius, int slices, int stacks)
+{   
+    int points=1;
+    std::ofstream f;
+    f.open(file);
+    float delta = (2*M_PI) / (float)slices;
+    float stack_h = height / (float)stacks;
+    float curr_h = height;
+    float stack_r = radius / (float)stacks;
+    float curr_r = 0;
+    int i = 0;
+    curr_r += stack_r;
+    while (i < slices)
+    {
+        float aCil = delta*i;
+        float px1 = (sin(aCil)), py1 = (cos(aCil));
+        float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        // glVertex3f(0.0f, curr_h, 0.0f);
+        f << "v " << std::setprecision(6) << 0.0 << ' '<< curr_h<< ' ' << 0.0 << '\n';
+        ++points;
+        // glVertex3f(px1 * curr_r, curr_h - stack_h, py1  * curr_r);
+        f << "v " << std::setprecision(6) << px1 * curr_r << ' '<<curr_h - stack_h<< ' ' << py1  * curr_r << '\n';
+        ++points;
+        // glVertex3f(px2 * curr_r, curr_h - stack_h, py2  * curr_r);
+        f << "v " << std::setprecision(6) << px2 * curr_r << ' '<<curr_h - stack_h<< ' ' << py2  * curr_r << '\n';
+        ++points;
+        i++;
+    }
+    curr_h-=stack_h;
+    while (curr_h > 0)
+    {
+        i = 0;
+        while (i < slices)
+        {
+            float aCil = delta*i;
+            float px1 = (sin(aCil)), py1 = (cos(aCil));
+            float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+            
+            //glVertex3f(px1 * curr_r, curr_h, py1 * curr_r);
+            f << "v " << std::setprecision(6) << px1 * curr_r << ' '<<curr_h << ' ' <<py1 * curr_r<< '\n';
+            ++points;
+            //glVertex3f(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r));
+            f << "v " << std::setprecision(6) << px1 * (curr_r+stack_r) << ' '<<curr_h - stack_h << ' ' << py1 * (curr_r+stack_r)<< '\n';
+            ++points;
+            //glVertex3f(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r));
+            f << "v " << std::setprecision(6) << px2 * (curr_r+stack_r) << ' '<<curr_h - stack_h<< ' ' <<py2 * (curr_r+stack_r) << '\n';
+            ++points;
 
+            //glVertex3f(px2 * curr_r, curr_h, py2 * curr_r);
+            f << "v " << std::setprecision(6) << px2 * curr_r << ' '<< curr_h<< ' ' <<py2 * curr_r<< '\n';
+            ++points;
+            //glVertex3f(px1 * curr_r, curr_h, py1 * curr_r);
+            f << "v " << std::setprecision(6) << px1 * curr_r << ' '<<curr_h<< ' ' <<py1 * curr_r << '\n';
+            ++points;
+            // glVertex3f(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r));
+            f << "v " << std::setprecision(6) << px2 * (curr_r+stack_r) << ' '<<curr_h - stack_h<< ' ' <<py2 * (curr_r+stack_r) << '\n';
+            ++points;
+            i++;
+        }
+        curr_h-=stack_h;
+        curr_r+=stack_r;
+    }
+    i=0;
+    while (i < slices)
+    {
+        float aCil = delta*i;
+        float px1 = (sin(aCil)), py1 = (cos(aCil));
+        float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        //glVertex3f(px2 * curr_r, curr_h, py2  * curr_r);
+        f << "v " << std::setprecision(6) << px2 * curr_r << ' '<< curr_h<< ' ' <<py2  * curr_r<< '\n';
+        ++points;
+        //glVertex3f(px1 * curr_r, curr_h, py1  * curr_r);
+        f << "v " << std::setprecision(6) << px1 * curr_r << ' '<< curr_h<< ' ' <<py1  * curr_r<< '\n';
+        ++points;
+        //glVertex3f(0.0f, curr_h, 0.0f);
+        f << "v " << std::setprecision(6) << 0.0 << ' '<< curr_h<< ' ' << 0.0 << '\n';
+        ++points;
+        i++;
+    }
+
+    for (auto i=1;i+3<=points;++i){
+        f << "f " << i <<"/0/0 ";
+        f << i+1 <<"/0/0 ";
+        f << i+2 <<"/0/0\n";
+    }
+    f.close();
+}
 int main(int argc, char** argv) {
     std::string s1 = "plane";
     std::string s2 = "box";
@@ -248,6 +334,14 @@ int main(int argc, char** argv) {
         std::size_t slices = std::stoul(argv[3]);
         std::size_t stacks = std::stoul(argv[4]);
         draw_sphere(argv[5], radius, slices, stacks);
+    }
+    // input line to draw a cone: ./generator cone radius heigth slices stacks NameofFileToOutput
+    else if (argc == 7 && std::string("cone").compare(argv[1]) == 0) {
+        int radius = atoi(argv[2]);
+        int heigth = atoi(argv[3]);
+        int slices = atoi(argv[4]);
+        int stacks = atoi(argv[5]);
+        drawCone(argv[6],heigth, radius, slices, stacks);
     }
     return 1;
 }
