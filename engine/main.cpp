@@ -1,8 +1,8 @@
+#include <GL/glew.h>
 #include <GL/glut.h>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include <fstream>
 #include <map>
 #include <vector>
@@ -66,6 +66,7 @@ struct scene {
 	int wWidth;
 	bool normal_keys[256];
 	bool special_keys[1024];
+	GLuint vertices, verticeCount;
 };
 
 scene cena;
@@ -146,40 +147,79 @@ bool writen = false;
 // 	}
 // }
 
-void drawCylinder(float radius, float height, int slices, float px, float py, float pz)
+std::vector<float> drawCylinder(float radius, float height, int slices, float px, float py, float pz)
 {
 	float aCil = 0;
 	float rotation = (2 * M_PI);
 	float delta = rotation / slices;
 	height = height / 2;
-	glPolygonMode(GL_FRONT, GL_LINE);
-	glBegin(GL_TRIANGLES);
+	std::vector<float> vs;
+	// glPolygonMode(GL_FRONT, GL_LINE);
+	// glBegin(GL_TRIANGLES);
 	while (aCil <= rotation)
 	{
 		glColor3f(1.0f, 0.0f, 0.0f);
 		float px1 = px + (radius * sin(aCil)), py1 = pz + (radius * cos(aCil));
 		float px2 = px + (radius * sin(aCil + delta)), py2 = pz + (radius * cos(aCil + delta));
 
-		aux((vertex_coords){.x = px, .y = height, .z = pz});
-		aux((vertex_coords){.x = px1, .y = height, .z = py1});
-		aux((vertex_coords){.x = px2, .y = height, .z = py2});
+		vs.push_back(px);
+		vs.push_back(height);
+		vs.push_back(pz);
 
-		aux((vertex_coords){.x = px1, .y = height, .z = py1});
-		aux((vertex_coords){.x = px1, .y = -height, .z = py1});
-		aux((vertex_coords){.x = px2, .y = -height, .z = py2});
+		vs.push_back(px1);
+		vs.push_back(height);
+		vs.push_back(py1);
 
-		aux((vertex_coords){.x = px1, .y = height, .z = py1});
-		aux((vertex_coords){.x = px2, .y = -height, .z = py2});
-		aux((vertex_coords){.x = px2, .y = height, .z = py2});
+		vs.push_back(px2);
+		vs.push_back(height);
+		vs.push_back(py2);
 
-		aux((vertex_coords){.x = px, .y = -height, .z = pz});
-		aux((vertex_coords){.x = px2, .y = -height, .z = py2});
-		aux((vertex_coords){.x = px1, .y = -height, .z = py1});
+
+		vs.push_back(px1);
+		vs.push_back(height);
+		vs.push_back(py1);
+
+		vs.push_back(px1);
+		vs.push_back(-height);
+		vs.push_back(py1);
+
+		vs.push_back(px2);
+		vs.push_back(-height);
+		vs.push_back(py2);
+
+
+		vs.push_back(px1);
+		vs.push_back(height);
+		vs.push_back(py1);
+
+		vs.push_back(px2);
+		vs.push_back(-height);
+		vs.push_back(py2);
+
+		vs.push_back(px2);
+		vs.push_back(height);
+		vs.push_back(py2);
+
+
+		vs.push_back(px);
+		vs.push_back(-height);
+		vs.push_back(pz);
+
+		vs.push_back(px2);
+		vs.push_back(-height);
+		vs.push_back(py2);
+
+		vs.push_back(px1);
+		vs.push_back(-height);
+		vs.push_back(py1);
+
 		aCil += delta;
 	}
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glEnd();
+	// glColor3f(1.0f, 0.0f, 0.0f);
+	// glEnd();
 	// printModel();
+
+	return vs;
 }
 
 bool operator<(const vertex_coords l, const vertex_coords r) {
@@ -273,64 +313,72 @@ scene loadScene(std::string const& fname){
 	return s;
 }
 
-void drawVertex(model m, vertex_ref v_ref){
+void drawVertex(model m, vertex_ref v_ref, std::vector<float> &vs){
 	vertex_coords c = m.vs.at(v_ref.c-1);
 	// VERTEX_TEXTURE t = m.ts.at(v_ref.t-1);
 	// VERTEX_NORMAL n = m.ns.at(v_ref.n-1);
-	glVertex3f(c.x, c.y, c.z);
+	vs.push_back(c.x);
+	vs.push_back(c.y);
+	vs.push_back(c.z);
 }
 
-void drawModel(model m){
-	glPolygonMode(GL_FRONT, GL_LINE);
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 1.0f, 0.0f);
+std::vector<float> drawModel(model m){
 	int i = 0;
+	std::vector<float> vs;
 	for(face& f : m.fs) {
 		i++;
-		drawVertex(m,f.v[0]);
-		drawVertex(m,f.v[1]);
-		drawVertex(m,f.v[2]);
+		drawVertex(m,f.v[0], vs);
+		drawVertex(m,f.v[1], vs);
+		drawVertex(m,f.v[2], vs);
 	}
-	glEnd();
+	return vs;
 }
 
 void processPressedKeys(){
 	bool changed = false;
-	if(cena.special_keys[GLUT_KEY_UP]){
+	if(cena.normal_keys['w']){
 		cena.cam.position.x += 0.05 * cena.cam.look_at.x;
 		cena.cam.position.y += 0.05 * cena.cam.look_at.y;
 		cena.cam.position.z += 0.05 * cena.cam.look_at.z;
 		changed = true;
 	}
-	if(cena.special_keys[GLUT_KEY_DOWN]){
+	if(cena.normal_keys['s']){
 		cena.cam.position.x -= 0.05 * cena.cam.look_at.x;
 		cena.cam.position.y -= 0.05 * cena.cam.look_at.y;
 		cena.cam.position.z -= 0.05 * cena.cam.look_at.z;
 		changed = true;
 	}
-	if(cena.special_keys[GLUT_KEY_RIGHT]){
+	if(cena.normal_keys['d']){
 		cena.cam.position.x += 0.05 * -cena.cam.look_at.z;
 		cena.cam.position.z += 0.05 * cena.cam.look_at.x;
 		changed = true;
 	}
-	if(cena.special_keys[GLUT_KEY_LEFT]){
+	if(cena.normal_keys['a']){
 		cena.cam.position.x -= 0.05 * -cena.cam.look_at.z;
 		cena.cam.position.z -= 0.05 * cena.cam.look_at.x;
 		changed = true;
 	}
-	if(cena.normal_keys['w']){
+	if(cena.normal_keys[' ']){
+		cena.cam.position.y += 0.05;
+		changed = true;
+	}
+	if(cena.special_keys[112]){
+		cena.cam.position.y -= 0.05;
+		changed = true;
+	}
+	if(cena.special_keys[GLUT_KEY_UP]){
 		cena.cam.beta = ((cena.cam.beta + 1) < cena.cam.halfRotationSteps) ? cena.cam.beta += 1 : cena.cam.beta;
 		changed = true;
 	}
-	if(cena.normal_keys['s']){
+	if(cena.special_keys[GLUT_KEY_DOWN]){
 		cena.cam.beta = ((cena.cam.beta - 1) > -cena.cam.halfRotationSteps) ? cena.cam.beta -= 1 : cena.cam.beta;
 		changed = true;
 	}
-	if(cena.normal_keys['a']){
+	if(cena.special_keys[GLUT_KEY_LEFT]){
 		cena.cam.alpha += 1;
 		changed = true;
 	}
-	if(cena.normal_keys['d']){
+	if(cena.special_keys[GLUT_KEY_RIGHT]){
 		cena.cam.alpha -= 1;
 		changed = true;
 	}
@@ -362,6 +410,7 @@ void drawCone(int height, int radius, int slices, int stacks)
     int i = 0;
     glPolygonMode(GL_FRONT, GL_LINE);
     glBegin(GL_TRIANGLES);
+	glColor3f(1.0f, 1.0f, 0.0f);
     curr_r += stack_r;
     while (i < slices)
     {
@@ -474,6 +523,7 @@ void drawSphere(int radius, int slices, int stacks)
     glEnd();
 }
 
+GLuint vertices, verticeCount;
 void renderScene(void) {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -484,12 +534,12 @@ void renderScene(void) {
 			  cena.cam.position.x + cena.cam.look_at.x, cena.cam.position.y + cena.cam.look_at.y, cena.cam.position.z + cena.cam.look_at.z,
 			  0.0f, 1.0f, 0.0f);
 	drawAxis();
-	//drawCylinder(1, 2, 10, -2.0f, 0.0f, 0.0f);
-	//drawSphere(1, 100, 100);
-	// drawModel(m2);
-	for(auto& m : cena.ms){
-		drawModel(m);
-	}
+	// drawSphere(1, 4, 4);
+	// drawCone(11,13,10,8);
+	glPolygonMode(GL_FRONT, GL_LINE);
+	glBindBuffer(GL_ARRAY_BUFFER, vertices);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glDrawArrays(GL_TRIANGLES, 0, verticeCount);
 	// End of frame
 	glutSwapBuffers();
 }
@@ -517,12 +567,32 @@ void update(int t)
     glutPostRedisplay();
 }
 
+std::vector<float> mergeVector(std::vector<float> v1, std::vector<float> v2){
+	v1.insert( v1.end(), v2.begin(), v2.end() );
+	return v1;
+}
+
+void prepData(){
+	std::vector<float> vs;
+	// vs = mergeVector(vs, drawCylinder(1, 2, 50, -2.0f, 0.0f, 0.0f));
+	for(auto& m : cena.ms){
+		vs = mergeVector(vs, drawModel(m));
+	}
+	verticeCount = vs.size() / 3;
+	glGenBuffers(1, &vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vertices);
+	glBufferData(
+		GL_ARRAY_BUFFER, // tipo do buffer, só é relevante na altura do desenho
+		sizeof(float) * vs.size(), // tamanho do vector em bytes
+		vs.data(), // os dados do array associado ao vector
+		GL_STATIC_DRAW); // indicativo da utilização (estático e para desenho)
+}
+
 int main(int argc, char **argv) {
 	// init GLUT and the window
 	std::string fname;
 	if (argc == 2) fname = argv[1];
 	else fname = "example.xml";
-	
 	cena = loadScene(fname);
 	recalcDirection();
 	glutInit(&argc, argv);
@@ -530,6 +600,9 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(cena.wWidth, cena.wHeight);
 	glutCreateWindow("CG@DI-UM");
+	glewInit();
+	glEnableClientState(GL_VERTEX_ARRAY);
+	prepData();
 	// Required callback registry
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
