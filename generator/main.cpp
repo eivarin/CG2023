@@ -20,17 +20,17 @@ void drawPlane(std::string const& file, std::size_t length,
     std::size_t divisions) {
     float right_most = (length * divisions) / 2.;
     std::vector<float> base_points;
+    float chunk = (float) length/(float)divisions;
     for (auto i = 0; i <= divisions; ++i) {
-        float chunk = (float) length/(float)divisions;
-        base_points.push_back(right_most - (chunk)*i);
+        base_points.push_back(right_most - (length)*i);
     }
 
     std::ofstream f;
     f.open(file);
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' ' << 0. << ' '
-                << (0 - base_points[j]) << '\n';
+            f << "v " << std::setprecision(6) << base_points[i]*chunk << ' ' << 0. << ' '
+                << (0 - base_points[j])*chunk << '\n';
         }
     }
     /*

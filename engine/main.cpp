@@ -68,6 +68,7 @@ void renderScene(void) {
 	// drawSphere(1, 4, 4);
 	// drawCone(11,13,10,8);
 	glPolygonMode(GL_FRONT, GL_LINE);
+	glColor3f(1.0f,1.0f,1.0f);
 	glBindBuffer(GL_ARRAY_BUFFER, cena.vertices);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 	glDrawArrays(GL_TRIANGLES, 0, cena.verticeCount);
