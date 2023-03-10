@@ -12,7 +12,6 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-// #include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -346,5 +345,5 @@ int main(int argc, char** argv) {
         int stacks = atoi(argv[5]);
         drawCone(argv[6],heigth, radius, slices, stacks);
     }
-    return 1;
+    return 0;
 }
