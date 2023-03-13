@@ -20,7 +20,7 @@ struct scene {
 	int wWidth;
 	bool normal_keys[256];
 	bool special_keys[1024];
-	GLuint vertices, verticeCount;
+	bool coordsMenu = false;
 };
 
 scene loadScene(std::string const& fname){

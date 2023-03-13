@@ -68,12 +68,13 @@ void renderScene(void) {
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glColor3f(1.0f,1.0f,1.0f);
 	cena.main_group.drawGroup();
+	if (cena.coordsMenu) cena.cam.drawCoords(cena.wWidth,cena.wHeight);
 	glutSwapBuffers();
 }
 
 void update(int t)
 {
-	cena.cam.processKeys(cena.normal_keys, cena.special_keys);
+	cena.cam.processCameraKeys(cena.normal_keys, cena.special_keys);
     glutTimerFunc(16, update, 0);
     glutPostRedisplay();
 }
@@ -87,6 +88,7 @@ void processUpKeys(unsigned char c, int xx, int yy) {
 }
 
 void processSpecialKeys(int key, int xx, int yy) {
+	if (key == GLUT_KEY_F3) cena.coordsMenu = !cena.coordsMenu;
 	cena.special_keys[key] = true;
 }
 
@@ -114,6 +116,7 @@ int main(int argc, char **argv) {
 	glutTimerFunc(0, update, 0);
 
 	// Callback registration for keyboard processing
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 	glutKeyboardFunc(processKeys);
 	glutKeyboardUpFunc(processUpKeys);
 	glutSpecialFunc(processSpecialKeys);

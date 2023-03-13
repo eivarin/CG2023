@@ -54,8 +54,8 @@ class group{
         void applyTransfs(){
             for(auto& t : ts){
                 t.apply();
-                glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
             }
+            glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
         }
         void drawGroup(){
             glPushMatrix();

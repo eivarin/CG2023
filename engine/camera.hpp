@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <string>
 #include <math.h>
 
 
@@ -106,7 +107,7 @@ class camera{
             look_at.y = sin(b);
             look_at.z = cos(b) * cos(a);
         }
-        void processKeys(bool *normal_keys, bool *special_keys){
+        void processCameraKeys(bool *normal_keys, bool *special_keys){
             bool changed = false;
             float step = 0.05f;
             if(normal_keys['w']){
@@ -163,6 +164,28 @@ class camera{
             gluLookAt(position.x, position.y, position.z,
 			  position.x + look_at.x, position.y + look_at.y, position.z + look_at.z,
 			  0.0f, 1.0f, 0.0f);
+        }
+        void drawCoords(float w, float h){
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+            // set projection so that coordinates match window pixels
+            gluOrtho2D(0, w, h, 0);
+            glMatrixMode(GL_MODELVIEW);
+            glDisable(GL_DEPTH_TEST);
+            glPushMatrix();
+            glLoadIdentity();
+            glRasterPos2d(10, 30);
+            std::string coords = "x:" + std::to_string(position.x) + " y: " + std::to_string(position.y) + " z: " + std::to_string(position.z);
+
+            for (const char *c = coords.c_str(); *c != '\0'; c++) {
+                glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+            }
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
+            glPopMatrix();
+            glEnable(GL_DEPTH_TEST);
         }
 };
 
