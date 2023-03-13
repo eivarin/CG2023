@@ -1,11 +1,12 @@
 #ifndef WAVEFRONT_H
 #define WAVEFRONT_H
 
+#include <GL/glew.h>
+#include <GL/glut.h>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <iostream>
-
 
 struct vertex_coords {
 	float x;
@@ -40,6 +41,7 @@ class model {
         std::vector<vertex_texture> ts;
         std::vector<vertex_normal> ns;
         std::vector<face> fs;
+        GLuint vertices, count;
         void loadModel(std::string const& fname) {
             std::ifstream file;
             file.open(fname);
@@ -78,7 +80,7 @@ class model {
             loadModel(filename);
         }
 
-        std::vector<float> drawModel(){
+        void prepModel(){
             int i = 0;
             std::vector<float> vList;
             for(face& f : fs) {
@@ -87,7 +89,19 @@ class model {
                 drawVertex(f.v[1], vList);
                 drawVertex(f.v[2], vList);
             }
-            return vList;
+            count = vList.size()/3;
+            glGenBuffers(1, &vertices);
+            glBindBuffer(GL_ARRAY_BUFFER, vertices);
+            glBufferData(
+                GL_ARRAY_BUFFER, // tipo do buffer, só é relevante na altura do desenho
+                sizeof(float) * vList.size(), // tamanho do vector em bytes
+                vList.data(), // os dados do array associado ao vector
+                GL_STATIC_DRAW); // indicativo da utilização (estático e para desenho)
+        }
+        void drawModel(){
+            glBindBuffer(GL_ARRAY_BUFFER, vertices);
+            glVertexPointer(3, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_TRIANGLES, 0, count);
         }
 };
 

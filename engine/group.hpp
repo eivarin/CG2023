@@ -17,13 +17,10 @@ class group{
     std::vector<transformation> ts;
     std::vector<model> ms;
     std::vector<group> gs;
-    int beginIndex;
-    int count;
     GLfloat matrix[16];
     public:
         group(){
-            beginIndex = 0;
-            count = 0;
+            
         }
         group(rapidxml::xml_node<> *node){
             for (rapidxml::xml_node<> *n = node->first_node(); n; n = n->next_sibling())
@@ -46,20 +43,13 @@ class group{
                 }
             }
         }
-        std::vector<float> prepGroup(int start){
-            beginIndex = start;
-            std::vector<float> vs;
+        void prepGroup(){
             for(auto& m : ms){
-                vs = mergeVector(vs, m.drawModel());
+                m.prepModel();
             }
-            count = vs.size()/3;
-            int new_start = beginIndex + count;
             for(auto& g : gs){
-                std::vector<float> next_group_vertexs = g.prepGroup(new_start);
-                new_start += next_group_vertexs.size()/3;
-                vs = mergeVector(vs, next_group_vertexs);
+                g.prepGroup();
             }
-            return vs;
         }
         void applyTransfs(){
             for(auto& t : ts){
@@ -67,16 +57,14 @@ class group{
                 glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
             }
         }
-        void drawGroup(GLuint vertices){
+        void drawGroup(){
             glPushMatrix();
-            glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
             applyTransfs();
-            glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
-            glBindBuffer(GL_ARRAY_BUFFER, vertices);
-            glVertexPointer(3, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_TRIANGLES, beginIndex, count);
+            for (auto& m : ms){
+                m.drawModel();
+            }
             for(auto& g :gs){
-                g.drawGroup(vertices);
+                g.drawGroup();
             }
             glPopMatrix();
         }

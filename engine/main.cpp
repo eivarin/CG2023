@@ -65,11 +65,9 @@ void renderScene(void) {
 	glLoadIdentity();
 	cena.cam.placeGlut();
 	drawAxis();
-	// drawSphere(1, 4, 4);
-	// drawCone(11,13,10,8);
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glColor3f(1.0f,1.0f,1.0f);
-	cena.main_group.drawGroup(cena.vertices);
+	cena.main_group.drawGroup();
 	glutSwapBuffers();
 }
 
@@ -78,23 +76,6 @@ void update(int t)
 	cena.cam.processKeys(cena.normal_keys, cena.special_keys);
     glutTimerFunc(16, update, 0);
     glutPostRedisplay();
-}
-
-
-void prepData(){
-	std::vector<float> vs = cena.main_group.prepGroup(0);
-	// vs = mergeVector(vs, drawCylinder(1, 2, 50, -2.0f, 0.0f, 0.0f));
-	// for(auto& m : cena.ms){
-	// 	vs = mergeVector(vs, m.drawModel());
-	// }
-	cena.verticeCount = vs.size() / 3;
-	glGenBuffers(1, &cena.vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, cena.vertices);
-	glBufferData(
-		GL_ARRAY_BUFFER, // tipo do buffer, só é relevante na altura do desenho
-		sizeof(float) * vs.size(), // tamanho do vector em bytes
-		vs.data(), // os dados do array associado ao vector
-		GL_STATIC_DRAW); // indicativo da utilização (estático e para desenho)
 }
 
 void processKeys(unsigned char c, int xx, int yy) {
@@ -126,7 +107,7 @@ int main(int argc, char **argv) {
 	glutCreateWindow("CG@DI-UM");
 	glewInit();
 	glEnableClientState(GL_VERTEX_ARRAY);
-	prepData();
+	cena.main_group.prepGroup();
 	// Required callback registry
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
