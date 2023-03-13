@@ -108,34 +108,35 @@ class camera{
         }
         void processKeys(bool *normal_keys, bool *special_keys){
             bool changed = false;
+            float step = 0.05f;
             if(normal_keys['w']){
-                position.x += 0.05 * look_at.x;
-                position.y += 0.05 * look_at.y;
-                position.z += 0.05 * look_at.z;
+                position.x += step * look_at.x;
+                position.y += step * look_at.y;
+                position.z += step * look_at.z;
                 changed = true;
             }
             if(normal_keys['s']){
-                position.x -= 0.05 * look_at.x;
-                position.y -= 0.05 * look_at.y;
-                position.z -= 0.05 * look_at.z;
+                position.x -= step * look_at.x;
+                position.y -= step * look_at.y;
+                position.z -= step * look_at.z;
                 changed = true;
             }
             if(normal_keys['d']){
-                position.x += 0.05 * -look_at.z;
-                position.z += 0.05 * look_at.x;
+                position.x += step * -look_at.z;
+                position.z += step * look_at.x;
                 changed = true;
             }
             if(normal_keys['a']){
-                position.x -= 0.05 * -look_at.z;
-                position.z -= 0.05 * look_at.x;
+                position.x -= step * -look_at.z;
+                position.z -= step * look_at.x;
                 changed = true;
             }
             if(normal_keys[' ']){
-                position.y += 0.05;
+                position.y += step;
                 changed = true;
             }
             if(special_keys[112]){
-                position.y -= 0.05;
+                position.y -= step;
                 changed = true;
             }
             if(special_keys[GLUT_KEY_UP]){

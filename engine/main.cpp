@@ -69,10 +69,7 @@ void renderScene(void) {
 	// drawCone(11,13,10,8);
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glColor3f(1.0f,1.0f,1.0f);
-	glBindBuffer(GL_ARRAY_BUFFER, cena.vertices);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_TRIANGLES, 0, cena.verticeCount);
-	// End of frame
+	cena.main_group.drawGroup(cena.vertices);
 	glutSwapBuffers();
 }
 
@@ -83,17 +80,13 @@ void update(int t)
     glutPostRedisplay();
 }
 
-std::vector<float> mergeVector(std::vector<float> v1, std::vector<float> v2){
-	v1.insert( v1.end(), v2.begin(), v2.end() );
-	return v1;
-}
 
 void prepData(){
-	std::vector<float> vs;
+	std::vector<float> vs = cena.main_group.prepGroup(0);
 	// vs = mergeVector(vs, drawCylinder(1, 2, 50, -2.0f, 0.0f, 0.0f));
-	for(auto& m : cena.ms){
-		vs = mergeVector(vs, m.drawModel());
-	}
+	// for(auto& m : cena.ms){
+	// 	vs = mergeVector(vs, m.drawModel());
+	// }
 	cena.verticeCount = vs.size() / 3;
 	glGenBuffers(1, &cena.vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, cena.vertices);
