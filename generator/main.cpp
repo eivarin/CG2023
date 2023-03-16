@@ -1,9 +1,3 @@
-#ifdef __APPLE__
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -15,23 +9,19 @@
 #include <string>
 #include <vector>
 
+#include "model.hpp"
+
 void drawPlane(std::string const& file, std::size_t length, std::size_t divisions) {
     float right_most = length / 2.;
     std::vector<float> base_points;
     float division_size = length / ((float) divisions);
-    for (auto i = 0; i <= divisions; ++i) {
+    for (auto i = 0; i <= divisions; ++i) 
         base_points.push_back(right_most - (division_size * i));
-    }
 
-    std::ofstream f;
-    f.open(file);
-    for (auto i = 0; i <= divisions; ++i) {
-        for (auto j = 0; j <= divisions; ++j) {
-            f << "v " << std::setprecision(6) 
-                << base_points[i] << ' ' << 0. << ' '
-                << base_points[j] << '\n';
-        }
-    }
+    model m;
+    for (auto i = 0; i <= divisions; ++i)
+        for (auto j = 0; j <= divisions; ++j) 
+            m.pushCoords(vertex_coords(base_points[i], 0., base_points[j]));
     /*
     16 12 8  4
     15 11 7  3
@@ -41,15 +31,11 @@ void drawPlane(std::string const& file, std::size_t length, std::size_t division
     for (auto i = 0; i < divisions; ++i) {
         for (auto j = 1; j <= divisions; ++j) {
             auto index = (divisions + 1) * i + j;
-            f << "f " << index << "/0/0 ";
-            f << index + 1 << "/0/0 ";
-            f << index + divisions + 1 << "/0/0\n";
-            f << "f " << index + 1 << "/0/0 ";
-            f << index + divisions + 2 << "/0/0 ";
-            f << index + divisions + 1 << "/0/0\n";
+            m.pushFace(face(index, index + 1, index + divisions + 1));
+            m.pushFace(face(index + 1, index + divisions + 2, index + divisions + 1));
         }
     }
-    f.close();
+    m.write(file);
 }
 
 void drawBox(std::string const& file, std::size_t length, std::size_t divisions) {
@@ -61,81 +47,50 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
         base_points.push_back(right_most - (division_size * i));
     }
 
-    std::ofstream f;
-    f.open(file);
+
+    model m;
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6)
-                << base_points[i] << ' '
-                << base_points[divisions] << ' '
-                << (0 - base_points[j]) << '\n';
+            m.pushCoords(vertex_coords(base_points[i],base_points[divisions],0 - base_points[j]));
         }
     }
     // Topo
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) 
-                << base_points[i] << ' '
-                << -(base_points[divisions]) << ' ' 
-                << (0 - base_points[j]) << '\n'; // 1
+            m.pushCoords(vertex_coords(base_points[i],0 - base_points[divisions],0 - base_points[j]));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) 
-                << base_points[divisions] << ' '
-                << base_points[i] << ' ' 
-                << (0 - base_points[j]) << '\n'; // 2 - Têm de estar escondidas
+            m.pushCoords(vertex_coords(base_points[divisions],base_points[i],0 - base_points[j]));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[0] << ' '
-                << base_points[i] << ' ' << (0 - base_points[j]) << '\n'; // 3
+            m.pushCoords(vertex_coords(base_points[0],base_points[i],0 - base_points[j]));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
-            f << "v " << std::setprecision(6) << base_points[i] << ' '
-                << (0 - base_points[j]) << ' ' << base_points[divisions]
-                << '\n'; // 4- Têm de estar escondidas
+            m.pushCoords(vertex_coords(base_points[i],(0 - base_points[j]),base_points[divisions]));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto // 5
-            f << "v " << std::setprecision(6) << base_points[i] << ' '
-                << (0 - base_points[j]) << ' ' << base_points[0] << '\n';
+            m.pushCoords(vertex_coords(base_points[i],(0 - base_points[j]),base_points[0]));
         }
     }
-    /* Base
-    20  15 10  5
-    19  14  9  4
-    18  13  8  3
-    17  12  7  2
-    16  11  6  1
-    Topo
-    40  35 30  25
-    39  34  29  24
-    38  33  28  23
-    37  32  27  22
-    36  31  26  21
-
-    */
-   for (auto k=0;k<6;++k){
+    for (auto k=0;k<6;++k){
         if (k % 2 !=0  && k !=1 || k == 0 ){
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    f << "f " << index << "/0/0 ";
-                    f << index + 1 << "/0/0 ";
-                    f << index + divisions + 1 << "/0/0\n";
-                    f << "f " << index + 1 << "/0/0 ";
-                    f << index + divisions + 2 << "/0/0 ";
-                    f << index + divisions + 1 << "/0/0\n";
+                    m.pushFace(face(index,index+1,index+divisions+1));
+                    m.pushFace(face(index + 1,index + divisions + 2,index + divisions + 1));
                 }
             }
         }
@@ -143,12 +98,8 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    f << "f " << index << "/0/0 ";
-                    f << index + divisions + 1 << "/0/0 ";
-                    f << index + 1 << "/0/0\n";
-                    f << "f " << index + 1 << "/0/0 ";
-                    f << index + divisions + 1 << "/0/0 ";
-                    f << index + divisions + 2 << "/0/0\n";
+                    m.pushFace(face(index, index + divisions + 1, index + 1));
+                    m.pushFace(face(index + 1,index + divisions + 1,index + divisions + 2));
                 }
             }
         }
@@ -156,35 +107,33 @@ void drawBox(std::string const& file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    f << "f " << index << "/0/0 ";
-                    f << index + divisions + 1 << "/0/0 ";
-                    f << index + 1 << "/0/0\n";
-                    f << "f " << index+1 << "/0/0 ";
-                    f << index + divisions + 1 << "/0/0 ";
-                    f << index + divisions + 2 << "/0/0\n";
+            // resultFaces.append(((index,index + divisions + 1,index+1)))
+                    m.pushFace(face(index,index + divisions + 1,index+1));
+            // resultFaces.append(((index + 1,index + divisions + 1,index + divisions + 2)))
+                    m.pushFace(face(index + 1,index + divisions + 1,index + divisions + 2 ));
                 }
             }
         }
     }
-    f.close();
+    m.write(file);
 }
 
-void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, std::size_t stacks) {
-    std::ofstream f;
-    f.open(fname);
+void draw_sphere(std::string const& file, ssize_t radius, std::size_t slices, std::size_t stacks) {
+    model m;
     float stack_angle = M_PI / stacks;
     float slice_angle = (2 * M_PI) / slices;
-    f << "v " << 0 << ' ' << radius << ' ' << 0 << '\n';
+    m.pushCoords(vertex_coords(0,radius,0));
     for (std::size_t i = 1; i < stacks; ++i) {
         for (std::size_t j = 0; j < slices; ++j) {
-            float sinb = sin((i * M_PI) / stacks);
-            f << "v " << std::noshowpoint << std::fixed << std::setprecision(6)
-                << sin(j * (2 * M_PI / slices)) * sinb * radius
-                << ' ' << cos((i * M_PI) / stacks) * radius
-                << ' ' << cos(j * (2 * M_PI / slices)) * sinb * radius << '\n';
+            float curr_b = i * stack_angle;
+            float sinb = sin(curr_b);
+            float x = sin(j * slice_angle) * sinb * radius;
+            float y = cos(curr_b) * radius;
+            float z = cos(j * slice_angle) * sinb * radius;
+            m.pushCoords(vertex_coords(x, y, z));
         }
     }
-    f << "v " << 0 << ' ' << -radius << ' ' << 0 << '\n';
+    m.pushCoords(vertex_coords(0,-radius,0));
 
     /*
     esfera 1 4 4
@@ -196,39 +145,30 @@ void draw_sphere(std::string const& fname, ssize_t radius, std::size_t slices, s
     */
     // "base" 1
     for(std::size_t i = 0; i < slices; ++i) {
-        f << "f " << 1 << "/0/0 ";
-        f << (i%slices) + 2 << "/0/0 ";
-        f << ((i+1)%slices) + 2 << "/0/0\n";
+        m.pushFace(face(1,(i%slices) + 2,((i+1)%slices) + 2));
     }
     // "faces"
     for(std::size_t i = 0; i < stacks - 2; ++i) {
         for(std::size_t j = 0; j < slices; ++j) {
             std::size_t r = (j%slices) + 2 + (i * slices);
             std::size_t l = ((j+1)%slices) + 2 + (i * slices);
-            // |/
-            f << "f " << r << "/0/0 ";
-            f << l + slices << "/0/0 ";
-            f << l << "/0/0\n";
-            // \|
-            f << "f " << r << "/0/0 ";
-            f << r + slices << "/0/0 ";
-            f << l + slices << "/0/0\n";
+            m.pushFace(face(r,l + slices,l));
+            m.pushFace(face(r,r+slices,l+slices));
 
         }
     }
     // "base" 2
     std::size_t bottom_most = slices*(stacks-1)+2;
     for(std::size_t i = 0; i < slices; ++i) {
-        f << "f " << bottom_most << "/0/0 ";
-        f << bottom_most - slices + (i+1)%slices << "/0/0 ";
-        f << bottom_most - slices + (i%slices) << "/0/0\n";
+        m.pushFace(face(bottom_most,bottom_most - slices + (i+1)%slices,bottom_most - slices + (i%slices)));
     }
+    m.write(file);
 }
+
 void drawCone(std::string const& file,int height, int radius, int slices, int stacks)
 {   
     int points=1;
-    std::ofstream f;
-    f.open(file);
+    model m;
     float delta = (2*M_PI) / (float)slices;
     float stack_h = height / (float)stacks;
     float curr_h = height;
@@ -241,14 +181,11 @@ void drawCone(std::string const& file,int height, int radius, int slices, int st
         float aCil = delta*i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
         float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
-        // glVertex3f(0.0f, curr_h, 0.0f);
-        f << "v " << std::setprecision(6) << 0.0 << ' '<< curr_h<< ' ' << 0.0 << '\n';
+        m.pushCoords(vertex_coords(0.0f, curr_h, 0.0f));
         ++points;
-        // glVertex3f(px1 * curr_r, curr_h - stack_h, py1  * curr_r);
-        f << "v " << std::setprecision(6) << px1 * curr_r << ' '<<curr_h - stack_h<< ' ' << py1  * curr_r << '\n';
+        m.pushCoords(vertex_coords(px1 * curr_r, curr_h - stack_h, py1  * curr_r));
         ++points;
-        // glVertex3f(px2 * curr_r, curr_h - stack_h, py2  * curr_r);
-        f << "v " << std::setprecision(6) << px2 * curr_r << ' '<<curr_h - stack_h<< ' ' << py2  * curr_r << '\n';
+        m.pushCoords(vertex_coords(px2 * curr_r, curr_h - stack_h, py2  * curr_r));
         ++points;
         i++;
     }
@@ -262,24 +199,18 @@ void drawCone(std::string const& file,int height, int radius, int slices, int st
             float px1 = (sin(aCil)), py1 = (cos(aCil));
             float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
             
-            //glVertex3f(px1 * curr_r, curr_h, py1 * curr_r);
-            f << "v " << std::setprecision(6) << px1 * curr_r << ' '<<curr_h << ' ' <<py1 * curr_r<< '\n';
+            m.pushCoords(vertex_coords(px1 * curr_r, curr_h, py1 * curr_r));
             ++points;
-            //glVertex3f(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r));
-            f << "v " << std::setprecision(6) << px1 * (curr_r+stack_r) << ' '<<curr_h - stack_h << ' ' << py1 * (curr_r+stack_r)<< '\n';
+            m.pushCoords(vertex_coords(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r)));
             ++points;
-            //glVertex3f(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r));
-            f << "v " << std::setprecision(6) << px2 * (curr_r+stack_r) << ' '<<curr_h - stack_h<< ' ' <<py2 * (curr_r+stack_r) << '\n';
+            m.pushCoords(vertex_coords(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             ++points;
 
-            //glVertex3f(px2 * curr_r, curr_h, py2 * curr_r);
-            f << "v " << std::setprecision(6) << px2 * curr_r << ' '<< curr_h<< ' ' <<py2 * curr_r<< '\n';
+            m.pushCoords(vertex_coords(px2 * curr_r, curr_h, py2 * curr_r));
             ++points;
-            //glVertex3f(px1 * curr_r, curr_h, py1 * curr_r);
-            f << "v " << std::setprecision(6) << px1 * curr_r << ' '<<curr_h<< ' ' <<py1 * curr_r << '\n';
+            m.pushCoords(vertex_coords(px1 * curr_r, curr_h, py1 * curr_r));
             ++points;
-            // glVertex3f(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r));
-            f << "v " << std::setprecision(6) << px2 * (curr_r+stack_r) << ' '<<curr_h - stack_h<< ' ' <<py2 * (curr_r+stack_r) << '\n';
+            m.pushCoords(vertex_coords(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             ++points;
             i++;
         }
@@ -292,24 +223,19 @@ void drawCone(std::string const& file,int height, int radius, int slices, int st
         float aCil = delta*i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
         float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
-        //glVertex3f(px2 * curr_r, curr_h, py2  * curr_r);
-        f << "v " << std::setprecision(6) << px2 * curr_r << ' '<< curr_h<< ' ' <<py2  * curr_r<< '\n';
+        m.pushCoords(vertex_coords(px2 * curr_r, curr_h, py2  * curr_r));
         ++points;
-        //glVertex3f(px1 * curr_r, curr_h, py1  * curr_r);
-        f << "v " << std::setprecision(6) << px1 * curr_r << ' '<< curr_h<< ' ' <<py1  * curr_r<< '\n';
+        m.pushCoords(vertex_coords(px1 * curr_r, curr_h, py1  * curr_r));
         ++points;
-        //glVertex3f(0.0f, curr_h, 0.0f);
-        f << "v " << std::setprecision(6) << 0.0 << ' '<< curr_h<< ' ' << 0.0 << '\n';
+        m.pushCoords(vertex_coords(0.0f, curr_h, 0.0f));
         ++points;
         i++;
     }
 
     for (auto i=1;i+3<=points;i=i+3){
-        f << "f " << i <<"/0/0 ";
-        f << i+1 <<"/0/0 ";
-        f << i+2 <<"/0/0\n";
+        m.pushFace(face(i,i+1,i+2));
     }
-    f.close();
+    m.write(file);
 }
 int main(int argc, char** argv) {
     std::string s1 = "plane";
