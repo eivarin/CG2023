@@ -1,4 +1,5 @@
 #include <GL/glew.h>
+#include <GL/glxew.h>
 #include <GL/glut.h>
 
 #define _USE_MATH_DEFINES
@@ -82,6 +83,7 @@ void renderScene(void) {
 	glColor3f(1.0f,1.0f,1.0f);
 	cena.main_group.drawGroup();
 	if (cena.coordsMenu) cena.cam.drawCoords(cena.wWidth,cena.wHeight);
+	glFinish();
 	glutSwapBuffers();
 }
 
@@ -109,6 +111,10 @@ void processSpecialUpKeys(int key, int xx, int yy) {
 	cena.special_keys[key] = false;
 }
 
+void processMouse(int x, int y){
+	cena.cam.processMouseCamera(x, y);
+}
+
 int main(int argc, char **argv) {
 	// init GLUT and the window
 	std::string fname;
@@ -128,6 +134,7 @@ int main(int argc, char **argv) {
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutTimerFunc(0, update, 0);
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// Callback registration for keyboard processing
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
@@ -135,7 +142,14 @@ int main(int argc, char **argv) {
 	glutKeyboardUpFunc(processUpKeys);
 	glutSpecialFunc(processSpecialKeys);
 	glutSpecialUpFunc(processSpecialUpKeys);
+	glutPassiveMotionFunc(processMouse);
+	Display *dpy = glXGetCurrentDisplay();
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    const int interval = -1;
 
+    if (drawable) {
+        glXSwapIntervalEXT(dpy, drawable, interval);
+    }
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);

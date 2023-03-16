@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <string>
 #include <math.h>
 
@@ -92,7 +93,7 @@ class camera{
             fov = std::stof(projection->first_attribute("fov")->value());
             near = std::stof(projection->first_attribute("near")->value());
             far = std::stof(projection->first_attribute("far")->value());
-            halfRotationSteps = 75;
+            halfRotationSteps = 5000;
             reverseCalc();
             this->recalcDirection();
         }
@@ -107,6 +108,16 @@ class camera{
             look_at.x = cos(b) * sin(a);
             look_at.y = sin(b);
             look_at.z = cos(b) * cos(a);
+        }
+        void processMouseCamera(int x, int y){
+            int centerX = glutGet(GLUT_WINDOW_WIDTH) / 2;
+            int centerY = glutGet(GLUT_WINDOW_HEIGHT) / 2;
+            alpha -= (x - centerX) ;
+            float nBeta = (y - centerY) ;
+            beta -= (beta - nBeta > -halfRotationSteps) and (beta - nBeta < halfRotationSteps) ? nBeta : 0;
+            recalcDirection();
+            if (x != centerX || y != centerY) glutWarpPointer(centerX, centerY);
+            glutPostRedisplay();
         }
         void processCameraKeys(bool *normal_keys, bool *special_keys){
             bool changed = false;
@@ -137,6 +148,9 @@ class camera{
                 position.y += step;
                 changed = true;
             }
+            if(normal_keys['Q']){
+                glutLeaveMainLoop();
+            }
             if(special_keys[112]){
                 position.y -= step;
                 changed = true;
@@ -164,7 +178,7 @@ class camera{
             glLoadIdentity();
             gluLookAt(position.x, position.y, position.z,
 			  position.x + look_at.x, position.y + look_at.y, position.z + look_at.z,
-			  0.0f, 1.0f, 0.0f);
+			  up.x, up.y, up.z);
         }
         void drawCoords(float w, float h){
             glMatrixMode(GL_PROJECTION);
