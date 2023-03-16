@@ -44,6 +44,7 @@ class camera{
             beta = b/fullRotationSteps;
         }
     public:
+        float fps;
         float ratio;
         camera(){
             position = {
@@ -176,7 +177,7 @@ class camera{
             glPushMatrix();
             glLoadIdentity();
             glRasterPos2d(10, 30);
-            std::string coords = "x:" + std::to_string(position.x) + " y: " + std::to_string(position.y) + " z: " + std::to_string(position.z);
+            std::string coords = "x:" + std::to_string(position.x) + " y: " + std::to_string(position.y) + " z: " + std::to_string(position.z) + " \nfps: " + std::to_string(fps);
 
             for (const char *c = coords.c_str(); *c != '\0'; c++) {
                 glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);

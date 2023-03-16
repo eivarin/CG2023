@@ -21,6 +21,8 @@ struct scene {
 	bool normal_keys[256];
 	bool special_keys[1024];
 	bool coordsMenu = false;
+	int timebase;
+	int frames;
 };
 
 scene loadScene(std::string const& fname){

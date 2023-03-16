@@ -56,11 +56,24 @@ void drawAxis(){
 	glEnd();
 }
 
+void calcFrames(){
+	float fps;
+	int time;
+	cena.frames++;
+	time = glutGet(GLUT_ELAPSED_TIME);
+	if (time - cena.timebase > 1000) {
+		fps = cena.frames*1000.0/(time-cena.timebase);
+		glutSetWindowTitle(std::to_string(fps).c_str());
+		cena.cam.fps = fps;
+		cena.timebase = time;
+		cena.frames = 0;
+	}
+}
 
 void renderScene(void) {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	calcFrames();
 	// set the camera
 	glLoadIdentity();
 	cena.cam.placeGlut();
@@ -106,6 +119,7 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(cena.wWidth, cena.wHeight);
+	cena.timebase = glutGet(GLUT_ELAPSED_TIME);
 	glutCreateWindow("CG@DI-UM");
 	glewInit();
 	glEnableClientState(GL_VERTEX_ARRAY);
