@@ -94,11 +94,19 @@ void update(int t)
     glutPostRedisplay();
 }
 
+void processMouse(int x, int y){
+	cena.cam.processMouseCamera(x, y);
+}
+
 void processKeys(unsigned char c, int xx, int yy) {
+	if (c >= 'a' && c <= 'z') cena.normal_keys[c - 32] = false;
+	if (c >= 'A' && c <= 'Z') cena.normal_keys[c + 32] = false;
 	cena.normal_keys[c] = true;
 }
 
 void processUpKeys(unsigned char c, int xx, int yy) {
+	if (c >= 'a' && c <= 'z') cena.normal_keys[c - 32] = false;
+	if (c >= 'A' && c <= 'Z') cena.normal_keys[c + 32] = false;
 	cena.normal_keys[c] = false;
 }
 
@@ -111,9 +119,6 @@ void processSpecialUpKeys(int key, int xx, int yy) {
 	cena.special_keys[key] = false;
 }
 
-void processMouse(int x, int y){
-	cena.cam.processMouseCamera(x, y);
-}
 
 int main(int argc, char **argv) {
 	// init GLUT and the window
@@ -134,7 +139,6 @@ int main(int argc, char **argv) {
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
 	glutTimerFunc(0, update, 0);
-	glutSetCursor(GLUT_CURSOR_NONE);
 
 	// Callback registration for keyboard processing
 	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
@@ -143,6 +147,8 @@ int main(int argc, char **argv) {
 	glutSpecialFunc(processSpecialKeys);
 	glutSpecialUpFunc(processSpecialUpKeys);
 	glutPassiveMotionFunc(processMouse);
+	glutMotionFunc(processMouse);
+	glutSetCursor(GLUT_CURSOR_NONE);
 	Display *dpy = glXGetCurrentDisplay();
     GLXDrawable drawable = glXGetCurrentDrawable();
     const int interval = -1;

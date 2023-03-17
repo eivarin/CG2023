@@ -122,26 +122,26 @@ class camera{
         void processCameraKeys(bool *normal_keys, bool *special_keys){
             bool changed = false;
             float step = 0.05f;
-            if(normal_keys['w']){
+            if(normal_keys['w'] || normal_keys['W']){
                 position.x += step * look_at.x;
                 position.y += step * look_at.y;
                 position.z += step * look_at.z;
                 changed = true;
             }
-            if(normal_keys['s']){
+            if(normal_keys['s'] || normal_keys['S']){
                 position.x -= step * look_at.x;
                 position.y -= step * look_at.y;
                 position.z -= step * look_at.z;
                 changed = true;
             }
-            if(normal_keys['d']){
-                position.x += step * -look_at.z;
-                position.z += step * look_at.x;
+            if(normal_keys['d'] || normal_keys['D']){
+                position.x += 2 * step * -look_at.z;
+                position.z += 2 * step * look_at.x;
                 changed = true;
             }
-            if(normal_keys['a']){
-                position.x -= step * -look_at.z;
-                position.z -= step * look_at.x;
+            if(normal_keys['a'] || normal_keys['A']){
+                position.x -= 2 * step * -look_at.z;
+                position.z -= 2 * step * look_at.x;
                 changed = true;
             }
             if(normal_keys[' ']){
@@ -191,7 +191,7 @@ class camera{
             glPushMatrix();
             glLoadIdentity();
             glRasterPos2d(10, 30);
-            std::string coords = "x:" + std::to_string(position.x) + " y: " + std::to_string(position.y) + " z: " + std::to_string(position.z) + " \nfps: " + std::to_string(fps);
+            std::string coords = "x:" + std::to_string(position.x) + " y: " + std::to_string(position.y) + " z: " + std::to_string(position.z) + " \nfps: " + std::to_string((int) fps);
 
             for (const char *c = coords.c_str(); *c != '\0'; c++) {
                 glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
