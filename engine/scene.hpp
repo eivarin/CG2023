@@ -18,6 +18,7 @@ struct scene {
 	group main_group;
 	int wHeight;
 	int wWidth;
+	bool drawAxis;
 	bool normal_keys[256];
 	bool special_keys[1024];
 	bool coordsMenu = false;
@@ -42,7 +43,8 @@ scene loadScene(std::string const& fname){
 		.cam = camera(camera_node),
 		.main_group = group(group_node),
 		.wHeight = std::stoi(window->first_attribute("height")->value()),
-		.wWidth = std::stoi(window->first_attribute("width")->value())
+		.wWidth = std::stoi(window->first_attribute("width")->value()),
+		.drawAxis = (window->first_attribute("axis") != 0)
 	};
 	return s;
 }

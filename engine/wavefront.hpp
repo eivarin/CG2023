@@ -31,6 +31,12 @@ struct vertex_ref {
 	int n;
 };
 
+struct color {
+    float r;
+    float g;
+    float b;
+};
+
 struct face {
 	vertex_ref v[3];
 };
@@ -41,6 +47,8 @@ class model {
         std::vector<vertex_texture> ts;
         std::vector<vertex_normal> ns;
         std::vector<face> fs;
+        color clr;
+        bool lines;
         GLuint vertices, count;
         void loadModel(std::string const& fname) {
             std::ifstream file;
@@ -76,8 +84,18 @@ class model {
             vList.push_back(c.z);
         }
     public:
-        model(std::string filename){
-            loadModel(filename);
+        model(rapidxml::xml_node<> *node){
+            loadModel(node->first_attribute("file")->value());
+            rapidxml::xml_attribute<char> *r_atrib = node->first_attribute("r");
+            if (r_atrib){
+                clr.r = std::stof(r_atrib->value());
+                clr.g = std::stof(node->first_attribute("g")->value());
+                clr.b = std::stof(node->first_attribute("b")->value());
+            }
+            else {
+                clr = {.r = 1.0f, .g = 1.0f, .b = 1.0f };
+            }
+            lines = (node->first_attribute("lines"));
         }
 
         void prepModel(){
@@ -99,9 +117,18 @@ class model {
                 GL_STATIC_DRAW); // indicativo da utilização (estático e para desenho)
         }
         void drawModel(){
+            glMatrixMode(GL_COLOR);
+            glPushMatrix();
+            glColor3f(clr.r, clr.g, clr.b);
+            glMatrixMode(GL_MODELVIEW);
+            if (lines) glPolygonMode(GL_FRONT, GL_LINE);
+            else glPolygonMode(GL_FRONT, GL_FILL);
             glBindBuffer(GL_ARRAY_BUFFER, vertices);
             glVertexPointer(3, GL_FLOAT, 0, 0);
             glDrawArrays(GL_TRIANGLES, 0, count);
+            glMatrixMode(GL_COLOR);
+            glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
         }
 };
 

@@ -93,7 +93,7 @@ class camera{
             fov = std::stof(projection->first_attribute("fov")->value());
             near = std::stof(projection->first_attribute("near")->value());
             far = std::stof(projection->first_attribute("far")->value());
-            halfRotationSteps = 5000;
+            halfRotationSteps = 1000;
             reverseCalc();
             this->recalcDirection();
         }
@@ -179,6 +179,17 @@ class camera{
             gluLookAt(position.x, position.y, position.z,
 			  position.x + look_at.x, position.y + look_at.y, position.z + look_at.z,
 			  up.x, up.y, up.z);
+        }
+        void mouse(int x, int y){
+            int centerX = glutGet(GLUT_WINDOW_WIDTH) / 2;
+            int centerY = glutGet(GLUT_WINDOW_HEIGHT) / 2;
+
+            alpha -= (x - centerX);
+            int new_b = beta - (y - centerY);
+            beta = ((new_b > -halfRotationSteps) || (new_b < halfRotationSteps)) ? new_b : beta;
+            
+            if (x != centerX || y != centerY) glutWarpPointer(centerX, centerY);
+            recalcDirection();
         }
         void drawCoords(float w, float h){
             glMatrixMode(GL_PROJECTION);

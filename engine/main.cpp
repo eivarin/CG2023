@@ -78,7 +78,7 @@ void renderScene(void) {
 	// set the camera
 	glLoadIdentity();
 	cena.cam.placeGlut();
-	drawAxis();
+	if (cena.drawAxis) drawAxis();
 	glPolygonMode(GL_FRONT, GL_LINE);
 	glColor3f(1.0f,1.0f,1.0f);
 	cena.main_group.drawGroup();
@@ -141,7 +141,7 @@ int main(int argc, char **argv) {
 	glutTimerFunc(0, update, 0);
 
 	// Callback registration for keyboard processing
-	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_ON);
 	glutKeyboardFunc(processKeys);
 	glutKeyboardUpFunc(processUpKeys);
 	glutSpecialFunc(processSpecialKeys);

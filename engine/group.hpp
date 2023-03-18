@@ -8,15 +8,11 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 
-std::vector<float> mergeVector(std::vector<float> v1, std::vector<float> v2){
-	v1.insert( v1.end(), v2.begin(), v2.end() );
-	return v1;
-}
-
 class group{
     std::vector<transformation> ts;
     std::vector<model> ms;
     std::vector<group> gs;
+
     GLfloat matrix[16];
     public:
         group(){
@@ -35,7 +31,7 @@ class group{
                 else if (tipo.compare("models") == 0){
                     for (rapidxml::xml_node<> *m = n->first_node(); m; m = m->next_sibling())
                     {
-                        ms.push_back(model(m->first_attribute("file")->value()));
+                        ms.push_back(model(m));
                     }
                 }
                 else if (tipo.compare("group") == 0){
