@@ -22,6 +22,7 @@ class camera{
         int halfRotationSteps;
         int alpha;
         int beta;
+        float stepDimension;
         void reverseCalc(){
             float dx = look_at.x - position.x;
             float dy = look_at.y - position.y;
@@ -94,6 +95,7 @@ class camera{
             near = std::stof(projection->first_attribute("near")->value());
             far = std::stof(projection->first_attribute("far")->value());
             halfRotationSteps = 1000;
+            stepDimension = 0.05f;
             reverseCalc();
             this->recalcDirection();
         }
@@ -121,7 +123,7 @@ class camera{
         }
         void processCameraKeys(bool *normal_keys, bool *special_keys){
             bool changed = false;
-            float step = 0.05f;
+            float step = stepDimension;
             if(normal_keys['w'] || normal_keys['W']){
                 position.x += step * look_at.x;
                 position.y += step * look_at.y;
@@ -147,6 +149,12 @@ class camera{
             if(normal_keys[' ']){
                 position.y += step;
                 changed = true;
+            }
+            if(normal_keys['+']){
+                stepDimension +=0.01f;
+            }
+            if(normal_keys['-']){
+                stepDimension -= (stepDimension > 0.01f) ? 0.01f: 0;
             }
             if(normal_keys['Q']){
                 glutLeaveMainLoop();

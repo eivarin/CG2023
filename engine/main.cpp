@@ -45,15 +45,16 @@ void changeSize(int w, int h) {
 
 void drawAxis(){
 	glBegin(GL_LINES);
+	float size = 100000.0f;
 	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(-1000.0f, 0.0f, 0.0f);
-	glVertex3f( 1000.0f, 0.0f, 0.0f);
+	glVertex3f(-size, 0.0f, 0.0f);
+	glVertex3f( size, 0.0f, 0.0f);
 	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f,-1000.0f, 0.0f);
-	glVertex3f(0.0f, 1000.0f, 0.0f);
+	glVertex3f(0.0f,-size, 0.0f);
+	glVertex3f(0.0f, size, 0.0f);
 	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f,-1000.0f);
-	glVertex3f(0.0f, 0.0f, 1000.0f);
+	glVertex3f(0.0f, 0.0f,-size);
+	glVertex3f(0.0f, 0.0f, size);
 	glEnd();
 }
 
