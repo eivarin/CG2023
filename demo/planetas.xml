@@ -1,3 +1,7 @@
+<!-- ring_medium -> radius:20 slices:100 width:1
+ring_thin -> radius:10 slices:100 width:1
+ring_wide -> radius:30 slices:100 width:1
+-->
 <world>
 	<window width="1200" height="1200"/>
 	<camera>
