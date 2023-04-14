@@ -165,6 +165,37 @@ void draw_sphere(std::string const& file, ssize_t radius, std::size_t slices, st
     m.write(file);
 }
 
+void draw_ring(std::string const& file, ssize_t radius, ssize_t slices, ssize_t width) {
+    model m;
+    float slice_angle = (2 * M_PI) / slices;
+    
+    ssize_t dif = width > 0 || radius - width > 0 ? radius - width : 0;
+    for(auto i = 0; i <= slices; ++i) {
+        float angle = i * slice_angle;
+
+        float x1 = sin(angle) * radius;
+        float z1 = cos(angle) * radius;
+        m.pushCoords(vertex_coords(x1, 0, z1));
+
+        float x2 = sin(angle) * dif;
+        float z2 = cos(angle) * dif;
+        m.pushCoords(vertex_coords(x2, 0, z2));
+    }
+    /*
+    1 3 5 7
+    2 4 6 8
+    */
+    for(auto i = 0; i < slices; ++i) {
+        // 1 2 3 e 3 2 1
+        m.pushFace(face(2*i+1, 2*i+2, 2*i+3));
+        m.pushFace(face(2*i+3, 2*i+2, 2*i+1));
+        // 2 4 3 e 3 4 2
+        m.pushFace(face(2*i+2, 2*i+4, 2*i+3));
+        m.pushFace(face(2*i+3, 2*i+4, 2*i+2));
+    }
+    m.write(file);
+}
+
 void drawCone(std::string const& file,int height, int radius, int slices, int stacks)
 {   
     int points=1;
@@ -270,6 +301,13 @@ int main(int argc, char** argv) {
         int slices = atoi(argv[4]);
         int stacks = atoi(argv[5]);
         drawCone(argv[6],heigth, radius, slices, stacks);
+    }
+    // input line to draw a ring: ./generator ring radius slices width
+    else if (argc == 6 && std::string("ring").compare(argv[1]) == 0) {
+        ssize_t radius = std::stoul(argv[2]);
+        ssize_t slices = std::stoul(argv[3]);
+        size_t width = std::stoul(argv[4]);
+        draw_ring(argv[5], radius, slices, width);
     }
     return 0;
 }
