@@ -91,6 +91,7 @@
 			</transform>
 			<models>
 				<model file="sphere.3d" r="1" g="0.5" b="0" />
+				<model file="ring_wide.3d" r="0.5" g="0.5" b="0.5" />
 			</models>
 			<!-- Lua -->
 			<group>
@@ -147,6 +148,9 @@
 			</transform>
 			<models>
 				<model file="sphere.3d" r="0.75" g="0.5" b="0" />
+				<model file="ring_thin.3d" r="0.0" g="0.5" b="0.5" />
+				<model file="ring_wide.3d" r="0.5" g="0.0" b="0.5" />
+				<model file="ring_medium.3d" r="0.5" g="0.5" b="0.0" />
 			</models>
 			<!-- Luas -->
 				<group>
@@ -230,6 +234,9 @@
 			</transform>
 			<models>
 				<model file="sphere.3d" r="0" g="0.1" b="1" />
+				<model file="ring_thin.3d" r="0.8" g="0.5" b="0.5" />
+				<model file="ring_wide.3d" r="0.5" g="0.3" b="0.5" />
+				<model file="ring_medium.3d" r="0.5" g="0.5" b="0.7" />
 			</models>
 			<!-- Luas -->
 			<group>
@@ -277,6 +284,9 @@
 				</transform>
 				<models>
 					<model file="sphere.3d" r="0.25" g="1" b="1" />
+					<model file="ring_thin.3d" r="0.9" g="0.5" b="0.5" />
+					<model file="ring_wide.3d" r="0.5" g="0.2" b="0.5" />
+					<model file="ring_medium.3d" r="0.5" g="0.5" b="0.3" />
 				</models>
 			</group>
 				<group>
