@@ -1,6 +1,8 @@
-<!-- ring_medium -> radius:20 slices:100 width:1
-ring_thin -> radius:10 slices:100 width:1
-ring_wide -> radius:30 slices:100 width:1
+<!--
+./generator ring 20 100 1 ring_medium.3d &
+./generator ring 10 100 1 ring_thin.3d &
+./generator ring 30 100 1 ring_wide.3d &
+./generator sphere 1 100 100 sphere.3d
 -->
 <world>
 	<window width="1200" height="1200"/>
