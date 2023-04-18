@@ -26,6 +26,16 @@ struct scene {
 	int frames;
 };
 
+bool check_draw_axis(rapidxml::xml_node<> *window){
+	auto r = true;
+	auto atrb = window->first_attribute("axis");
+	if (atrb != 0){
+		std::string s = atrb->value();
+		r = s.compare("true") || s.compare("True") || s.compare("1");
+	}
+	return r;
+}
+
 scene loadScene(std::string const& fname){
 	std::ifstream file(fname, std::ios::binary | std::ios::ate);
 	std::streamsize size = file.tellg();

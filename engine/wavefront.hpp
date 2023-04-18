@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include "./rapid_xml/rapidxml.hpp"
 
 struct vertex_coords {
 	float x;
@@ -50,6 +51,15 @@ class model {
         color clr;
         bool lines;
         GLuint vertices, count;
+        bool check_lines(rapidxml::xml_node<> *model){
+            auto r = true;
+            auto atrb = model->first_attribute("lines");
+            if (atrb != 0){
+                std::string s = atrb->value();
+                r = s.compare("true") || s.compare("True") || s.compare("1");
+            }
+            return r;
+        }
         void loadModel(std::string const& fname) {
             std::ifstream file;
             file.open(fname);
@@ -95,7 +105,7 @@ class model {
             else {
                 clr = {.r = 1.0f, .g = 1.0f, .b = 1.0f };
             }
-            lines = (node->first_attribute("lines"));
+            lines = check_lines(node);
         }
 
         void prepModel(){

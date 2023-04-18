@@ -7,9 +7,10 @@
 #include "./rapid_xml/rapidxml.hpp"
 #include <GL/glew.h>
 #include <GL/glut.h>
+#include <memory>
 
 class group{
-    std::vector<transformation> ts;
+    std::vector<std::unique_ptr<transformation>> ts;
     std::vector<model> ms;
     std::vector<group> gs;
 
@@ -25,7 +26,7 @@ class group{
                 if (tipo.compare("transform") == 0){
                     for (rapidxml::xml_node<> *t = n->first_node(); t; t = t->next_sibling())
                     {
-                        ts.push_back(transformation(t));
+                        ts.push_back(transformation::from_rapidxml_node(t));
                     }
                 }
                 else if (tipo.compare("models") == 0){
@@ -49,7 +50,7 @@ class group{
         }
         void applyTransfs(){
             for(auto& t : ts){
-                t.apply();
+                t->apply();
             }
             glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
         }
