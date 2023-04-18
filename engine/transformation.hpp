@@ -60,8 +60,25 @@ class static_transf : public transformation{
         }
 };
 
-class animated_transf : public transformation{
-    vertex_coords vx;
+class animated_rotation : public transformation{
+    vertex_coords axis;
+    float time;
+    public:
+        animated_rotation(rapidxml::xml_node<> *node) : transformation(node){
+            time = std::stof(node->first_attribute("time")->value());
+            axis.x = std::stof(node->first_attribute("x")->value());
+            axis.y = std::stof(node->first_attribute("y")->value());
+            axis.z = std::stof(node->first_attribute("z")->value());
+        }
+
+        void apply() override{
+            int curr_time = glutGet(GLUT_ELAPSED_TIME);
+            glRotatef(curr_time / time ,axis.x, axis.y, axis.z);
+        }
+};
+
+class animated_translation : public transformation{
+    vertex_coords old_y;
     std::vector<vertex_coords> points;
     float time;
     bool align;
@@ -75,50 +92,36 @@ class animated_transf : public transformation{
         return r;
     }
     public:
-        animated_transf(rapidxml::xml_node<> *node) : transformation(node){
+        animated_translation(rapidxml::xml_node<> *node) : transformation(node){
             time = std::stof(node->first_attribute("time")->value());
-            if (t == R){
-                vx.x = std::stof(node->first_attribute("x")->value());
-                vx.y = std::stof(node->first_attribute("y")->value());
-                vx.z = std::stof(node->first_attribute("z")->value());
-            }
-            else if (t == T){
-                align = check_align(node);
-                for (rapidxml::xml_node<> *n = node->first_node(); n; n = n->next_sibling())
-                {
-                    std::string nome = n->name();
-                    if (nome.compare("point") == 0){
-                        vertex_coords new_v;
-                        new_v.x = std::stof(n->first_attribute("x")->value());
-                        new_v.y = std::stof(n->first_attribute("y")->value());
-                        new_v.z = std::stof(n->first_attribute("z")->value());
-                        points.push_back(new_v);
-                    }
+            align = check_align(node);
+            for (rapidxml::xml_node<> *n = node->first_node(); n; n = n->next_sibling())
+            {
+                std::string nome = n->name();
+                if (nome.compare("point") == 0){
+                    vertex_coords new_v;
+                    new_v.x = std::stof(n->first_attribute("x")->value());
+                    new_v.y = std::stof(n->first_attribute("y")->value());
+                    new_v.z = std::stof(n->first_attribute("z")->value());
+                    points.push_back(new_v);
                 }
             }
         }
 
         void apply() override{
             int curr_time = glutGet(GLUT_ELAPSED_TIME);
-            switch (t)
-            {
-            case T:
-                // wrong
-                glTranslatef(vx.x, vx.y, vx.z);
-                break;
-            case R:
-                glRotatef(curr_time / time ,vx.x, vx.y, vx.z);
-                break;
-            default:
-                break;
-            }
+            //glTranslatef(vx.x, vx.y, vx.z);
         }
 };
 
 std::unique_ptr<transformation> transformation::from_rapidxml_node(rapidxml::xml_node<> *node){
     std::unique_ptr<transformation> t;
-    if (node->first_attribute("time")){
-        t = std::make_unique<animated_transf>(node);
+    bool is_animated = (node->first_attribute("time") != 0);
+    if (is_animated && node->first_node()){
+        t = std::make_unique<animated_translation>(node);
+    }
+    else if (is_animated){
+        t = std::make_unique<animated_rotation>(node);
     }
     else
     {
