@@ -10,7 +10,7 @@
 #include <memory>
 
 class group{
-    std::vector<std::unique_ptr<transformation>> ts;
+    std::vector<transformation*> ts;
     std::vector<model> ms;
     std::vector<group> gs;
 

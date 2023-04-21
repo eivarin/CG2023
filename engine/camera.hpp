@@ -16,6 +16,8 @@ class camera{
         vertex_coords position;
         vertex_coords look_at;
         vertex_coords up;
+        vertex_coords crab_vector;
+        vertex_coords true_up;
         float fov;
         float near;
         float far;
@@ -24,16 +26,15 @@ class camera{
         int beta;
         float stepDimension;
         void reverseCalc(){
-            float dx = look_at.x - position.x;
-            float dy = look_at.y - position.y;
-            float dz = look_at.z - position.z;
-            float vLen = sqrtf64(dx*dx+dy*dy+dz*dz);
-            dx = dx / vLen;
-            dy = dy / vLen;
-            dz = dz / vLen;
-            float b = asin(dy);
-            float sin_a = dx / cos(b);
-            float cos_a = dz / cos(b);
+            vertex_coords d = {
+                .x = look_at.x - position.x,
+                .y = look_at.y - position.y,
+                .z = look_at.z - position.z
+            };
+            d.normalize();
+            float b = asin(d.y);
+            float sin_a = d.x / cos(b);
+            float cos_a = d.z / cos(b);
 
             float a = 0.0;
             if (sin_a >= 0.0) {
@@ -110,6 +111,8 @@ class camera{
             look_at.x = cos(b) * sin(a);
             look_at.y = sin(b);
             look_at.z = cos(b) * cos(a);
+            crab_vector = look_at.get_cross_product(up);
+            true_up = look_at.get_cross_product(crab_vector);
         }
         void processMouseCamera(int x, int y){
             int centerX = glutGet(GLUT_WINDOW_WIDTH) / 2;
@@ -137,23 +140,23 @@ class camera{
                 changed = true;
             }
             if(normal_keys['d'] || normal_keys['D']){
-                position.x += 2 * step * -look_at.z;
-                position.z += 2 * step * look_at.x;
+                position.x += 2 * step * crab_vector.x;
+                position.z += 2 * step * crab_vector.z;
                 changed = true;
             }
             if(normal_keys['a'] || normal_keys['A']){
-                position.x -= 2 * step * -look_at.z;
-                position.z -= 2 * step * look_at.x;
+                position.x -= 2 * step * crab_vector.x;
+                position.z -= 2 * step * crab_vector.z;
                 changed = true;
             }
             if(normal_keys[' ']){
                 position.y += step;
                 changed = true;
             }
-            if(normal_keys['+']){
+            if(normal_keys['m']){
                 stepDimension +=0.01f;
             }
-            if(normal_keys['-']){
+            if(normal_keys['n']){
                 stepDimension -= (stepDimension > 0.01f) ? 0.01f: 0;
             }
             if(normal_keys['Q']){

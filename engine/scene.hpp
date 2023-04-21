@@ -31,7 +31,7 @@ bool check_draw_axis(rapidxml::xml_node<> *window){
 	auto atrb = window->first_attribute("axis");
 	if (atrb != 0){
 		std::string s = atrb->value();
-		r = s.compare("true") || s.compare("True") || s.compare("1");
+		r = (s.compare("true") == 0) || (s.compare("True") == 0) || (s.compare("1") == 0);
 	}
 	return r;
 }
@@ -54,7 +54,7 @@ scene loadScene(std::string const& fname){
 		.main_group = group(group_node),
 		.wHeight = std::stoi(window->first_attribute("height")->value()),
 		.wWidth = std::stoi(window->first_attribute("width")->value()),
-		.drawAxis = (window->first_attribute("axis") != 0)
+		.drawAxis = check_draw_axis(window)
 	};
 	return s;
 }

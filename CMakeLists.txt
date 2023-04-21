@@ -6,6 +6,8 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_executable(engine engine/main.cpp)
 add_executable(generator generator/main.cpp)
+target_compile_features(engine PUBLIC cxx_std_17)
+
 
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})

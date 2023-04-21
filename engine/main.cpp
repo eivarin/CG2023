@@ -13,6 +13,7 @@
 #include "wavefront.hpp"
 #include "camera.hpp"
 #include "scene.hpp"
+#include "transformation.hpp"
 
 scene cena;
 
@@ -126,6 +127,8 @@ int main(int argc, char **argv) {
 	std::string fname;
 	if (argc == 2) fname = argv[1];
 	else fname = "example.xml";
+	
+	animated_translation::at_vector = std::vector<animated_translation*>();
 	cena = loadScene(fname);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -135,7 +138,9 @@ int main(int argc, char **argv) {
 	glutCreateWindow("CG@DI-UM");
 	glewInit();
 	glEnableClientState(GL_VERTEX_ARRAY);
+
 	cena.main_group.prepGroup();
+	for (auto at : animated_translation::at_vector) at->prepLine();
 	// Required callback registry
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);

@@ -7,12 +7,28 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <math.h>
 #include "./rapid_xml/rapidxml.hpp"
 
 struct vertex_coords {
 	float x;
 	float y;
 	float z;
+    void normalize(){
+        float vLen = sqrtf64(x*x+y*y+z*z);
+        x = x / vLen;
+        y = y / vLen;
+        z = z / vLen;
+    };
+    vertex_coords get_cross_product(vertex_coords& v){
+        this->normalize();
+        v.normalize();
+        return (vertex_coords) {
+            .x = (this->y*v.z) - (this->z*v.y),
+            .y = (this->z*v.x) - (this->x*v.z),
+            .z = (this->x*v.y) - (this->y*v.x)
+        };
+    };
 };
 
 struct vertex_texture {
@@ -49,14 +65,36 @@ class model {
         std::vector<vertex_normal> ns;
         std::vector<face> fs;
         color clr;
-        bool lines;
+        bool lines, axis;
+        float axis_size;
         GLuint vertices, count;
+        void drawAxis(){
+            glBegin(GL_LINES);
+            float size = axis_size;
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(-size, 0.0f, 0.0f);
+            glVertex3f( size, 0.0f, 0.0f);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(0.0f,-size, 0.0f);
+            glVertex3f(0.0f, size, 0.0f);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(0.0f, 0.0f,-size);
+            glVertex3f(0.0f, 0.0f, size);
+            glEnd();
+        }
+        bool check_draw_axis(rapidxml::xml_node<> *model){
+            auto atrb = model->first_attribute("axis");
+            if (atrb != 0){
+                axis_size = std::stof(model->first_attribute("axis")->value());
+            }
+            return atrb;
+        }
         bool check_lines(rapidxml::xml_node<> *model){
             auto r = true;
             auto atrb = model->first_attribute("lines");
             if (atrb != 0){
                 std::string s = atrb->value();
-                r = s.compare("true") || s.compare("True") || s.compare("1");
+                r = (s.compare("true") == 0) || (s.compare("True") == 0) || (s.compare("1") == 0);
             }
             return r;
         }
@@ -106,6 +144,7 @@ class model {
                 clr = {.r = 1.0f, .g = 1.0f, .b = 1.0f };
             }
             lines = check_lines(node);
+            axis = check_draw_axis(node);
         }
 
         void prepModel(){
@@ -129,6 +168,7 @@ class model {
         void drawModel(){
             glMatrixMode(GL_COLOR);
             glPushMatrix();
+            if (axis) drawAxis();
             glColor3f(clr.r, clr.g, clr.b);
             glMatrixMode(GL_MODELVIEW);
             if (lines) glPolygonMode(GL_FRONT, GL_LINE);
