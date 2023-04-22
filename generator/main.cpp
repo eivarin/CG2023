@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+
 #include "model.hpp"
 
 void drawPlane(std::string const& file, std::size_t length, std::size_t divisions) {
@@ -268,6 +269,20 @@ void drawCone(std::string const& file,int height, int radius, int slices, int st
     }
     m.write(file);
 }
+void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fileOutput)
+{   
+    std::string fileData = "";
+    std::ifstream filePatch;
+    filePatch.open(fileInput);
+    if ( filePatch.is_open() ) {
+        char line;
+        while (filePatch) {
+            line = filePatch.get();
+            fileData += line;
+        }
+    }
+    std :: cout << fileData;
+}
 int main(int argc, char** argv) {
     std::string s1 = "plane";
     std::string s2 = "box";
@@ -308,6 +323,12 @@ int main(int argc, char** argv) {
         ssize_t slices = std::stoul(argv[3]);
         size_t width = std::stoul(argv[4]);
         draw_ring(argv[5], radius, slices, width);
+    }
+    // input line to give a file with points to draw a teapot: ./generator fileOutput fileInput
+    else{
+        std::string fileInput = argv[2];
+        std::string fileOutput = argv[1];
+        calculatePointsToTeaPot(fileInput, fileOutput);
     }
     return 0;
 }
