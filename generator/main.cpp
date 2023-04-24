@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include <algorithm>
 
 #include "model.hpp"
 
@@ -269,19 +269,72 @@ void drawCone(std::string const& file,int height, int radius, int slices, int st
     }
     m.write(file);
 }
+std::vector<std::string> split (const std::string &s, char delim) 
+{
+    std::vector<std::string> result;
+    std::stringstream ss (s);
+    std::string item;
+
+    while (getline (ss, item, delim)) {
+        result.push_back (item);
+    }
+
+    return result;
+}
 void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fileOutput)
 {   
-    std::string fileData = "";
-    std::ifstream filePatch;
-    filePatch.open(fileInput);
-    if ( filePatch.is_open() ) {
-        char line;
-        while (filePatch) {
-            line = filePatch.get();
-            fileData += line;
+    std:: ofstream MyFile(fileOutput);
+    int lineNumber;
+    int arrayPatches[32][16];
+    int it = 0; 
+    int column = 0;
+    int line = 0;
+    std::string myText;
+    std::ifstream MyReadFile(fileInput);
+
+    while (getline (MyReadFile, myText)) {
+        if (it == 0) {
+            lineNumber = stoi(myText);
+            it++;
+        }
+        else if (it >=1 && it <=lineNumber){
+            std::vector<std::string> res = split(myText,',');
+            for(auto i: res){
+                if (column < 16){
+                    arrayPatches[line][column] = stoi(i);
+                    column++;
+                }
+                else{
+                    line++;
+                    column = 0;
+                    arrayPatches[line][column] = stoi(i);
+                    column++;
+                }
+            }
+            it++;
+        }
+        else if (it > lineNumber+1){
+                std::string str= "v"+myText;
+                std::replace(str.begin(),str.end(), ',',' ');
+                MyFile << str<<"\n";
+                it++;
+
+        }
+        else {
+            it++;
         }
     }
-    std :: cout << fileData;
+    
+    for(int i=0; i<lineNumber-1; i++){
+        for(int k=0; k<=14; k++){
+            MyFile << "f "+std::to_string(arrayPatches[i][k+1]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i][k]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i+1][k]+1)+ "/0/0"+"\n";
+            MyFile << "f "+std::to_string(arrayPatches[i][k+1]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i+1][k]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i+1][k+1]+1)+ "/0/0"+"\n";
+        }
+    }
+
+    MyReadFile.close();
+    MyFile.close();
+
 }
 int main(int argc, char** argv) {
     std::string s1 = "plane";
