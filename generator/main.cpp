@@ -9,8 +9,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-
+#include <tuple>
 #include "model.hpp"
+
 
 void drawPlane(std::string const& file, std::size_t length, std::size_t divisions) {
     float right_most = length / 2.;
@@ -283,12 +284,16 @@ std::vector<std::string> split (const std::string &s, char delim)
 }
 void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fileOutput)
 {   
-    std:: ofstream MyFile(fileOutput);
+    /************************PARSING DO FICHEIRO DE INPUT INICIADA***********************************************/
+    int nPontos = 0;
     int lineNumber;
-    int arrayPatches[32][16];
     int it = 0; 
     int column = 0;
     int line = 0;
+
+    std::tuple<float,float,float> arrayVertices[290];
+    int arrayPatches[128][4];
+
     std::string myText;
     std::ifstream MyReadFile(fileInput);
 
@@ -300,7 +305,7 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
         else if (it >=1 && it <=lineNumber){
             std::vector<std::string> res = split(myText,',');
             for(auto i: res){
-                if (column < 16){
+                if (column < 4){
                     arrayPatches[line][column] = stoi(i);
                     column++;
                 }
@@ -314,9 +319,9 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
             it++;
         }
         else if (it > lineNumber+1){
-                std::string str= "v"+myText;
-                std::replace(str.begin(),str.end(), ',',' ');
-                MyFile << str<<"\n";
+                std::vector<std::string> res = split(myText,',');
+                arrayVertices[nPontos] = std::tuple<float,float,float>(stof(res[0]),stof(res[1]),stof(res[2]));
+                nPontos++;
                 it++;
 
         }
@@ -324,17 +329,65 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
             it++;
         }
     }
+    /*
+    for (int i = 0 ;i <128;i++){
+        for (int k = 0; k < 4;k++){
+            std:: cout << arrayPatches[i][k] << " ";
+        }
+        std::cout << "\n";
+    }
+    */
+    /*
+    for (int i = 0 ; i< 290;i++){
+        std::cout << get<0>(arrayVertices[i])<<" "<< get<1>(arrayVertices[i])<<" "<< get<2>(arrayVertices[i])<<"\n";
+    }
+    */
+    MyReadFile.close();
+
+    /************************PARSING DO FICHEIRO DE INPUT TERMINADA***********************************************/
+    // Nivel de seleção é 1 , logo u = 0.1 e v = 0.1
     
-    for(int i=0; i<lineNumber-1; i++){
-        for(int k=0; k<=14; k++){
-            MyFile << "f "+std::to_string(arrayPatches[i][k+1]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i][k]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i+1][k]+1)+ "/0/0"+"\n";
-            MyFile << "f "+std::to_string(arrayPatches[i][k+1]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i+1][k]+1)+ "/0/0"+" "+std::to_string(arrayPatches[i+1][k+1]+1)+ "/0/0"+"\n";
+    std::tuple<float,float,float> pontosFinais[10][10];
+    int lPontos = 0;
+    int cPontos = 0;
+    int cPontosArm = 0;
+    int lPontosArm = 0;
+    int bezierMatrix [4][4]={{-1,3,-3,1},
+                            {3,-6,3,0},
+                            {-3,3,0,0},
+                            {1,0,0,0}};
+    for(float u = 0.0;u<=1.0;u+=0.1){
+        float uvector[4]={u*u*u,u*u,u,1};
+        for(float v = 0.0;v<=1.0;v+=0.1){
+            std::tuple<float,float,float> matrixPontosCalc [4][4]={{arrayVertices[arrayPatches[lPontosArm][cPontosArm]],arrayVertices[arrayPatches[lPontosArm][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm][cPontosArm+3]]},
+                                                                    {arrayVertices[arrayPatches[lPontosArm+1][cPontosArm]],arrayVertices[arrayPatches[lPontosArm+1][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm+1][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm+1][cPontosArm+3]]},
+                                                                    {arrayVertices[arrayPatches[lPontosArm+2][cPontosArm]],arrayVertices[arrayPatches[lPontosArm+2][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm+2][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm+2][cPontosArm+3]]},
+                                                                    {arrayVertices[arrayPatches[lPontosArm+3][cPontosArm]],arrayVertices[arrayPatches[lPontosArm+3][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm+3][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm+3][cPontosArm+3]]}};
+            float vvector[4]={v*v*v,v*v,v,1};
+            //Falta multiplicar a matriz bezierMatrix * matrixPontosCalc * bezierMatrix
+            //Depois multiplicar a mtriz uvector * calculado no comentario anterior * vvector
+            //Temos o ponto p(u,v), colocamo-lo na matriz pontosFinais
+
+            lPontosArm+=4;
+        }
+        lPontosArm=0;
+    }
+
+    std::ofstream MyFile(fileOutput);
+    for (int i = 0;i<10;i++){
+        for(int k = 0;k<10;k++){
+            MyFile << "v " << std::to_string(std::get<0>(pontosFinais[i][k])) << " " << std::to_string(std::get<1>(pontosFinais[i][k])) << " " << std::to_string(std::get<2>(pontosFinais[i][k]))<<"\n";
         }
     }
 
-    MyReadFile.close();
-    MyFile.close();
+    for (int i = 0;i<8;i++){
+        for(int k = 0;k<8;k++){
+            MyFile << "f " << k+2 << "/0/0 " << k+1 << "/0/0  " << k+10+i+1 <<"/0/0\n";
+            MyFile << "f " << k+2 << "/0/0 " << k+10+i+1 << "/0/0  " << k+10+i+2 <<"/0/0\n";
+        }
+    }
 
+    MyFile.close();
 }
 int main(int argc, char** argv) {
     std::string s1 = "plane";
@@ -379,9 +432,10 @@ int main(int argc, char** argv) {
     }
     // input line to give a file with points to draw a teapot: ./generator fileOutput fileInput
     else{
+        
         std::string fileInput = argv[2];
         std::string fileOutput = argv[1];
-        calculatePointsToTeaPot(fileInput, fileOutput);
+        calculatePointsToTeaPot(fileInput,fileOutput);
     }
     return 0;
 }
