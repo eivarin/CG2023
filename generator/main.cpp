@@ -282,6 +282,51 @@ std::vector<std::string> split (const std::string &s, char delim)
 
     return result;
 }
+std::tuple <float,float,float> calcPoint(std::tuple <float,float,float> p,int x){
+    return std::tuple <float,float,float>((std::get<0>(p))*x,(std::get<1>(p))*x,(std::get<2>(p)) *x);
+}
+std::tuple <float,float,float> calcPointFloat(std::tuple <float,float,float> p,float x){
+    return std::tuple <float,float,float>((std::get<0>(p))*x,(std::get<1>(p))*x,(std::get<2>(p)) *x);
+}
+std::tuple <float,float,float> calculaPointMatrixFinal(int c[4],std::tuple<float,float,float> matrixPontos[4]){
+    std::tuple <float,float,float> pontosInt [4];
+    std::tuple <float,float,float> res;
+    for (int i = 0;i<4;i++){
+        res = calcPoint(matrixPontos[i],c[i]);
+        pontosInt[i] = res;
+    }
+    std::tuple <float,float,float> final=std::tuple<float,float,float>(0.0,0.0,0.0);
+
+    for (int k = 0;k<4;k++){
+        (std::get<0>(final)) +=  (std::get<0>(pontosInt[k]));
+        (std::get<1>(final)) +=  (std::get<1>(pontosInt[k]));
+        (std::get<2>(final)) +=  (std::get<2>(pontosInt[k]));
+    }
+    return final;
+}
+std::tuple <float,float,float> calculaPointMatrixFinalFloat(float c[4],std::tuple<float,float,float> matrixPontos[4]){
+    std::tuple <float,float,float> pontosInt [4];
+    std::tuple <float,float,float> res;
+    for (int i = 0;i<4;i++){
+        res = calcPointFloat(matrixPontos[i],c[i]);
+        pontosInt[i] = res;
+    }
+    /*
+    std:: cout << "Pontos int:";
+    for ( auto i = 0; i< 4;i++){
+        std:: cout <<std::to_string(std::get<0>(pontosInt[i])) << " " << std::to_string(std::get<1>(pontosInt[i])) << " " << std::to_string(std::get<2>(pontosInt[i]))<<"|";
+    }
+    std:: cout << "\n";
+    */
+    std::tuple <float,float,float> final=std::tuple<float,float,float>(0.0,0.0,0.0);
+
+    for (int k = 0;k<4;k++){
+        (std::get<0>(final)) +=  (std::get<0>(pontosInt[k]));
+        (std::get<1>(final)) +=  (std::get<1>(pontosInt[k]));
+        (std::get<2>(final)) +=  (std::get<2>(pontosInt[k]));
+    }
+    return final;
+}
 void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fileOutput)
 {   
     /************************PARSING DO FICHEIRO DE INPUT INICIADA***********************************************/
@@ -346,44 +391,85 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
 
     /************************PARSING DO FICHEIRO DE INPUT TERMINADA***********************************************/
     // Nivel de seleção é 1 , logo u = 0.1 e v = 0.1
-    
-    std::tuple<float,float,float> pontosFinais[10][10];
-    int lPontos = 0;
-    int cPontos = 0;
-    int cPontosArm = 0;
-    int lPontosArm = 0;
+    // Isto é só para um patch 
+    std::tuple<float,float,float> pontosFinais[11][11];
     int bezierMatrix [4][4]={{-1,3,-3,1},
                             {3,-6,3,0},
                             {-3,3,0,0},
                             {1,0,0,0}};
-    for(float u = 0.0;u<=1.0;u+=0.1){
-        float uvector[4]={u*u*u,u*u,u,1};
-        for(float v = 0.0;v<=1.0;v+=0.1){
-            std::tuple<float,float,float> matrixPontosCalc [4][4]={{arrayVertices[arrayPatches[lPontosArm][cPontosArm]],arrayVertices[arrayPatches[lPontosArm][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm][cPontosArm+3]]},
-                                                                    {arrayVertices[arrayPatches[lPontosArm+1][cPontosArm]],arrayVertices[arrayPatches[lPontosArm+1][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm+1][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm+1][cPontosArm+3]]},
-                                                                    {arrayVertices[arrayPatches[lPontosArm+2][cPontosArm]],arrayVertices[arrayPatches[lPontosArm+2][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm+2][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm+2][cPontosArm+3]]},
-                                                                    {arrayVertices[arrayPatches[lPontosArm+3][cPontosArm]],arrayVertices[arrayPatches[lPontosArm+3][cPontosArm+1]],arrayVertices[arrayPatches[lPontosArm+3][cPontosArm+2]],arrayVertices[arrayPatches[lPontosArm+3][cPontosArm+3]]}};
-            float vvector[4]={v*v*v,v*v,v,1};
-            //Falta multiplicar a matriz bezierMatrix * matrixPontosCalc * bezierMatrix
-            //Depois multiplicar a mtriz uvector * calculado no comentario anterior * vvector
-            //Temos o ponto p(u,v), colocamo-lo na matriz pontosFinais
-
-            lPontosArm+=4;
-        }
-        lPontosArm=0;
-    }
-
+    int linhasPatch = 0;
     std::ofstream MyFile(fileOutput);
-    for (int i = 0;i<10;i++){
-        for(int k = 0;k<10;k++){
-            MyFile << "v " << std::to_string(std::get<0>(pontosFinais[i][k])) << " " << std::to_string(std::get<1>(pontosFinais[i][k])) << " " << std::to_string(std::get<2>(pontosFinais[i][k]))<<"\n";
+    while(linhasPatch!=128){
+        std::tuple<float,float,float> pontosPatch [4][4] = {{arrayVertices[arrayPatches[linhasPatch][0]],arrayVertices[arrayPatches[linhasPatch+1][0]],arrayVertices[arrayPatches[linhasPatch+2][0]],arrayVertices[arrayPatches[linhasPatch+3][0]]},
+                                                            {arrayVertices[arrayPatches[linhasPatch][1]],arrayVertices[arrayPatches[linhasPatch+1][1]],arrayVertices[arrayPatches[linhasPatch+2][1]],arrayVertices[arrayPatches[linhasPatch+3][1]]},
+                                                            {arrayVertices[arrayPatches[linhasPatch][2]],arrayVertices[arrayPatches[linhasPatch+1][2]],arrayVertices[arrayPatches[linhasPatch+2][2]],arrayVertices[arrayPatches[linhasPatch+3][2]]},
+                                                            {arrayVertices[arrayPatches[linhasPatch][3]],arrayVertices[arrayPatches[linhasPatch+1][3]],arrayVertices[arrayPatches[linhasPatch+2][3]],arrayVertices[arrayPatches[linhasPatch+3][3]]}}; 
+        std::tuple<float,float,float> bezierMatrixXPontosPatch [4][4];
+        for (auto i = 0;i<4;i++){
+            for (auto j = 0;j<4;j++){
+                    bezierMatrixXPontosPatch[i][j] = calculaPointMatrixFinal(bezierMatrix[i],pontosPatch[j]);
+            }
         }
+        std::tuple<float,float,float> bezierMatrixXPontosPatchXbezierMatrix [4][4];
+        for (auto i = 0;i<4;i++){
+            for (auto j = 0;j<4;j++){
+                    bezierMatrixXPontosPatchXbezierMatrix[i][j] = calculaPointMatrixFinal(bezierMatrix[j],bezierMatrixXPontosPatch[i]);
+            }
+        }
+        std::tuple<float,float,float> bezierMatrixXPontosPatchXbezierMatrixTrans [4][4];
+        for (auto i = 0;i<4;i++){
+            for (auto j = 0;j<4;j++){
+                    bezierMatrixXPontosPatchXbezierMatrixTrans[i][j] = bezierMatrixXPontosPatchXbezierMatrix [j][i];
+            }
+        }
+        /*
+        for (auto i = 0;i<4;i++){
+            for (auto j = 0;j<4;j++){
+                    std:: cout << std::to_string(std::get<0>(bezierMatrixXPontosPatchXbezierMatrixTrans[i][j])) << " " << std::to_string(std::get<1>(bezierMatrixXPontosPatchXbezierMatrixTrans[i][j])) << " " << std::to_string(std::get<2>(bezierMatrixXPontosPatchXbezierMatrixTrans[i][j])) << "|";
+            }
+            std:: cout << "\n";
+        }
+        */
+        for(int u = 0;u<=10;u++){
+            float uf = float(u)/10;
+            float u_vetor [4] = {uf*uf*uf,uf*uf,uf,1};
+            for(int v = 0;v<=10;v++){
+                float vf =float(v)/10;
+                float v_vetor [4] = {vf*vf*vf,vf*vf,vf,1};
+
+                std::tuple<float,float,float> u_vetorXcalculada[4];
+                for (auto i = 0; i < 4;i++){
+                    u_vetorXcalculada[i]= calculaPointMatrixFinalFloat(u_vetor,bezierMatrixXPontosPatchXbezierMatrixTrans[i]);
+                }
+                /*
+                std::cout<< "Vetor v-";
+                for (auto i = 0; i < 4;i++){
+                std::cout<<v_vetor[i]<< " ";
+                }
+                std::cout << "\n";
+                */
+                std::tuple<float,float,float> puv;
+                puv = calculaPointMatrixFinalFloat(v_vetor,u_vetorXcalculada);
+                std::cout<< "Puv:";
+                std::cout <<std::to_string(std::get<0>(puv)) << " " << std::to_string(std::get<1>(puv)) << " " << std::to_string(std::get<2>(puv)) << "|";
+                std::cout << "\n";
+                pontosFinais[u][v] = puv;
+
+            }
+        }
+
+        for (int i = 0;i<=10;i++){
+            for(int k = 0;k<=10;k++){
+                MyFile << "v " << std::to_string(std::get<0>(pontosFinais[i][k])) << " " << std::to_string(std::get<1>(pontosFinais[i][k])) << " " << std::to_string(std::get<2>(pontosFinais[i][k]))<<"\n";
+            }
+        }
+        linhasPatch += 4;
     }
 
-    for (int i = 0;i<8;i++){
-        for(int k = 0;k<8;k++){
-            MyFile << "f " << k+2 << "/0/0 " << k+1 << "/0/0  " << k+10+i+1 <<"/0/0\n";
-            MyFile << "f " << k+2 << "/0/0 " << k+10+i+1 << "/0/0  " << k+10+i+2 <<"/0/0\n";
+    for (int i = 0;i<32;i++){
+        for(int k = 1;k<=11;k++){
+            MyFile << "f " << i*121+k+1 << "/0/0 " << i*121+k << "/0/0  " << i*121+k+11 <<"/0/0\n";
+            MyFile << "f " << i*121+k+1 << "/0/0 " << i*121+k+11 << "/0/0  " << i*121+k+12 <<"/0/0\n";
         }
     }
 
@@ -433,8 +519,8 @@ int main(int argc, char** argv) {
     // input line to give a file with points to draw a teapot: ./generator fileOutput fileInput
     else{
         
-        std::string fileInput = argv[2];
-        std::string fileOutput = argv[1];
+        std::string fileInput = "../teapot.patch";
+        std::string fileOutput = "teapot.3d";
         calculatePointsToTeaPot(fileInput,fileOutput);
     }
     return 0;
