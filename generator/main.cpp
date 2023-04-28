@@ -466,11 +466,12 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
         linhasPatch += 4;
     }
 
-    for (int i = 0;i<32;i++){
-        for(int k = 1;k<=11;k++){
-            MyFile << "f " << i*121+k+1 << "/0/0 " << i*121+k << "/0/0  " << i*121+k+11 <<"/0/0\n";
-            MyFile << "f " << i*121+k+1 << "/0/0 " << i*121+k+11 << "/0/0  " << i*121+k+12 <<"/0/0\n";
-        }
+    for(int i = 1 ; i <= 3860 ; i++){
+        MyFile << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
+        MyFile << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
+
+        std :: cout << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
+        std:: cout << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
     }
 
     MyFile.close();
