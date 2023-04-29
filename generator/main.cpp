@@ -441,18 +441,8 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
                 for (auto i = 0; i < 4;i++){
                     u_vetorXcalculada[i]= calculaPointMatrixFinalFloat(u_vetor,bezierMatrixXPontosPatchXbezierMatrixTrans[i]);
                 }
-                /*
-                std::cout<< "Vetor v-";
-                for (auto i = 0; i < 4;i++){
-                std::cout<<v_vetor[i]<< " ";
-                }
-                std::cout << "\n";
-                */
                 std::tuple<float,float,float> puv;
                 puv = calculaPointMatrixFinalFloat(v_vetor,u_vetorXcalculada);
-                std::cout<< "Puv:";
-                std::cout <<std::to_string(std::get<0>(puv)) << " " << std::to_string(std::get<1>(puv)) << " " << std::to_string(std::get<2>(puv)) << "|";
-                std::cout << "\n";
                 pontosFinais[u][v] = puv;
 
             }
@@ -465,10 +455,19 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
         }
         linhasPatch += 4;
     }
-
+    int k = 0;
     for(int i = 1 ; i <= 3860 ; i++){
-        MyFile << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
-        MyFile << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
+        if ((i / 121) == float(k + 1 )){
+            k++;
+            std::cout << k <<"\n";
+        }
+        else if ((float) i/121 > (k + 0.9174)) {
+           std::cout <<"i: "<< i <<"\n";
+        }
+        else{
+            MyFile << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
+            MyFile << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
+        }
 
         std :: cout << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
         std:: cout << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
