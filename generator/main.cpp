@@ -311,13 +311,6 @@ std::tuple <float,float,float> calculaPointMatrixFinalFloat(float c[4],std::tupl
         res = calcPointFloat(matrixPontos[i],c[i]);
         pontosInt[i] = res;
     }
-    /*
-    std:: cout << "Pontos int:";
-    for ( auto i = 0; i< 4;i++){
-        std:: cout <<std::to_string(std::get<0>(pontosInt[i])) << " " << std::to_string(std::get<1>(pontosInt[i])) << " " << std::to_string(std::get<2>(pontosInt[i]))<<"|";
-    }
-    std:: cout << "\n";
-    */
     std::tuple <float,float,float> final=std::tuple<float,float,float>(0.0,0.0,0.0);
 
     for (int k = 0;k<4;k++){
@@ -327,6 +320,22 @@ std::tuple <float,float,float> calculaPointMatrixFinalFloat(float c[4],std::tupl
     }
     return final;
 }
+std::string readLineinFile(std::string const& fileInput,int lineNumber){
+    std::string resultado;
+    std::ifstream MyReadFile(fileInput);
+    int lineNumberLido = 1;
+    while (getline (MyReadFile, resultado)) {
+        if (lineNumber == lineNumberLido){
+            break;
+        }
+        else {
+            lineNumberLido++;
+        }
+
+    }
+    
+    return resultado;
+}
 void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fileOutput)
 {   
     /************************PARSING DO FICHEIRO DE INPUT INICIADA***********************************************/
@@ -335,9 +344,12 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
     int it = 0; 
     int column = 0;
     int line = 0;
+    
+    int tarrayPatches = stoi(readLineinFile(fileInput,1));
+    int tarrayVertices = stoi(readLineinFile(fileInput,tarrayPatches+2));
 
-    std::tuple<float,float,float> arrayVertices[290];
-    int arrayPatches[128][4];
+    std::tuple<float,float,float> arrayVertices[tarrayVertices];
+    int arrayPatches[tarrayPatches*4][4];
 
     std::string myText;
     std::ifstream MyReadFile(fileInput);
@@ -399,7 +411,7 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
                             {1,0,0,0}};
     int linhasPatch = 0;
     std::ofstream MyFile(fileOutput);
-    while(linhasPatch!=128){
+    while(linhasPatch!=tarrayPatches*4){
         std::tuple<float,float,float> pontosPatch [4][4] = {{arrayVertices[arrayPatches[linhasPatch][0]],arrayVertices[arrayPatches[linhasPatch+1][0]],arrayVertices[arrayPatches[linhasPatch+2][0]],arrayVertices[arrayPatches[linhasPatch+3][0]]},
                                                             {arrayVertices[arrayPatches[linhasPatch][1]],arrayVertices[arrayPatches[linhasPatch+1][1]],arrayVertices[arrayPatches[linhasPatch+2][1]],arrayVertices[arrayPatches[linhasPatch+3][1]]},
                                                             {arrayVertices[arrayPatches[linhasPatch][2]],arrayVertices[arrayPatches[linhasPatch+1][2]],arrayVertices[arrayPatches[linhasPatch+2][2]],arrayVertices[arrayPatches[linhasPatch+3][2]]},
@@ -456,21 +468,22 @@ void calculatePointsToTeaPot(std::string const& fileInput,std::string const& fil
         linhasPatch += 4;
     }
     int k = 0;
-    for(int i = 1 ; i <= 3860 ; i++){
+    for(int i = 1 ; i <= (11*11*tarrayPatches)-12 ; i++){
+        // std::cout <<"i/121: "<< (float) i/121 <<"\n";
         if ((i / 121) == float(k + 1 )){
             k++;
-            std::cout << k <<"\n";
+            // std::cout << k <<"\n";
         }
         else if ((float) i/121 > (k + 0.9174)) {
-           std::cout <<"i: "<< i <<"\n";
+           // std::cout <<"i: "<< i <<"\n";
         }
         else{
             MyFile << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
             MyFile << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
         }
 
-        std :: cout << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
-        std:: cout << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
+        // std :: cout << "f " << i+1 << "/0/0 " << i << "/0/0  " << i+11 <<"/0/0\n";
+        // std:: cout << "f " << i+1 << "/0/0 " << i+11 << "/0/0  " << i+12 <<"/0/0\n";
     }
 
     MyFile.close();
