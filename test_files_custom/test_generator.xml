@@ -1,0 +1,53 @@
+<world>
+    <window width="512" height="512" axis="True"/>
+    <camera> 
+	    <position x="0" y="5" z="10" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="80" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+    <group> 
+        <group> 
+            <transform>
+                <translate x="6" y="0" z="0" />
+                <scale x="0.5" y="0.5" z="0.5" />
+                <rotate angle="-90" x="1" y="0" z="0"/>
+            </transform>
+            <models> 
+                <model file="bezier_5.3d" /> <!-- generator patch ../teapot.patch 5 bezier_5.3d -->
+            </models>
+        </group>
+        <group> 
+            <transform>
+                <translate x="3" y="0" z="0" />
+            </transform>
+            <models> 
+                <model file="cone_1_2_20_5.3d" /> <!-- generator cone 1 2 20 5 cone_1_2_20_5.3d -->
+            </models>
+        </group>
+        <group> 
+            <transform>
+                <translate x="0" y="0" z="0" />
+            </transform>
+            <models> 
+                <model file="sphere_1_20_20.3d"/> <!-- ./generator sphere 1 20 20 sphere_1_20_20.3d -->
+            </models>
+        </group>
+        <group> 
+            <transform>
+                <translate x="-3" y="0" z="0" />
+            </transform>
+            <models> 
+                <model file="plane_2_3.3d" /> <!-- generator plane 2 3 plane_2_3.3d -->
+            </models>
+        </group>
+        <group> 
+            <transform>
+                <translate x="-6" y="0" z="0" />
+            </transform>
+            <models> 
+                <model file="box_2_3.3d" /> <!-- generator box 2 3 box_2_3.3d -->
+            </models>
+        </group>
+	</group>
+</world>
