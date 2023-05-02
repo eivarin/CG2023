@@ -8,16 +8,16 @@
 #include <math.h>
 
 
-#include "wavefront.hpp"
+#include "model.hpp"
 #include "./rapid_xml/rapidxml.hpp"
 
 class camera{
     private:
-        vertex_coords position;
-        vertex_coords look_at;
-        vertex_coords up;
-        vertex_coords crab_vector;
-        vertex_coords true_up;
+        vec3 position;
+        vec3 look_at;
+        vec3 up;
+        vec3 crab_vector;
+        vec3 true_up;
         float fov;
         float near;
         float far;
@@ -26,11 +26,7 @@ class camera{
         int beta;
         float stepDimension;
         void reverseCalc(){
-            vertex_coords d = {
-                .x = look_at.x - position.x,
-                .y = look_at.y - position.y,
-                .z = look_at.z - position.z
-            };
+            vec3 d = vec3(look_at.x - position.x, look_at.y - position.y, look_at.z - position.z);
             d.normalize();
             float b = asin(d.y);
             float sin_a = d.x / cos(b);
@@ -50,21 +46,9 @@ class camera{
         float fps;
         float ratio;
         camera(){
-            position = {
-                .x = 0.0f,
-                .y = 2.0f,
-                .z = -10.0f
-            };
-            look_at = {
-                .x = 0.0f,
-                .y = 0.0f,
-                .z = 0.0f
-            };
-            up = {
-                .x = 0,
-                .y = 1,
-                .z = 0
-            };
+            position = vec3(0.0f, 2.0f, -10.0f);
+            look_at = vec3(0,0,0);
+            up = vec3(0,1,0);
             fov = 60;
             near = 1;
             far = 1000; 
@@ -77,21 +61,21 @@ class camera{
             rapidxml::xml_node<> *new_position = c->first_node("position");
             rapidxml::xml_node<> *new_look_at = c->first_node("lookAt");
             rapidxml::xml_node<> *new_up = c->first_node("up");
-            position = {
-                .x = std::stof(new_position->first_attribute("x")->value()),
-                .y = std::stof(new_position->first_attribute("y")->value()),
-                .z = std::stof(new_position->first_attribute("z")->value())
-            };
-            look_at = {
-                .x = std::stof(new_look_at->first_attribute("x")->value()),
-                .y = std::stof(new_look_at->first_attribute("y")->value()),
-                .z = std::stof(new_look_at->first_attribute("z")->value())
-            };
-            up = {
-                .x = std::stof(new_up->first_attribute("x")->value()),
-                .y = std::stof(new_up->first_attribute("y")->value()),
-                .z = std::stof(new_up->first_attribute("z")->value())
-            };
+            position = vec3(
+                std::stof(new_position->first_attribute("x")->value()),
+                std::stof(new_position->first_attribute("y")->value()),
+                std::stof(new_position->first_attribute("z")->value())
+            );
+            look_at = vec3(
+                std::stof(new_look_at->first_attribute("x")->value()),
+                std::stof(new_look_at->first_attribute("y")->value()),
+                std::stof(new_look_at->first_attribute("z")->value())
+            );
+            up = vec3(
+                std::stof(new_up->first_attribute("x")->value()),
+                std::stof(new_up->first_attribute("y")->value()),
+                std::stof(new_up->first_attribute("z")->value())
+            );
             fov = std::stof(projection->first_attribute("fov")->value());
             near = std::stof(projection->first_attribute("near")->value());
             far = std::stof(projection->first_attribute("far")->value());

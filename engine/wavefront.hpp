@@ -8,45 +8,8 @@
 #include <fstream>
 #include <iostream>
 #include <math.h>
+#include "model.hpp"
 #include "./rapid_xml/rapidxml.hpp"
-
-struct vertex_coords {
-	float x;
-	float y;
-	float z;
-    void normalize(){
-        float vLen = sqrtf64(x*x+y*y+z*z);
-        x = x / vLen;
-        y = y / vLen;
-        z = z / vLen;
-    };
-    vertex_coords get_cross_product(vertex_coords& v){
-        this->normalize();
-        v.normalize();
-        return (vertex_coords) {
-            .x = (this->y*v.z) - (this->z*v.y),
-            .y = (this->z*v.x) - (this->x*v.z),
-            .z = (this->x*v.y) - (this->y*v.x)
-        };
-    };
-};
-
-struct vertex_texture {
-	float x;
-	float y;
-};
-
-struct vertex_normal {
-	float x;
-	float y;
-	float z;
-};
-
-struct vertex_ref {
-	int c;
-	int t;
-	int n;
-};
 
 struct color {
     float r;
@@ -54,15 +17,11 @@ struct color {
     float b;
 };
 
-struct face {
-	vertex_ref v[3];
-};
-
 class model {
     private:
-        std::vector<vertex_coords> vs;
-        std::vector<vertex_texture> ts;
-        std::vector<vertex_normal> ns;
+        std::vector<vec3> cs;
+        std::vector<vec3> ts;
+        std::vector<vec3> ns;
         std::vector<face> fs;
         color clr;
         bool lines, axis;
@@ -104,27 +63,27 @@ class model {
             // read the first word of the line
             for(std::string line_header; file >> line_header; ) {
                 if(line_header.compare("v") == 0) {
-                    vertex_coords v;
-                    file >> v.x >> v.y >> v.z;
-                    vs.push_back(v);
+                    vec3 c;
+                    file >> c.x >> c.y >> c.z;
+                    cs.push_back(c);
                 } else if(line_header.compare("vt") == 0) {
-                    vertex_texture t;
+                    vec3 t;
                     file >> t.x >> t.y;
                     ts.push_back(t);
                 } else if (line_header.compare("vn") == 0 ) {
-                    vertex_normal n;
+                    vec3 n;
                     file >> n.x >> n.y >> n.z;
                     ns.push_back(n);
                 } else if (line_header.compare("f") == 0 ) {
-                    face f = {0};
+                    face f;
                     char ignore;
-                    file >> f.v[0].c >> ignore >> f.v[0].t >> ignore >> f.v[0].n >> f.v[1].c >> ignore >> f.v[1].t >> ignore >> f.v[1].n >> f.v[2].c >> ignore >> f.v[2].t >> ignore >> f.v[2].n;
+                    file >> f.v[0].coords >> ignore >> f.v[0].texture >> ignore >> f.v[0].normal >> f.v[1].coords >> ignore >> f.v[1].texture >> ignore >> f.v[1].normal >> f.v[2].coords >> ignore >> f.v[2].texture >> ignore >> f.v[2].normal;
                     fs.push_back(f);
                 }
             }
         }
         void drawVertex(vertex_ref v_ref, std::vector<float> &vList){
-            vertex_coords c = vs.at(v_ref.c-1);
+            vec3 c = cs.at(v_ref.coords-1);
             // VERTEX_TEXTURE t = m.ts.at(v_ref.t-1);
             // VERTEX_NORMAL n = m.ns.at(v_ref.n-1);
             vList.push_back(c.x);
@@ -182,7 +141,7 @@ class model {
         }
 };
 
-bool operator<(const vertex_coords l, const vertex_coords r) {
+bool operator<(const vec3 l, const vec3 r) {
 	return true;
 }
 

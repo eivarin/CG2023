@@ -10,7 +10,7 @@
 #include <vector>
 #include <algorithm>
 #include <tuple>
-#include "model.hpp"
+#include "wavefront.hpp"
 
 void drawPlane(std::string const &file, std::size_t length, std::size_t divisions)
 {
@@ -22,8 +22,8 @@ void drawPlane(std::string const &file, std::size_t length, std::size_t division
 
     model m;
     for (auto i = 0; i <= divisions; ++i)
-        for (auto j = 0; j <= divisions; ++j)
-            m.pushCoords(vertex_coords(base_points[i], 0., base_points[j]));
+        for (auto j = 0; j <= divisions; ++j) 
+            m.pushCoords(vec3(base_points[i], 0., base_points[j]));
     /*
     16 12 8  4
     15 11 7  3
@@ -35,8 +35,8 @@ void drawPlane(std::string const &file, std::size_t length, std::size_t division
         for (auto j = 1; j <= divisions; ++j)
         {
             auto index = (divisions + 1) * i + j;
-            m.pushFace(face(index, index + 1, index + divisions + 1));
-            m.pushFace(face(index + 1, index + divisions + 2, index + divisions + 1));
+            m.pushFace(face(vertex_ref(index,0,0), vertex_ref(index + 1, 0, 0), vertex_ref(index + divisions + 1, 0, 0)));
+            m.pushFace(face(vertex_ref(index + 1, 0, 0), vertex_ref(index + divisions + 2, 0, 0), vertex_ref(index + divisions + 1, 0, 0)));
         }
     }
     m.write(file);
@@ -54,90 +54,68 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
     }
 
     model m;
-    for (auto i = 0; i <= divisions; ++i)
-    { // -O2, melhora-me isto
-        for (auto j = 0; j <= divisions; ++j)
-        { // -O2, melhora-me isto
-            m.pushCoords(vertex_coords(base_points[i], base_points[divisions], 0 - base_points[j]));
+    for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
+        for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
+            m.pushCoords(vec3(base_points[i],base_points[divisions],0 - base_points[j]));
         }
     }
     // Topo
-    for (auto i = 0; i <= divisions; ++i)
-    { // -O2, melhora-me isto
-        for (auto j = 0; j <= divisions; ++j)
-        { // -O2, melhora-me isto
-            m.pushCoords(vertex_coords(base_points[i], 0 - base_points[divisions], 0 - base_points[j]));
+    for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
+        for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
+            m.pushCoords(vec3(base_points[i],0 - base_points[divisions],0 - base_points[j]));
         }
     }
 
-    for (auto i = 0; i <= divisions; ++i)
-    {
-        for (auto j = 0; j <= divisions; ++j)
-        { // -O2, melhora-me isto
-            m.pushCoords(vertex_coords(base_points[divisions], base_points[i], 0 - base_points[j]));
+    for (auto i = 0; i <= divisions; ++i) {
+        for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
+            m.pushCoords(vec3(base_points[divisions],base_points[i],0 - base_points[j]));
         }
     }
 
-    for (auto i = 0; i <= divisions; ++i)
-    { // -O2, melhora-me isto
-        for (auto j = 0; j <= divisions; ++j)
-        { // -O2, melhora-me isto
-            m.pushCoords(vertex_coords(base_points[0], base_points[i], 0 - base_points[j]));
+    for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
+        for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
+            m.pushCoords(vec3(base_points[0],base_points[i],0 - base_points[j]));
         }
     }
 
-    for (auto i = 0; i <= divisions; ++i)
-    { // -O2, melhora-me isto
-        for (auto j = 0; j <= divisions; ++j)
-        { // -O2, melhora-me isto
-            m.pushCoords(vertex_coords(base_points[i], (0 - base_points[j]), base_points[divisions]));
+    for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
+        for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
+            m.pushCoords(vec3(base_points[i],(0 - base_points[j]),base_points[divisions]));
         }
     }
 
-    for (auto i = 0; i <= divisions; ++i)
-    { // -O2, melhora-me isto
-        for (auto j = 0; j <= divisions; ++j)
-        { // -O2, melhora-me isto // 5
-            m.pushCoords(vertex_coords(base_points[i], (0 - base_points[j]), base_points[0]));
+    for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
+        for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto // 5
+            m.pushCoords(vec3(base_points[i],(0 - base_points[j]),base_points[0]));
         }
     }
-    for (auto k = 0; k < 6; ++k)
-    {
-        if (k % 2 != 0 && k != 1 || k == 0)
-        {
-            for (auto i = 0; i < divisions; ++i)
-            {
-                for (auto j = 1; j <= divisions; ++j)
-                {
-                    auto index = (divisions + 1) * i + j + k * (divisions + 1) * (divisions + 1);
-                    m.pushFace(face(index, index + 1, index + divisions + 1));
-                    m.pushFace(face(index + 1, index + divisions + 2, index + divisions + 1));
+    for (auto k=0;k<6;++k){
+        if (k % 2 !=0  && k !=1 || k == 0 ){
+            for(auto i = 0; i < divisions; ++i) {
+                for(auto j = 1; j <= divisions; ++j) {
+                    auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
+                    m.pushFace(face(vertex_ref(index, 0, 0),vertex_ref(index+1, 0, 0),vertex_ref(index+divisions+1, 0, 0)));
+                    m.pushFace(face(vertex_ref(index + 1, 0, 0),vertex_ref(index + divisions + 2, 0, 0),vertex_ref(index + divisions + 1, 0, 0)));
                 }
             }
         }
-        else if (k == 1)
-        {
-            for (auto i = 0; i < divisions; ++i)
-            {
-                for (auto j = 1; j <= divisions; ++j)
-                {
-                    auto index = (divisions + 1) * i + j + k * (divisions + 1) * (divisions + 1);
-                    m.pushFace(face(index, index + divisions + 1, index + 1));
-                    m.pushFace(face(index + 1, index + divisions + 1, index + divisions + 2));
+        else if (k==1){
+            for(auto i = 0; i < divisions; ++i) {
+                for(auto j = 1; j <= divisions; ++j) {
+                    auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
+                    m.pushFace(face(vertex_ref(index, 0, 0), vertex_ref(index + divisions + 1, 0, 0), vertex_ref(index + 1, 0, 0)));
+                    m.pushFace(face(vertex_ref(index + 1, 0, 0),vertex_ref(index + divisions + 1, 0, 0),vertex_ref(index + divisions + 2, 0, 0)));
                 }
             }
         }
-        else
-        {
-            for (auto i = 0; i < divisions; ++i)
-            {
-                for (auto j = 1; j <= divisions; ++j)
-                {
-                    auto index = (divisions + 1) * i + j + k * (divisions + 1) * (divisions + 1);
-                    // resultFaces.append(((index,index + divisions + 1,index+1)))
-                    m.pushFace(face(index, index + divisions + 1, index + 1));
-                    // resultFaces.append(((index + 1,index + divisions + 1,index + divisions + 2)))
-                    m.pushFace(face(index + 1, index + divisions + 1, index + divisions + 2));
+        else{
+            for(auto i = 0; i < divisions; ++i) {
+                for(auto j = 1; j <= divisions; ++j) {
+                    auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
+            // resultFaces.append(((index,index + divisions + 1,index+1)))
+                    m.pushFace(face(vertex_ref(index, 0, 0),vertex_ref(index + divisions + 1, 0, 0),vertex_ref(index+1, 0, 0)));
+            // resultFaces.append(((index + 1,index + divisions + 1,index + divisions + 2)))
+                    m.pushFace(face(vertex_ref(index + 1, 0, 0),vertex_ref(index + divisions + 1, 0, 0),vertex_ref(index + divisions + 2, 0, 0) ));
                 }
             }
         }
@@ -150,20 +128,18 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     model m;
     float stack_angle = M_PI / stacks;
     float slice_angle = (2 * M_PI) / slices;
-    m.pushCoords(vertex_coords(0, radius, 0));
-    for (std::size_t i = 1; i < stacks; ++i)
-    {
-        for (std::size_t j = 0; j < slices; ++j)
-        {
+    m.pushCoords(vec3(0,radius,0));
+    for (std::size_t i = 1; i < stacks; ++i) {
+        for (std::size_t j = 0; j < slices; ++j) {
             float curr_b = i * stack_angle;
             float sinb = sin(curr_b);
             float x = sin(j * slice_angle) * sinb * radius;
             float y = cos(curr_b) * radius;
             float z = cos(j * slice_angle) * sinb * radius;
-            m.pushCoords(vertex_coords(x, y, z));
+            m.pushCoords(vec3(x, y, z));
         }
     }
-    m.pushCoords(vertex_coords(0, -radius, 0));
+    m.pushCoords(vec3(0,-radius,0));
 
     /*
     esfera 1 4 4
@@ -174,26 +150,23 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     14
     */
     // "base" 1
-    for (std::size_t i = 0; i < slices; ++i)
-    {
-        m.pushFace(face(1, (i % slices) + 2, ((i + 1) % slices) + 2));
+    for(std::size_t i = 0; i < slices; ++i) {
+        m.pushFace(face(vertex_ref(1, 0, 0),vertex_ref((i%slices) + 2, 0, 0),vertex_ref(((i+1)%slices) + 2, 0, 0)));
     }
     // "faces"
-    for (std::size_t i = 0; i < stacks - 2; ++i)
-    {
-        for (std::size_t j = 0; j < slices; ++j)
-        {
-            std::size_t r = (j % slices) + 2 + (i * slices);
-            std::size_t l = ((j + 1) % slices) + 2 + (i * slices);
-            m.pushFace(face(r, l + slices, l));
-            m.pushFace(face(r, r + slices, l + slices));
+    for(std::size_t i = 0; i < stacks - 2; ++i) {
+        for(std::size_t j = 0; j < slices; ++j) {
+            std::size_t r = (j%slices) + 2 + (i * slices);
+            std::size_t l = ((j+1)%slices) + 2 + (i * slices);
+            m.pushFace(face(vertex_ref(r, 0, 0),vertex_ref(l + slices, 0, 0),vertex_ref(l, 0, 0)));
+            m.pushFace(face(vertex_ref(r, 0, 0),vertex_ref(r+slices, 0, 0),vertex_ref(l+slices, 0, 0)));
+
         }
     }
     // "base" 2
-    std::size_t bottom_most = slices * (stacks - 1) + 2;
-    for (std::size_t i = 0; i < slices; ++i)
-    {
-        m.pushFace(face(bottom_most, bottom_most - slices + (i + 1) % slices, bottom_most - slices + (i % slices)));
+    std::size_t bottom_most = slices*(stacks-1)+2;
+    for(std::size_t i = 0; i < slices; ++i) {
+        m.pushFace(face(vertex_ref(bottom_most,0,0),vertex_ref(bottom_most - slices + (i+1)%slices,0,0),vertex_ref(bottom_most - slices + (i%slices),0,0)));
     }
     m.write(file);
 }
@@ -210,11 +183,11 @@ void draw_ring(std::string const &file, ssize_t radius, ssize_t slices, ssize_t 
 
         float x1 = sin(angle) * radius;
         float z1 = cos(angle) * radius;
-        m.pushCoords(vertex_coords(x1, 0, z1));
+        m.pushCoords(vec3(x1, 0, z1));
 
         float x2 = sin(angle) * dif;
         float z2 = cos(angle) * dif;
-        m.pushCoords(vertex_coords(x2, 0, z2));
+        m.pushCoords(vec3(x2, 0, z2));
     }
     /*
     1 3 5 7
@@ -223,11 +196,11 @@ void draw_ring(std::string const &file, ssize_t radius, ssize_t slices, ssize_t 
     for (auto i = 0; i < slices; ++i)
     {
         // 1 2 3 e 3 2 1
-        m.pushFace(face(2 * i + 1, 2 * i + 2, 2 * i + 3));
-        m.pushFace(face(2 * i + 3, 2 * i + 2, 2 * i + 1));
+        m.pushFace(face(vertex_ref(2*i+1, 0, 0), vertex_ref(2*i+2, 0, 0), vertex_ref(2*i+3, 0, 0)));
+        m.pushFace(face(vertex_ref(2*i+3, 0, 0), vertex_ref(2*i+2, 0, 0), vertex_ref(2*i+1, 0, 0)));
         // 2 4 3 e 3 4 2
-        m.pushFace(face(2 * i + 2, 2 * i + 4, 2 * i + 3));
-        m.pushFace(face(2 * i + 3, 2 * i + 4, 2 * i + 2));
+        m.pushFace(face(vertex_ref(2*i+2,0,0), vertex_ref(2*i+4, 0, 0), vertex_ref(2*i+3, 0, 0)));
+        m.pushFace(face(vertex_ref(2*i+3,0,0), vertex_ref(2*i+4, 0, 0), vertex_ref(2*i+2, 0, 0)));
     }
     m.write(file);
 }
@@ -248,11 +221,11 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         float aCil = delta * i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
         float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
-        m.pushCoords(vertex_coords(0.0f, curr_h, 0.0f));
+        m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         ++points;
-        m.pushCoords(vertex_coords(px1 * curr_r, curr_h - stack_h, py1 * curr_r));
+        m.pushCoords(vec3(px1 * curr_r, curr_h - stack_h, py1  * curr_r));
         ++points;
-        m.pushCoords(vertex_coords(px2 * curr_r, curr_h - stack_h, py2 * curr_r));
+        m.pushCoords(vec3(px2 * curr_r, curr_h - stack_h, py2  * curr_r));
         ++points;
         i++;
     }
@@ -265,19 +238,19 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
             float aCil = delta * i;
             float px1 = (sin(aCil)), py1 = (cos(aCil));
             float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+            
+            m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
+            ++points;
+            m.pushCoords(vec3(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r)));
+            ++points;
+            m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
+            ++points;
 
-            m.pushCoords(vertex_coords(px1 * curr_r, curr_h, py1 * curr_r));
+            m.pushCoords(vec3(px2 * curr_r, curr_h, py2 * curr_r));
             ++points;
-            m.pushCoords(vertex_coords(px1 * (curr_r + stack_r), curr_h - stack_h, py1 * (curr_r + stack_r)));
+            m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
             ++points;
-            m.pushCoords(vertex_coords(px2 * (curr_r + stack_r), curr_h - stack_h, py2 * (curr_r + stack_r)));
-            ++points;
-
-            m.pushCoords(vertex_coords(px2 * curr_r, curr_h, py2 * curr_r));
-            ++points;
-            m.pushCoords(vertex_coords(px1 * curr_r, curr_h, py1 * curr_r));
-            ++points;
-            m.pushCoords(vertex_coords(px2 * (curr_r + stack_r), curr_h - stack_h, py2 * (curr_r + stack_r)));
+            m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             ++points;
             i++;
         }
@@ -290,18 +263,17 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         float aCil = delta * i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
         float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
-        m.pushCoords(vertex_coords(px2 * curr_r, curr_h, py2 * curr_r));
+        m.pushCoords(vec3(px2 * curr_r, curr_h, py2  * curr_r));
         ++points;
-        m.pushCoords(vertex_coords(px1 * curr_r, curr_h, py1 * curr_r));
+        m.pushCoords(vec3(px1 * curr_r, curr_h, py1  * curr_r));
         ++points;
-        m.pushCoords(vertex_coords(0.0f, curr_h, 0.0f));
+        m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         ++points;
         i++;
     }
 
-    for (auto i = 1; i + 3 <= points; i = i + 3)
-    {
-        m.pushFace(face(i, i + 1, i + 2));
+    for (auto i=1;i+3<=points;i=i+3){
+        m.pushFace(face(vertex_ref(i,0,0),vertex_ref(i+1, 0, 0), vertex_ref(i+2, 0 ,0)));
     }
     m.write(file);
 }

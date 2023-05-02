@@ -4,11 +4,11 @@
 
 #include<string>
 #include<math.h>
-#include "wavefront.hpp"
 #include "./rapid_xml/rapidxml.hpp"
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <memory>
+#include "model.hpp"
 
 enum t_tipo : unsigned char { T, R, S};
 
@@ -36,7 +36,7 @@ class transformation{
 };
 
 class static_transf : public transformation{
-    vertex_coords vx;
+    vec3 vx;
     float angle;
     public:
         static_transf(rapidxml::xml_node<> *node) : transformation(node){
@@ -65,7 +65,7 @@ class static_transf : public transformation{
 };
 
 class animated_rotation : public transformation{
-    vertex_coords axis;
+    vec3 axis;
     float time;
     public:
         animated_rotation(rapidxml::xml_node<> *node) : transformation(node){
@@ -88,28 +88,28 @@ class animated_rotation : public transformation{
 #define CatmullRomPosCoord(coord) CatmullRomPosSingle(ps[0].coord, ps[1].coord, ps[2].coord, ps[3].coord)
 #define CatmullRomDerivCoord(coord) CatmullRomDerivSingle(ps[0].coord, ps[1].coord, ps[2].coord, ps[3].coord)
 
-#define CatmullRomPosVector {.x= CatmullRomPosCoord(x), .y=CatmullRomPosCoord(y), .z=CatmullRomPosCoord(z)}
-#define CatmullRomDerivVector {.x= CatmullRomDerivCoord(x), .y=CatmullRomDerivCoord(y), .z=CatmullRomDerivCoord(z)}
+#define CatmullRomPosVector vec3(CatmullRomPosCoord(x), CatmullRomPosCoord(y), CatmullRomPosCoord(z))
+#define CatmullRomDerivVector vec3(CatmullRomDerivCoord(x), CatmullRomDerivCoord(y), CatmullRomDerivCoord(z))
 
-#define CatmullRomMacro(isDeriv) (isDeriv) ? (vertex_coords) CatmullRomDerivVector : (vertex_coords) CatmullRomPosVector
+#define CatmullRomMacro(isDeriv) (isDeriv) ? CatmullRomDerivVector : CatmullRomPosVector
 
 class animated_translation : public transformation{
-    vertex_coords old_y;
-    std::vector<vertex_coords> points;
+    vec3 old_y;
+    std::vector<vec3> points;
     int npoints, segments;
     float time;
     bool needsLine, align;
     GLuint vertices, count;
 
-    vertex_coords CatmullRom(float t, vertex_coords *ps, bool isDeriv) {
+    vec3 CatmullRom(float t, vec3 *ps, bool isDeriv) {
         float t2 = pow(t,2), t3 = pow(t,3);
         return CatmullRomMacro(isDeriv);
     }
 
-    void getRotationMatrix(float t, vertex_coords *ps, float * m){
-        vertex_coords deriv_X = CatmullRom(t, ps, true);
-        vertex_coords deriv_Z = deriv_X.get_cross_product(old_y);
-        vertex_coords deriv_Y = deriv_Z.get_cross_product(deriv_X);
+    void getRotationMatrix(float t, vec3 *ps, float * m){
+        vec3 deriv_X = CatmullRom(t, ps, true);
+        vec3 deriv_Z = deriv_X.get_cross_product(old_y);
+        vec3 deriv_Y = deriv_Z.get_cross_product(deriv_X);
         deriv_Y.normalize();
         m[0] = deriv_X.x; m[1] = deriv_X.y; m[2]  = deriv_X.z; m[3] = 0;
         m[4] = deriv_Y.x; m[5] = deriv_Y.y; m[6]  = deriv_Y.z; m[7] = 0;
@@ -119,7 +119,7 @@ class animated_translation : public transformation{
     }
 
 
-    float getLocalPoints(float gt, vertex_coords *ps){
+    float getLocalPoints(float gt, vec3 *ps){
         float t = gt * npoints; // this is the real global t
         int index = floor(t);  // which segment
         t = t - index; // where within  the segment
@@ -134,7 +134,7 @@ class animated_translation : public transformation{
         return t;
     }
 
-    float getCurrentPoints(vertex_coords *ps){
+    float getCurrentPoints(vec3 *ps){
         float curr_time = glutGet(GLUT_ELAPSED_TIME), bla;
         float gt = modf((curr_time / 1000) / (float) time, &bla);
         return getLocalPoints(gt, ps);
@@ -172,12 +172,12 @@ class animated_translation : public transformation{
         animated_translation(rapidxml::xml_node<> *node) : transformation(node){
             time = std::stof(node->first_attribute("time")->value());
             align = check_align(node);
-            old_y = {.x=0, .y=1, .z=0};
+            old_y = vec3(0,1,0);
             for (rapidxml::xml_node<> *n = node->first_node(); n; n = n->next_sibling())
             {
                 std::string nome = n->name();
                 if (nome.compare("point") == 0){
-                    vertex_coords new_v;
+                    vec3 new_v;
                     new_v.x = std::stof(n->first_attribute("x")->value());
                     new_v.y = std::stof(n->first_attribute("y")->value());
                     new_v.z = std::stof(n->first_attribute("z")->value());
@@ -192,10 +192,10 @@ class animated_translation : public transformation{
             std::vector<float> vList;
             for (size_t i = 0; i <= segments; i++)
             {
-                vertex_coords ps[4];
+                vec3 ps[4];
                 float gt = i / (float) segments;
                 float t = getLocalPoints(gt, ps);
-                vertex_coords pos = CatmullRom(t, ps, false);
+                vec3 pos = CatmullRom(t, ps, false);
                 vList.push_back(pos.x);
                 vList.push_back(pos.y);
                 vList.push_back(pos.z);
@@ -214,9 +214,9 @@ class animated_translation : public transformation{
             if (needsLine){
                 drawLine();
             }
-            vertex_coords ps[4];
+            vec3 ps[4];
             float t = getCurrentPoints(ps);
-            vertex_coords pos = CatmullRom(t, ps, false);
+            vec3 pos = CatmullRom(t, ps, false);
             glTranslatef(pos.x, pos.y, pos.z);
             if (align){
                 float m[16];

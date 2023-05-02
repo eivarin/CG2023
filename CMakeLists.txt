@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.5)
 PROJECT(cg)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+include_directories(${CMAKE_SOURCE_DIR}/shared)
+link_directories(${CMAKE_SOURCE_DIR}/shared)
+
 add_executable(engine engine/main.cpp)
 add_executable(generator generator/main.cpp)
 target_compile_features(engine PUBLIC cxx_std_17)
