@@ -504,7 +504,7 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput)
         }
         linhasPatch += 4;
     }
-    for (int k = 0; k < 32; k++)
+    for (int k = 0; k < tarrayPatches; k++)
     {
         for (int i = 1; i <= 121 - 12; i++)
         {
