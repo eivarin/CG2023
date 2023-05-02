@@ -355,7 +355,7 @@ std::string readLineinFile(std::string const &fileInput, int lineNumber)
 
     return resultado;
 }
-void calculatePointsToTeaPot(std::string const &fileInput, std::string const &fileOutput)
+void draw_patches(std::string const &fileInput,std::string const &fileOutput)
 {
     /************************PARSING DO FICHEIRO DE INPUT INICIADA***********************************************/
     int nPontos = 0;
@@ -561,12 +561,19 @@ int main(int argc, char **argv)
         draw_ring(argv[5], radius, slices, width);
     }
     // input line to give a file with points to draw a teapot: ./generator fileOutput fileInput
+    else if (argc == 5 && std::string("patch").compare(argv[1]) == 0)
+    {
+        std::string fileInput = argv[2];
+        ssize_t tesselation = std::stoul(argv[3]);
+        std::string fileOutput = argv[4];
+        draw_patches(fileInput, fileOutput);
+    }
     else
     {
-
+        //MOTA MAKE PRETTY FAIL PRINT
         std::string fileInput = "../teapot.patch";
         std::string fileOutput = "teapot.3d";
-        calculatePointsToTeaPot(fileInput, fileOutput);
+        draw_patches(fileInput, fileOutput);
     }
     return 0;
 }
