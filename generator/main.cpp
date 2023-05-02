@@ -504,14 +504,25 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput)
         }
         linhasPatch += 4;
     }
+    int nTriangulos = 0;
     for (int k = 0; k < tarrayPatches; k++)
     {
-        for (int i = 1; i <= 121 - 12; i++)
+        for (int l = 1; l <= 11; l++)
         {
-            MyFile << "f " << (i + 1) + k * 121 << "/0/0 " << i + (k * 121) << "/0/0  " << (i + 11) + (k * 121) << "/0/0\n";
-            MyFile << "f " << (i + 1) + k * 121 << "/0/0 " << (i + 11) + k * 121 << "/0/0  " << (i + 12) + k * 121 << "/0/0\n";
+            for(int c = 1 ;c <= 11;c++){
+
+        
+
+                MyFile << "f " << ((c*11+l) + 1) + k * 121 << "/0/0 " << (c*11+l) + (k * 121) << "/0/0  " << ((c*11+l) + 11) + (k * 121) << "/0/0\n";
+                nTriangulos++;
+                MyFile << "f " << ((c*11+l) + 1) + k * 121 << "/0/0 " << ((c*11+l) + 11) + k * 121 << "/0/0  " << ((c*11+l) + 12) + k * 121 << "/0/0\n";
+                nTriangulos++;
+            }
         }
+        std::cout << nTriangulos << "\n";
+        nTriangulos = 0;
     }
+    
     MyFile.close();
 }
 int main(int argc, char **argv)
