@@ -355,7 +355,7 @@ std::string readLineinFile(std::string const &fileInput, int lineNumber)
 
     return resultado;
 }
-void draw_patches(std::string const &fileInput,std::string const &fileOutput)
+void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssize_t tesselation)
 {
     /************************PARSING DO FICHEIRO DE INPUT INICIADA***********************************************/
     int nPontos = 0;
@@ -363,7 +363,6 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput)
     int it = 0;
     int column = 0;
     int line = 0;
-
     int tarrayPatches = stoi(readLineinFile(fileInput, 1));
     int tarrayVertices = stoi(readLineinFile(fileInput, tarrayPatches + 2));
 
@@ -430,7 +429,7 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput)
     /************************PARSING DO FICHEIRO DE INPUT TERMINADA***********************************************/
     // Nivel de seleção é 1 , logo u = 0.1 e v = 0.1
     // Isto é só para um patch
-    std::tuple<float, float, float> pontosFinais[11][11];
+    std::tuple<float, float, float> pontosFinais[tesselation+1][tesselation+1];
     int bezierMatrix[4][4] = {{-1, 3, -3, 1},
                               {3, -6, 3, 0},
                               {-3, 3, 0, 0},
@@ -475,13 +474,13 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput)
             std:: cout << "\n";
         }
         */
-        for (int u = 0; u <= 10; u++)
+        for (int u = 0; u <= tesselation; u++)
         {
-            float uf = float(u) / 10;
+            float uf = float(u) / tesselation;
             float u_vetor[4] = {uf * uf * uf, uf * uf, uf, 1};
-            for (int v = 0; v <= 10; v++)
+            for (int v = 0; v <= tesselation; v++)
             {
-                float vf = float(v) / 10;
+                float vf = float(v) / tesselation;
                 float v_vetor[4] = {vf * vf * vf, vf * vf, vf, 1};
 
                 std::tuple<float, float, float> u_vetorXcalculada[4];
@@ -495,30 +494,27 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput)
             }
         }
 
-        for (int i = 0; i <= 10; i++)
+        for (int i = 0; i <= tesselation; i++)
         {
-            for (int k = 0; k <= 10; k++)
+            for (int k = 0; k <= tesselation; k++)
             {
                 MyFile << "v " << std::to_string(std::get<0>(pontosFinais[i][k])) << " " << std::to_string(std::get<1>(pontosFinais[i][k])) << " " << std::to_string(std::get<2>(pontosFinais[i][k])) << "\n";
             }
         }
         linhasPatch += 4;
     }
-    int nTriangulos = 0;
+
     for (int k = 0; k < tarrayPatches; k++)
     {
-        for (int l = 0; l < 10; l++)
+        for (int l = 0; l < tesselation; l++)
         {
-            for(int c = 1 ;c < 11;c++){
+            for(int c = 1 ;c < tesselation +1 ;c++){
 
-                MyFile << "f " << ((c+l*11) + 1) + k * 121 << "/0/0 " << (c+l*11) + 11 + (k * 121) << "/0/0  " << ((c+l*11)) + (k * 121) << "/0/0\n";
-                nTriangulos++;
-                MyFile << "f " << ((c+l*11) + 1) + k * 121 << "/0/0 " << ((c+l*11) + 12) + k * 121 << "/0/0  " << ((c+l*11) + 11) + k * 121 << "/0/0\n";
-                nTriangulos++;
+                MyFile << "f " << ((c+l*(tesselation+1)) + 1) + k * (tesselation+1)*(tesselation+1) << "/0/0 " << (c+l*(tesselation+1)) + (tesselation+1) + (k * (tesselation+1)*(tesselation+1)) << "/0/0  " << ((c+l*(tesselation+1))) + (k * (tesselation+1)*(tesselation+1)) << "/0/0\n";
+                MyFile << "f " << ((c+l*(tesselation+1)) + 1) + k * (tesselation+1)*(tesselation+1) << "/0/0 " << ((c+l*(tesselation+1)) + (tesselation+2)) + k * (tesselation+1)*(tesselation+1) << "/0/0  " << ((c+l*(tesselation+1)) + (tesselation+1)) + k * (tesselation+1)*(tesselation+1) << "/0/0\n";
+                
             }
         }
-        std::cout << nTriangulos << "\n";
-        nTriangulos = 0;
     }
     
     MyFile.close();
@@ -575,14 +571,15 @@ int main(int argc, char **argv)
         std::string fileInput = argv[2];
         ssize_t tesselation = std::stoul(argv[3]);
         std::string fileOutput = argv[4];
-        draw_patches(fileInput, fileOutput);
+        draw_patches(fileInput, fileOutput,tesselation);
     }
     else
     {
+        ssize_t tesselation = std::stoul(argv[3]);
         //MOTA MAKE PRETTY FAIL PRINT
         std::string fileInput = "../teapot.patch";
         std::string fileOutput = "teapot.3d";
-        draw_patches(fileInput, fileOutput);
+        draw_patches(fileInput, fileOutput,tesselation);
     }
     return 0;
 }
