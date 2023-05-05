@@ -1,13 +1,12 @@
-<!--
-./generator ring 20 100 1 ring_medium.3d &
-./generator ring 10 100 1 ring_thin.3d &
-./generator ring 30 100 1 ring_wide.3d &
-./generator sphere 1 100 100 sphere.3d
--->
+<!-- ./generator ring 20 100 1 ring_medium.3d -->
+<!-- ./generator ring 10 100 1 ring_thin.3d -->
+<!-- ./generator ring 30 100 1 ring_wide.3d -->
+<!-- ./generator sphere 1 100 100 sphere.3d -->
+<!-- ./generator patch ../demo/rubber_duck.patch 30 rubber.3d -->
 <world>
-	<window width="1200" height="1200" />
+	<window width="1200" height="1200" axis="false" />
 	<camera>
-		<position x="555" y="0" z="0" />
+		<position x="0" y="100" z="0" />
 		<lookAt x="0" y="0" z="0" />
 		<up x="0" y="1" z="0" />
 		<projection fov="60" near="1" far="100000" />
@@ -15,7 +14,7 @@
 	<group>
 		<group> <!-- cometa -->
 			<transform>
-				<translate x="-2725" y="-900" z="0" />
+				<translate x="-2725" y="-850" z="0" />
 			</transform>
 			<group>
 				<transform>
@@ -34,16 +33,16 @@
 					<rotate angle="45" x="0" y="0" z="1" />
 				</transform>
 				<models>
-					<model file="rubber.3d" r="1" g="0.5" b="0" />
+					<model file="rubber.3d" r="1" g="0.5" b="0" lines="false" />
 				</models>
 			</group>
 		</group>
 		<group> <!-- Sol-->
 			<transform>
-				<scale x="10" y="10" z="10" />
+				<scale x="40" y="40" z="40" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="1" g="1" b="0" />
+				<model file="sphere.3d" r="1" g="1" b="0" lines="false" />
 			</models>
 		</group>
 		<group> <!-- Terra-->
@@ -62,7 +61,7 @@
 				<rotate angle="23.45" x="0" y="0" z="1" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0" g="0" b="1" />
+				<model file="sphere.3d" r="0" g="0" b="1" lines="false" />
 			</models>
 			<!-- Lua -->
 			<group>
@@ -80,7 +79,7 @@
 					<scale x="0.3" y="0.3" z="0.3" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 		</group>
@@ -100,7 +99,7 @@
 				<scale x="0.333333" y="0.333333" z="0.333333" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.5" g="0.5" b="0.5" />
+				<model file="sphere.3d" r="0.5" g="0.5" b="0.5" lines="false" />
 			</models>
 		</group>
 		<group> <!-- Venus -->
@@ -118,7 +117,7 @@
 				<rotate angle="-2.6" x="1" y="0" z="1" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="1" g="0.5" b="0" />
+				<model file="sphere.3d" r="1" g="0.5" b="0" lines="false" />
 			</models>
 		</group>
 		<group> <!-- Marte -->
@@ -137,7 +136,7 @@
 				<scale x="0.5" y="0.5" z="0.5" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.75" g="0" b="0" />
+				<model file="sphere.3d" r="0.75" g="0" b="0" lines="false" />
 			</models>
 			<!-- Luas -->
 			<group>
@@ -155,7 +154,7 @@
 					<scale x="0.4" y="0.4" z="0.4" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -174,7 +173,7 @@
 					<scale x="0.4" y="0.4" z="0.4" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 		</group>
@@ -194,7 +193,7 @@
 				<scale x="11" y="11" z="11" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="1" g="0.5" b="0" />
+				<model file="sphere.3d" r="1" g="0.5" b="0" lines="false" />
 			</models>
 			<!-- aneis -->
 			<group>
@@ -202,7 +201,7 @@
 					<scale x="0.05" y="0.05" z="0.05" />
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.29" g="0.25" b="0.16" />
+					<model file="ring_thin.3d" r="0.29" g="0.25" b="0.16" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -210,7 +209,7 @@
 					<scale x="0.053" y="0.053" z="0.053" />
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.16" g="0.15" b="0.13" />
+					<model file="ring_thin.3d" r="0.16" g="0.15" b="0.13" lines="false" />
 				</models>
 			</group>
 			<!-- Lua -->
@@ -230,7 +229,7 @@
 					<scale x="0.2" y="0.2" z="0.2" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -249,7 +248,7 @@
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -268,7 +267,7 @@
 					<scale x="0.1" y="0.1" z="0.1" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -287,7 +286,7 @@
 					<scale x="0.18" y="0.18" z="0.18" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="0.25" g="1" b="1" />
+					<model file="sphere.3d" r="0.25" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -306,7 +305,7 @@
 					<scale x="0.18" y="0.18" z="0.18" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="0.75" b="1" />
+					<model file="sphere.3d" r="1" g="0.75" b="1" lines="false" />
 				</models>
 			</group>
 		</group>
@@ -326,7 +325,7 @@
 				<rotate angle="27" x="0.5" y="0" z="0.75" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.75" g="0.5" b="0" />
+				<model file="sphere.3d" r="0.75" g="0.5" b="0" lines="false" />
 			</models>
 			<!-- Aneis -->
 			<group>
@@ -334,7 +333,7 @@
 					<scale x="0.15" y="0.15" z="0.15" /> <!-- este anel terá ~30, vindo de 10*9 -->
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.2" g="0.18" b="0.13" />
+					<model file="ring_wide.3d" r="0.2" g="0.18" b="0.13" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -342,7 +341,7 @@
 					<scale x="0.08" y="0.08" z="0.08" /> <!-- este anel terá ~16, vindo de 20*9 -->
 				</transform>
 				<models>
-					<model file="ring_medium.3d" r="0.71" g="0.64" b="0.45" />
+					<model file="ring_medium.3d" r="0.71" g="0.64" b="0.45" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -350,7 +349,7 @@
 					<scale x="0.06" y="0.06" z="0.06" /> <!-- este anel terá ~17, vindo de 30*9 -->
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.58" g="0.51" b="0.32" />
+					<model file="ring_thin.3d" r="0.58" g="0.51" b="0.32" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -358,7 +357,7 @@
 					<scale x="0.21" y="0.21" z="0.21" /> <!-- este anel terá ~30, vindo de 10*9 -->
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.11" g="0.1" b="0.08" />
+					<model file="ring_wide.3d" r="0.11" g="0.1" b="0.08" lines="false" />
 				</models>
 			</group>
 			<!-- Luas -->
@@ -378,7 +377,7 @@
 					<scale x="0.2" y="0.2" z="0.2" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -397,7 +396,7 @@
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -416,7 +415,7 @@
 					<scale x="0.1" y="0.1" z="0.1" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -435,7 +434,7 @@
 					<scale x="0.18" y="0.18" z="0.18" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="0.25" g="1" b="1" />
+					<model file="sphere.3d" r="0.25" g="1" b="1" lines="false" />
 				</models>
 			</group>
 		</group>
@@ -455,7 +454,7 @@
 				<rotate angle="98" x="0.5" y="0" z="0.5" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0" g="0.1" b="1" />
+				<model file="sphere.3d" r="0" g="0.1" b="1" lines="false" />
 			</models>
 			<!-- anéis -->
 			<group>
@@ -463,7 +462,7 @@
 					<scale x="0.095" y="0.095" z="0.095" />
 				</transform>
 				<models>
-					<model file="ring_medium.3d" r="0.31" g="0.35" b="0.35" />
+					<model file="ring_medium.3d" r="0.31" g="0.35" b="0.35" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -471,7 +470,7 @@
 					<scale x="0.067" y="0.067" z="0.067" />
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.1" g="0.4" b="0.73" />
+					<model file="ring_thin.3d" r="0.1" g="0.4" b="0.73" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -479,7 +478,7 @@
 					<scale x="0.23" y="0.23" z="0.23" />
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.67" g="0.78" b="0.81" />
+					<model file="ring_wide.3d" r="0.67" g="0.78" b="0.81" lines="false" />
 				</models>
 			</group>
 			<!-- Luas -->
@@ -499,7 +498,7 @@
 					<scale x="0.2" y="0.2" z="0.2" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -518,7 +517,7 @@
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 			<group>
@@ -537,7 +536,7 @@
 					<scale x="0.1" y="0.1" z="0.1" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" />
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
 				</models>
 			</group>
 		</group>
@@ -593,44 +592,44 @@
 				</models>
 			</group>
 			<!-- luas -->
-            <group>
-                <transform>
-                    <translate time="20" align="true" segments="10000">
-                        <point x="8" y="0" z="0" />
-                        <point x="4.949747468305833" y="0.0" z="4.949747468305833" />
-                        <point x="0" y="0.0" z="6" />
-                        <point x="-4.949747468305833" y="0.0" z="4.949747468305833" />
-                        <point x="-8" y="0" z="0" />
-                        <point x="-4.949747468305833" y="0.0" z="-4.949747468305833" />
-                        <point x="0" y="0.0" z="-6" />
-                        <point x="4.949747468305833" y="0.0" z="-4.949747468305833" />
-                    </translate>
-                    <rotate angle="60" x="0.5" y="0" z="0" />
-                    <scale x="0.2" y="0.2" z="0.2" />
-                </transform>
-                <models>
-                    <model file="sphere.3d" r="0.5" g="0.5" b="1" />
-                </models>
-            </group>
-            <group>
-                <transform>
-                    <translate time="20" align="true" segments="10000">
-                        <point x="7" y="0" z="0" />
-                        <point x="4.242640687119285" y="0.0" z="4.242640687119285" />
-                        <point x="0" y="0.0" z="5" />
-                        <point x="-4.242640687119285" y="0.0" z="4.242640687119285" />
-                        <point x="-7" y="0" z="0" />
-                        <point x="-4.242640687119285" y="0.0" z="-4.242640687119285" />
-                        <point x="0" y="0.0" z="-5" />
-                        <point x="4.242640687119285" y="0.0" z="-4.242640687119285" />
-                    </translate>
-                    <scale x="0.05" y="0.05" z="0.05" />
-                    <rotate angle="45" x="0.5" y="0.5" z="0" />
-                </transform>
-                <models>
-                    <model file="sphere.3d" r="1" g="1" b="1" />
-                </models>
-            </group>
+			<group>
+				<transform>
+					<translate time="20" align="true" segments="10000">
+						<point x="8" y="0" z="0" />
+						<point x="4.949747468305833" y="0.0" z="4.949747468305833" />
+						<point x="0" y="0.0" z="6" />
+						<point x="-4.949747468305833" y="0.0" z="4.949747468305833" />
+						<point x="-8" y="0" z="0" />
+						<point x="-4.949747468305833" y="0.0" z="-4.949747468305833" />
+						<point x="0" y="0.0" z="-6" />
+						<point x="4.949747468305833" y="0.0" z="-4.949747468305833" />
+					</translate>
+					<rotate angle="60" x="0.5" y="0" z="0" />
+					<scale x="0.2" y="0.2" z="0.2" />
+				</transform>
+				<models>
+					<model file="sphere.3d" r="0.5" g="0.5" b="1" lines="false" />
+				</models>
+			</group>
+			<group>
+				<transform>
+					<translate time="20" align="true" segments="10000">
+						<point x="7" y="0" z="0" />
+						<point x="4.242640687119285" y="0.0" z="4.242640687119285" />
+						<point x="0" y="0.0" z="5" />
+						<point x="-4.242640687119285" y="0.0" z="4.242640687119285" />
+						<point x="-7" y="0" z="0" />
+						<point x="-4.242640687119285" y="0.0" z="-4.242640687119285" />
+						<point x="0" y="0.0" z="-5" />
+						<point x="4.242640687119285" y="0.0" z="-4.242640687119285" />
+					</translate>
+					<scale x="0.05" y="0.05" z="0.05" />
+					<rotate angle="45" x="0.5" y="0.5" z="0" />
+				</transform>
+				<models>
+					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+				</models>
+			</group>
 		</group>
 	</group>
 </world>
