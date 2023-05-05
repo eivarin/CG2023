@@ -526,7 +526,7 @@ int main(int argc, char **argv)
     // input line to draw a plane:  ./generator plane length divisions
     // NameOfFileToOutput
     if (argc == 5 && s1.compare(argv[1]) == 0)
-    {
+    {   
         std::size_t length = std::stoul(argv[2]);
         std::size_t divisions = std::stoul(argv[3]);
         drawPlane(argv[4], length, divisions);
