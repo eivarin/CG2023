@@ -140,6 +140,8 @@ int main(int argc, char **argv) {
 	glutCreateWindow("CG@DI-UM");
 	glewInit();
 	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	cena.main_group.prepGroup();
 	for (auto at : animated_translation::at_vector) at->prepLine();
