@@ -290,52 +290,21 @@ std::vector<std::string> split(const std::string &s, char delim)
 
     return result;
 }
-std::tuple<float, float, float> calcPoint(std::tuple<float, float, float> p, int x)
+
+vec3 multMathVec(float c[4], vec3 matrixPontos[4])
 {
-    return std::tuple<float, float, float>((std::get<0>(p)) * x, (std::get<1>(p)) * x, (std::get<2>(p)) * x);
-}
-std::tuple<float, float, float> calcPointFloat(std::tuple<float, float, float> p, float x)
-{
-    return std::tuple<float, float, float>((std::get<0>(p)) * x, (std::get<1>(p)) * x, (std::get<2>(p)) * x);
-}
-std::tuple<float, float, float> calculaPointMatrixFinal(int c[4], std::tuple<float, float, float> matrixPontos[4])
-{
-    std::tuple<float, float, float> pontosInt[4];
-    std::tuple<float, float, float> res;
+    vec3 pontosInt[4], res;
     for (int i = 0; i < 4; i++)
     {
-        res = calcPoint(matrixPontos[i], c[i]);
+        res = matrixPontos[i];
+        res.multByFloat(c[i]);
         pontosInt[i] = res;
     }
-    std::tuple<float, float, float> final = std::tuple<float, float, float>(0.0, 0.0, 0.0);
-
-    for (int k = 0; k < 4; k++)
-    {
-        (std::get<0>(final)) += (std::get<0>(pontosInt[k]));
-        (std::get<1>(final)) += (std::get<1>(pontosInt[k]));
-        (std::get<2>(final)) += (std::get<2>(pontosInt[k]));
-    }
+    vec3 final = vec3(0.0, 0.0, 0.0);
+    for (int k = 0; k < 4; final.addVec3(pontosInt[k++]));
     return final;
 }
-std::tuple<float, float, float> calculaPointMatrixFinalFloat(float c[4], std::tuple<float, float, float> matrixPontos[4])
-{
-    std::tuple<float, float, float> pontosInt[4];
-    std::tuple<float, float, float> res;
-    for (int i = 0; i < 4; i++)
-    {
-        res = calcPointFloat(matrixPontos[i], c[i]);
-        pontosInt[i] = res;
-    }
-    std::tuple<float, float, float> final = std::tuple<float, float, float>(0.0, 0.0, 0.0);
 
-    for (int k = 0; k < 4; k++)
-    {
-        (std::get<0>(final)) += (std::get<0>(pontosInt[k]));
-        (std::get<1>(final)) += (std::get<1>(pontosInt[k]));
-        (std::get<2>(final)) += (std::get<2>(pontosInt[k]));
-    }
-    return final;
-}
 std::string readLineinFile(std::string const &fileInput, int lineNumber)
 {
     std::string resultado;
@@ -355,7 +324,7 @@ std::string readLineinFile(std::string const &fileInput, int lineNumber)
 
     return resultado;
 }
-void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssize_t tesselation)
+void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssize_t tess)
 {
     /************************PARSING DO FICHEIRO DE INPUT INICIADA***********************************************/
     int nPontos = 0;
@@ -366,7 +335,7 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssi
     int tarrayPatches = stoi(readLineinFile(fileInput, 1));
     int tarrayVertices = stoi(readLineinFile(fileInput, tarrayPatches + 2));
 
-    std::tuple<float, float, float> arrayVertices[tarrayVertices];
+    vec3 arrayVertices[tarrayVertices];
     int arrayPatches[tarrayPatches * 4][4];
 
     std::string myText;
@@ -402,7 +371,7 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssi
         else if (it > lineNumber + 1)
         {
             std::vector<std::string> res = split(myText, ',');
-            arrayVertices[nPontos] = std::tuple<float, float, float>(stof(res[0]), stof(res[1]), stof(res[2]));
+            arrayVertices[nPontos] = vec3(stof(res[0]), stof(res[1]), stof(res[2]));
             nPontos++;
             it++;
         }
@@ -411,113 +380,94 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssi
             it++;
         }
     }
-    /*
-    for (int i = 0 ;i <128;i++){
-        for (int k = 0; k < 4;k++){
-            std:: cout << arrayPatches[i][k] << " ";
-        }
-        std::cout << "\n";
-    }
-    */
-    /*
-    for (int i = 0 ; i< 290;i++){
-        std::cout << get<0>(arrayVertices[i])<<" "<< get<1>(arrayVertices[i])<<" "<< get<2>(arrayVertices[i])<<"\n";
-    }
-    */
     MyReadFile.close();
 
     /************************PARSING DO FICHEIRO DE INPUT TERMINADA***********************************************/
     // Nivel de seleção é 1 , logo u = 0.1 e v = 0.1
     // Isto é só para um patch
-    std::tuple<float, float, float> pontosFinais[tesselation+1][tesselation+1];
-    int bezierMatrix[4][4] = {{-1, 3, -3, 1},
+    vec3 pontosFinais[tess+1][tess+1];
+    float bezierMatrix[4][4] = {{-1, 3, -3, 1},
                               {3, -6, 3, 0},
                               {-3, 3, 0, 0},
                               {1, 0, 0, 0}};
     int linhasPatch = 0;
-    std::ofstream MyFile(fileOutput);
+    model m;
     while (linhasPatch != tarrayPatches * 4)
     {
-        std::tuple<float, float, float> pontosPatch[4][4] = {{arrayVertices[arrayPatches[linhasPatch][0]], arrayVertices[arrayPatches[linhasPatch + 1][0]], arrayVertices[arrayPatches[linhasPatch + 2][0]], arrayVertices[arrayPatches[linhasPatch + 3][0]]},
-                                                             {arrayVertices[arrayPatches[linhasPatch][1]], arrayVertices[arrayPatches[linhasPatch + 1][1]], arrayVertices[arrayPatches[linhasPatch + 2][1]], arrayVertices[arrayPatches[linhasPatch + 3][1]]},
-                                                             {arrayVertices[arrayPatches[linhasPatch][2]], arrayVertices[arrayPatches[linhasPatch + 1][2]], arrayVertices[arrayPatches[linhasPatch + 2][2]], arrayVertices[arrayPatches[linhasPatch + 3][2]]},
-                                                             {arrayVertices[arrayPatches[linhasPatch][3]], arrayVertices[arrayPatches[linhasPatch + 1][3]], arrayVertices[arrayPatches[linhasPatch + 2][3]], arrayVertices[arrayPatches[linhasPatch + 3][3]]}};
-        std::tuple<float, float, float> bezierMatrixXPontosPatch[4][4];
+        vec3 pontosPatch[4][4] = {{arrayVertices[arrayPatches[linhasPatch][0]], arrayVertices[arrayPatches[linhasPatch + 1][0]], arrayVertices[arrayPatches[linhasPatch + 2][0]], arrayVertices[arrayPatches[linhasPatch + 3][0]]},
+                                  {arrayVertices[arrayPatches[linhasPatch][1]], arrayVertices[arrayPatches[linhasPatch + 1][1]], arrayVertices[arrayPatches[linhasPatch + 2][1]], arrayVertices[arrayPatches[linhasPatch + 3][1]]},
+                                  {arrayVertices[arrayPatches[linhasPatch][2]], arrayVertices[arrayPatches[linhasPatch + 1][2]], arrayVertices[arrayPatches[linhasPatch + 2][2]], arrayVertices[arrayPatches[linhasPatch + 3][2]]},
+                                  {arrayVertices[arrayPatches[linhasPatch][3]], arrayVertices[arrayPatches[linhasPatch + 1][3]], arrayVertices[arrayPatches[linhasPatch + 2][3]], arrayVertices[arrayPatches[linhasPatch + 3][3]]}};
+        vec3 matrix_MP[4][4];
         for (auto i = 0; i < 4; i++)
         {
             for (auto j = 0; j < 4; j++)
             {
-                bezierMatrixXPontosPatch[i][j] = calculaPointMatrixFinal(bezierMatrix[i], pontosPatch[j]);
+                matrix_MP[i][j] = multMathVec(bezierMatrix[i], pontosPatch[j]);
             }
         }
-        std::tuple<float, float, float> bezierMatrixXPontosPatchXbezierMatrix[4][4];
+        vec3 matrix_MPM[4][4];
         for (auto i = 0; i < 4; i++)
         {
             for (auto j = 0; j < 4; j++)
             {
-                bezierMatrixXPontosPatchXbezierMatrix[i][j] = calculaPointMatrixFinal(bezierMatrix[j], bezierMatrixXPontosPatch[i]);
+                matrix_MPM[i][j] = multMathVec(bezierMatrix[j], matrix_MP[i]);
             }
         }
-        std::tuple<float, float, float> bezierMatrixXPontosPatchXbezierMatrixTrans[4][4];
+        vec3 matrix_MPM_trans[4][4];
         for (auto i = 0; i < 4; i++)
         {
             for (auto j = 0; j < 4; j++)
             {
-                bezierMatrixXPontosPatchXbezierMatrixTrans[i][j] = bezierMatrixXPontosPatchXbezierMatrix[j][i];
+                matrix_MPM_trans[i][j] = matrix_MPM[j][i];
             }
         }
-        /*
-        for (auto i = 0;i<4;i++){
-            for (auto j = 0;j<4;j++){
-                    std:: cout << std::to_string(std::get<0>(bezierMatrixXPontosPatchXbezierMatrixTrans[i][j])) << " " << std::to_string(std::get<1>(bezierMatrixXPontosPatchXbezierMatrixTrans[i][j])) << " " << std::to_string(std::get<2>(bezierMatrixXPontosPatchXbezierMatrixTrans[i][j])) << "|";
-            }
-            std:: cout << "\n";
-        }
-        */
-        for (int u = 0; u <= tesselation; u++)
+
+        for (int u = 0; u <= tess; u++)
         {
-            float uf = float(u) / tesselation;
+            float uf = float(u) / tess;
             float u_vetor[4] = {uf * uf * uf, uf * uf, uf, 1};
-            for (int v = 0; v <= tesselation; v++)
+            for (int v = 0; v <= tess; v++)
             {
-                float vf = float(v) / tesselation;
+                float vf = float(v) / tess;
                 float v_vetor[4] = {vf * vf * vf, vf * vf, vf, 1};
 
-                std::tuple<float, float, float> u_vetorXcalculada[4];
+                vec3 u_vetorXcalculada[4], puv;
                 for (auto i = 0; i < 4; i++)
                 {
-                    u_vetorXcalculada[i] = calculaPointMatrixFinalFloat(u_vetor, bezierMatrixXPontosPatchXbezierMatrixTrans[i]);
+                    u_vetorXcalculada[i] = multMathVec(u_vetor, matrix_MPM_trans[i]);
                 }
-                std::tuple<float, float, float> puv;
-                puv = calculaPointMatrixFinalFloat(v_vetor, u_vetorXcalculada);
+                puv = multMathVec(v_vetor, u_vetorXcalculada);
                 pontosFinais[u][v] = puv;
             }
         }
+        
+        for (int i = 0; i <= tess; i++)
+            for (int k = 0; k <= tess; m.pushCoords(pontosFinais[i][k++]));
 
-        for (int i = 0; i <= tesselation; i++)
-        {
-            for (int k = 0; k <= tesselation; k++)
-            {
-                MyFile << "v " << std::to_string(std::get<0>(pontosFinais[i][k])) << " " << std::to_string(std::get<1>(pontosFinais[i][k])) << " " << std::to_string(std::get<2>(pontosFinais[i][k])) << "\n";
-            }
-        }
         linhasPatch += 4;
     }
 
     for (int k = 0; k < tarrayPatches; k++)
     {
-        for (int l = 0; l < tesselation; l++)
+        for (int l = 0; l < tess; l++)
         {
-            for(int c = 1 ;c < tesselation +1 ;c++){
-
-                MyFile << "f " << ((c+l*(tesselation+1)) + 1) + k * (tesselation+1)*(tesselation+1) << "/0/0 " << (c+l*(tesselation+1)) + (tesselation+1) + (k * (tesselation+1)*(tesselation+1)) << "/0/0  " << ((c+l*(tesselation+1))) + (k * (tesselation+1)*(tesselation+1)) << "/0/0\n";
-                MyFile << "f " << ((c+l*(tesselation+1)) + 1) + k * (tesselation+1)*(tesselation+1) << "/0/0 " << ((c+l*(tesselation+1)) + (tesselation+2)) + k * (tesselation+1)*(tesselation+1) << "/0/0  " << ((c+l*(tesselation+1)) + (tesselation+1)) + k * (tesselation+1)*(tesselation+1) << "/0/0\n";
-                
+            for(int c = 1 ;c < tess +1 ;c++){
+                m.pushFace(face(
+                    vertex_ref(((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),0,0),
+                    vertex_ref((c+l*(tess+1)) + (tess+1) + (k * (tess+1)*(tess+1)),0,0),
+                    vertex_ref(((c+l*(tess+1))) + (k * (tess+1)*(tess+1)),0,0)
+                ));
+                m.pushFace(face(
+                    vertex_ref(((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),0,0),
+                    vertex_ref(((c+l*(tess+1)) + (tess+2)) + k * (tess+1)*(tess+1),0,0),
+                    vertex_ref(((c+l*(tess+1)) + (tess+1)) + k * (tess+1)*(tess+1),0,0)
+                ));
             }
         }
     }
     
-    MyFile.close();
+    m.write(fileOutput);
 }
 int main(int argc, char **argv)
 {

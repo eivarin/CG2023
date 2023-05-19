@@ -12,6 +12,16 @@ struct vec3 {
     vec3(){
 
     }
+    void addVec3(vec3 w){
+        x += w.x;
+        y += w.y;
+        z += w.z;
+    }
+    void multByFloat(float w){
+        x *= w;
+        y *= w;
+        z *= w;
+    }
     void normalize(){
         float vLen = sqrtf64(x*x+y*y+z*z);
         x = x / vLen;
