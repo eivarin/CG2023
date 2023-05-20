@@ -13,17 +13,29 @@
 #include "wavefront.hpp"
 #include "camera.hpp"
 #include "group.hpp"
+#include "light.hpp"
+#include "shared.hpp"
+
+GLenum ls[8] = { GL_LIGHT0, GL_LIGHT1, GL_LIGHT2, GL_LIGHT3, GL_LIGHT4, GL_LIGHT5, GL_LIGHT6, GL_LIGHT7};
+
 struct scene {
 	camera cam;
 	group main_group;
-	int wHeight;
-	int wWidth;
-	bool drawAxis;
-	bool normal_keys[256];
-	bool special_keys[1024];
-	bool coordsMenu = false;
-	int timebase;
-	int frames;
+	std::vector<light> lights;
+	int wHeight, wWidth, timebase, frames;
+	bool needsAxis, normal_keys[256], special_keys[1024], coordsMenu = false;
+	void prep(){
+		for (auto& l: lights) l.prep();
+		main_group.prepGroup();
+	}
+	void draw(){
+		cam.placeGlut();
+		for (auto& l: lights) l.apply();
+		if (needsAxis) drawAxis(1000000);
+		glPolygonMode(GL_FRONT, GL_FILL);
+		main_group.drawGroup();
+		if (coordsMenu) cam.drawCoords(wWidth,wHeight);
+	}
 };
 
 bool check_draw_axis(rapidxml::xml_node<> *window){
@@ -54,8 +66,11 @@ scene loadScene(std::string const& fname){
 		.main_group = group(group_node),
 		.wHeight = std::stoi(window->first_attribute("height")->value()),
 		.wWidth = std::stoi(window->first_attribute("width")->value()),
-		.drawAxis = check_draw_axis(window)
+		.needsAxis = check_draw_axis(window)
 	};
+	rapidxml::xml_node<> *lights_node = world->first_node("lights");
+	rapidxml::xml_node<> *n = lights_node->first_node();
+	if (n) for (size_t i = 0; i < 8 && n; n = n->next_sibling()) s.lights.push_back(light(n, ls[i++]));
 	return s;
 }
 

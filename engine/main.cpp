@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <GL/glxew.h>
 #include <GL/glut.h>
+#include <IL/il.h>
+
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -44,21 +46,6 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void drawAxis(){
-	glBegin(GL_LINES);
-	float size = 100000.0f;
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(-size, 0.0f, 0.0f);
-	glVertex3f( size, 0.0f, 0.0f);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.0f,-size, 0.0f);
-	glVertex3f(0.0f, size, 0.0f);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f,-size);
-	glVertex3f(0.0f, 0.0f, size);
-	glEnd();
-}
-
 void calcFrames(){
 	float fps;
 	int time;
@@ -79,14 +66,8 @@ void renderScene(void) {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	calcFrames();
-	// set the camera
 	glLoadIdentity();
-	cena.cam.placeGlut();
-	if (cena.drawAxis) drawAxis();
-	glPolygonMode(GL_FRONT, GL_LINE);
-	glColor3f(1.0f,1.0f,1.0f);
-	cena.main_group.drawGroup();
-	if (cena.coordsMenu) cena.cam.drawCoords(cena.wWidth,cena.wHeight);
+	cena.draw();
 	glFinish();
 	glutSwapBuffers();
 }
@@ -138,12 +119,23 @@ int main(int argc, char **argv) {
 	glutInitWindowSize(cena.wWidth, cena.wHeight);
 	cena.timebase = glutGet(GLUT_ELAPSED_TIME);
 	glutCreateWindow("CG@DI-UM");
+	ilInit();
 	glewInit();
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_RESCALE_NORMAL);
+	glEnable(GL_TEXTURE_2D);
+
+
+	// controls global ambient light
+	float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	cena.main_group.prepGroup();
+	cena.prep();
 	for (auto at : animated_translation::at_vector) at->prepLine();
 	// Required callback registry
 	glutDisplayFunc(renderScene);

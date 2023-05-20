@@ -1,0 +1,24 @@
+<world>
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="3" y="2" z="3" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="60" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<lights> 
+		<light type="directional" dirx="1" diry="0.7" dirz="0.5"/>
+	</lights>
+    <group> 
+        <transform>
+			<rotate time="15" x="0" y="1" z="0" />
+		    <translate x="3" y="0" z="0" />
+			<rotate angle="-30" x="0" y="1" z="0" />
+        </transform>
+		<models>
+			<model file="car.3d">
+				<texture file="formula1.png"/>
+			</model>
+		</models>
+	</group>
+</world>

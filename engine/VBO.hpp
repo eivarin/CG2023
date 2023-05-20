@@ -12,6 +12,7 @@ class VBO
 private:
     std::vector<vec3> cs, ns, ts;
     std::vector<face> fs;
+    GLenum mode;
     unsigned int vertices, normals, texCoords;
     bool hasNormals, hasTexCoords;
     int count;
@@ -60,6 +61,7 @@ private:
 public:
     VBO(std::string const& fileName){
         loadModel(fileName);
+        mode = GL_TRIANGLES;
     }
     void prep(){
         std::vector<float> cList, tList, nList;
@@ -80,7 +82,7 @@ public:
         }
     }
 
-    void draw(GLenum mode){
+    void draw(){
         glBindBuffer(GL_ARRAY_BUFFER,vertices);
         glVertexPointer(3,GL_FLOAT,0,0);
         if (hasNormals){
