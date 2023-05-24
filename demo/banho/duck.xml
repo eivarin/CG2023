@@ -1,0 +1,37 @@
+<world>
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="3" y="2" z="3" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="45" near="1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<lights> 
+		<light type="directional" dirx="1" diry="0.7" dirz="0.5"/>
+	</lights>
+    <group> 
+		<transform> 
+			<scale x="0.1" y="0.1" z="0.1" />
+		</transform>
+		<models>
+			<model file="duck_corpo.3d"> <!-- generator patch ../demo/banho/duck_corpo.patch 30 duck_corpo.3d -->
+				<color>
+					<ambient R="0" G="0" B="0" />
+					<diffuse R="127.5" G="127.5" B="0" />
+					<specular R="153" G="153" B="127.5" />
+					<emissive R="0" G="0" B="0" />
+					<shininess value="32" />
+				</color>
+			</model>
+			<model file="duck_bico.3d">  <!-- generator patch ../demo/banho/duck_bico.patch 30 duck_bico.3d -->
+				<color>
+					<ambient R="0" G="0" B="0" />
+					<diffuse R="127.5" G="0" B="0" />
+					<specular R="178.5" G="153" B="153" />
+					<emissive R="0" G="0" B="0" />
+					<shininess value="32" />
+				</color>
+			</model>
+		</models>
+	</group>
+</world>

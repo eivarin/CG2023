@@ -8,6 +8,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <sstream>
 #include <string>
 #include "./rapid_xml/rapidxml.hpp"
 #include "wavefront.hpp"
@@ -49,15 +50,14 @@ bool check_draw_axis(rapidxml::xml_node<> *window){
 }
 
 scene loadScene(std::string const& fname){
-	std::ifstream file(fname, std::ios::binary | std::ios::ate);
-	std::streamsize size = file.tellg();
-	file.seekg(0, std::ios::beg);
-	std::vector<char> buffer(size);
-	file.read(buffer.data(), size);
-	
 	rapidxml::xml_document<> doc;
-	doc.parse<0>(reinterpret_cast<char*>(buffer.data()));
-	rapidxml::xml_node<> *world = doc.first_node("world");
+	std::ifstream file(fname);
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	file.close();
+	std::string content(buffer.str());
+	doc.parse<0>(&content[0]);
+	auto world = doc.first_node("world");
 	rapidxml::xml_node<> *window = world->first_node("window");
 	rapidxml::xml_node<> *camera_node = world->first_node("camera");
 	rapidxml::xml_node<> *group_node = world->first_node("group");

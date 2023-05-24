@@ -30,13 +30,14 @@ void drawPlane(std::string const &file, std::size_t length, std::size_t division
     14 10 6  2
     13 9  5  1
     */
+    m.pushNormal(vec3(0,1,0));
     for (auto i = 0; i < divisions; ++i)
     {
         for (auto j = 1; j <= divisions; ++j)
         {
             auto index = (divisions + 1) * i + j;
-            m.pushFace(face(vertex_ref(index,0,0), vertex_ref(index + 1, 0, 0), vertex_ref(index + divisions + 1, 0, 0)));
-            m.pushFace(face(vertex_ref(index + 1, 0, 0), vertex_ref(index + divisions + 2, 0, 0), vertex_ref(index + divisions + 1, 0, 0)));
+            m.pushFace(face(vertex_ref(index,1,0), vertex_ref(index + 1, 1, 0), vertex_ref(index + divisions + 1, 1, 0)));
+            m.pushFace(face(vertex_ref(index + 1, 1, 0), vertex_ref(index + divisions + 2, 1, 0), vertex_ref(index + divisions + 1, 1, 0)));
         }
     }
     m.write(file);
@@ -385,7 +386,7 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssi
     /************************PARSING DO FICHEIRO DE INPUT TERMINADA***********************************************/
     // Nivel de seleção é 1 , logo u = 0.1 e v = 0.1
     // Isto é só para um patch
-    vec3 pontosFinais[tess+1][tess+1];
+    vec3 pontosFinais[tess+1][tess+1], normaisFinais[tess+1][tess+1];
     float bezierMatrix[4][4] = {{-1, 3, -3, 1},
                               {3, -6, 3, 0},
                               {-3, 3, 0, 0},
@@ -427,23 +428,32 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssi
         {
             float uf = float(u) / tess;
             float u_vetor[4] = {uf * uf * uf, uf * uf, uf, 1};
+            float u_vetor_deriv[4] = {uf * uf * 3, uf * 2, 1, 0};
             for (int v = 0; v <= tess; v++)
             {
                 float vf = float(v) / tess;
                 float v_vetor[4] = {vf * vf * vf, vf * vf, vf, 1};
+                float v_vetor_deriv[4] = {vf * vf * 3, vf * 2, 1, 0};
 
                 vec3 u_vetorXcalculada[4], puv;
+                vec3 u_vetorXcalculada_uderiv[4], puv_uderiv, puv_vderiv;
                 for (auto i = 0; i < 4; i++)
                 {
                     u_vetorXcalculada[i] = multMathVec(u_vetor, matrix_MPM_trans[i]);
+                    u_vetorXcalculada_uderiv[i] = multMathVec(u_vetor_deriv, matrix_MPM_trans[i]);
                 }
                 puv = multMathVec(v_vetor, u_vetorXcalculada);
                 pontosFinais[u][v] = puv;
+                puv_uderiv = multMathVec(v_vetor, u_vetorXcalculada_uderiv);
+                puv_vderiv = multMathVec(v_vetor_deriv, u_vetorXcalculada);
+                vec3 normal = puv_vderiv.get_cross_product(puv_uderiv);
+                normal.normalize();
+                normaisFinais[u][v] = normal;
             }
         }
         
         for (int i = 0; i <= tess; i++)
-            for (int k = 0; k <= tess; m.pushCoords(pontosFinais[i][k++]));
+            for (int k = 0; k <= tess; m.pushCoords(pontosFinais[i][k++])) m.pushNormal(normaisFinais[i][k]);
 
         linhasPatch += 4;
     }
@@ -454,14 +464,14 @@ void draw_patches(std::string const &fileInput,std::string const &fileOutput,ssi
         {
             for(int c = 1 ;c < tess +1 ;c++){
                 m.pushFace(face(
-                    vertex_ref(((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),0,0),
-                    vertex_ref((c+l*(tess+1)) + (tess+1) + (k * (tess+1)*(tess+1)),0,0),
-                    vertex_ref(((c+l*(tess+1))) + (k * (tess+1)*(tess+1)),0,0)
+                    vertex_ref(((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),0),
+                    vertex_ref((c+l*(tess+1)) + (tess+1) + (k * (tess+1)*(tess+1)),(c+l*(tess+1)) + (tess+1) + (k * (tess+1)*(tess+1)),0),
+                    vertex_ref(((c+l*(tess+1))) + (k * (tess+1)*(tess+1)),((c+l*(tess+1))) + (k * (tess+1)*(tess+1)),0)
                 ));
                 m.pushFace(face(
-                    vertex_ref(((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),0,0),
-                    vertex_ref(((c+l*(tess+1)) + (tess+2)) + k * (tess+1)*(tess+1),0,0),
-                    vertex_ref(((c+l*(tess+1)) + (tess+1)) + k * (tess+1)*(tess+1),0,0)
+                    vertex_ref(((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),((c+l*(tess+1)) + 1) + k * (tess+1)*(tess+1),0),
+                    vertex_ref(((c+l*(tess+1)) + (tess+2)) + k * (tess+1)*(tess+1),((c+l*(tess+1)) + (tess+2)) + k * (tess+1)*(tess+1),0),
+                    vertex_ref(((c+l*(tess+1)) + (tess+1)) + k * (tess+1)*(tess+1), ((c+l*(tess+1)) + (tess+1)) + k * (tess+1)*(tess+1),0)
                 ));
             }
         }

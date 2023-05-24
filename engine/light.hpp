@@ -34,6 +34,7 @@ public:
             dir.x = std::stof(node->first_attribute("dirx")->value());
             dir.y = std::stof(node->first_attribute("diry")->value());
             dir.z = std::stof(node->first_attribute("dirz")->value());
+            dir.normalize();
         }
         if (hasDir && hasPos) cutOff = std::stof(node->first_attribute("cutoff")->value());
     };

@@ -17,7 +17,7 @@
 
 class model {
     private:
-        bool lines, axis, hasTexture, hasMaterial;
+        bool lines, axis, hasTexture = false, hasMaterial = false;
         float axis_size;
         VBO m;
         texture t;
@@ -44,13 +44,13 @@ class model {
             lines = check_lines(node);
             axis = check_draw_axis(node);
             auto tex_node = node->first_node("texture");
-            if (tex_node)
+            if (tex_node != 0)
             {
                 t = texture(tex_node->first_attribute("file")->value());
                 hasTexture = true;
             }
             auto mat_node = node->first_node("color");
-            if (mat_node)
+            if (mat_node!=0)
             {
                 mat = material(mat_node);
                 hasMaterial = true;
