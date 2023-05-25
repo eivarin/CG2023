@@ -146,6 +146,27 @@ void glDebugOutput(GLenum source, GLenum type, unsigned int id, GLenum severity,
     std::cout << std::endl;
 };
 
+void enableMultisample(int msaa)
+{
+    if (msaa)
+    {
+        glEnable(GL_MULTISAMPLE);
+        glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+
+        // detect current settings
+        GLint iMultiSample = 0;
+        GLint iNumSamples = 0;
+        glGetIntegerv(GL_SAMPLE_BUFFERS, &iMultiSample);
+        glGetIntegerv(GL_SAMPLES, &iNumSamples);
+        printf("MSAA on, GL_SAMPLE_BUFFERS = %d, GL_SAMPLES = %d\n", iMultiSample, iNumSamples);
+    }
+    else
+    {
+        glDisable(GL_MULTISAMPLE);
+        printf("MSAA off\n");
+    }   
+}
+
 int main(int argc, char **argv) {
 	// init GLUT and the window
 	std::string fname;
@@ -155,7 +176,9 @@ int main(int argc, char **argv) {
 	animated_translation::at_vector = std::vector<animated_translation*>();
 	cena = loadScene(fname);
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutSetOption(GLUT_MULTISAMPLE, 8);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA| GLUT_MULTISAMPLE);
+	enableMultisample(8);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(cena.wWidth, cena.wHeight);
 	cena.timebase = glutGet(GLUT_ELAPSED_TIME);
@@ -201,13 +224,13 @@ int main(int argc, char **argv) {
     }
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);\
+
 
 	glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
     glDebugMessageCallback(glDebugOutput, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-
 	// enter GLUT's main cycle
 	glutMainLoop();
 
