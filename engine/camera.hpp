@@ -84,6 +84,11 @@ class camera{
             reverseCalc();
             this->recalcDirection();
         }
+        void resetCamera(){
+            look_at = vec3(0,0,0);
+            reverseCalc();
+            this->recalcDirection();
+        }
         void setPerspective(){
             glLoadIdentity();
             gluPerspective(fov, ratio, near, far);
@@ -142,6 +147,9 @@ class camera{
             }
             if(normal_keys['n']){
                 stepDimension -= (stepDimension > 0.01f) ? 0.01f: 0;
+            }
+            if(normal_keys['r']){
+                resetCamera();
             }
             if(normal_keys['Q']){
                 glutLeaveMainLoop();
