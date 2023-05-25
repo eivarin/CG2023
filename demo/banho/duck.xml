@@ -15,22 +15,10 @@
 		</transform>
 		<models>
 			<model file="duck_corpo.3d"> <!-- generator patch ../demo/banho/duck_corpo.patch 30 duck_corpo.3d -->
-				<color>
-					<ambient R="0" G="0" B="0" />
-					<diffuse R="127.5" G="127.5" B="0" />
-					<specular R="153" G="153" B="127.5" />
-					<emissive R="0" G="0" B="0" />
-					<shininess value="32" />
-				</color>
+				<texture file="../demo/banho/yellow.png"/>
 			</model>
 			<model file="duck_bico.3d">  <!-- generator patch ../demo/banho/duck_bico.patch 30 duck_bico.3d -->
-				<color>
-					<ambient R="0" G="0" B="0" />
-					<diffuse R="127.5" G="0" B="0" />
-					<specular R="178.5" G="153" B="153" />
-					<emissive R="0" G="0" B="0" />
-					<shininess value="32" />
-				</color>
+				<texture file="../demo/banho/orange.png"/>
 			</model>
 		</models>
 	</group>
