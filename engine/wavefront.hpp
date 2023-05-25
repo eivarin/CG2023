@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include <vector>
 #include <string>
+#include <map>
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -15,12 +16,16 @@
 #include "material.hpp"
 #include "shared.hpp"
 
+std::map<std::string, int> vbo_map;
+std::vector<VBO> vbo_array;
+std::map<std::string, int> texture_map;
+std::vector<texture> texture_array;
+
 class model {
     private:
         bool lines, axis, hasTexture = false, hasMaterial = false;
         float axis_size;
-        VBO m;
-        texture t;
+        int vbo_id, texture_id;
         material mat;
         
         bool check_draw_axis(rapidxml::xml_node<> *model){
@@ -40,13 +45,32 @@ class model {
             return r;
         }
     public:
-        model(rapidxml::xml_node<> *node) : m(node->first_attribute("file")->value()){
+        model(rapidxml::xml_node<> *node){
+            std::string fname = node->first_attribute("file")->value();
+            if(vbo_map.count(fname) > 0){
+                vbo_id = vbo_map[fname];
+            }
+            else{
+                auto v = VBO(node->first_attribute("file")->value());
+                vbo_id = vbo_array.size();
+                vbo_map[fname] = vbo_id;
+                vbo_array.push_back(v);
+            }
             lines = check_lines(node);
             axis = check_draw_axis(node);
             auto tex_node = node->first_node("texture");
             if (tex_node != 0)
             {
-                t = texture(tex_node->first_attribute("file")->value());
+                fname = tex_node->first_attribute("file")->value();
+                if(texture_map.count(fname) > 0){
+                    texture_id = texture_map[fname];
+                }
+                else{
+                    auto t = texture(tex_node->first_attribute("file")->value());
+                    texture_id = texture_array.size();
+                    texture_map[fname] = texture_id;
+                    texture_array.push_back(t);
+                }
                 hasTexture = true;
             }
             auto mat_node = node->first_node("color");
@@ -58,15 +82,16 @@ class model {
         }
 
         void prepModel(){
-            m.prep();
-            if (hasTexture) t.prep();
+            vbo_array[vbo_id].prep();
+            if (hasTexture) texture_array[texture_id].prep();
         }
         void drawModel(){
             glPushAttrib(GL_LIGHTING_BIT);
             if (axis) drawAxis(axis_size);
-            if (hasTexture) t.apply();
+            mat.apply();
+            if (hasTexture) texture_array[texture_id].apply();
             else if (hasMaterial) mat.apply();
-            m.draw();
+            vbo_array[vbo_id].draw();
             glBindTexture(GL_TEXTURE_2D, 0);
             glPopAttrib();
         }

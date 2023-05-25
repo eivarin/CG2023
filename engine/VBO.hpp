@@ -5,7 +5,10 @@
 #include <GL/glut.h>
 #include <vector>
 #include <string>
+#include <map>
 #include "model.hpp"
+
+
 
 class VBO
 {
@@ -14,7 +17,7 @@ private:
     std::vector<face> fs;
     GLenum mode;
     unsigned int vertices, normals, texCoords;
-    bool hasNormals, hasTexCoords;
+    bool hasNormals, hasTexCoords, prepped = false;
     int count;
     void loadModel(std::string const& fname) {
         std::ifstream file;
@@ -59,28 +62,35 @@ private:
         }
     }
 public:
+    VBO(){
+        
+    }
     VBO(std::string const& fileName){
         loadModel(fileName);
         mode = GL_TRIANGLES;
     }
     void prep(){
-        std::vector<float> cList, tList, nList;
-        for(face& f : fs) for (size_t j = 0; j < 3; j++) drawVertex(f.v[j], cList, tList, nList);
-        count = cList.size() / 3;
-        glGenBuffers(1, &vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, vertices);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * count, cList.data(), GL_STATIC_DRAW);
-        if (hasNormals){
-            glGenBuffers(1, &normals);
-            glBindBuffer(GL_ARRAY_BUFFER, normals);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * count, nList.data(), GL_STATIC_DRAW);
+        if (!prepped)
+        {
+            std::vector<float> cList, tList, nList;
+            for(face& f : fs) for (size_t j = 0; j < 3; j++) drawVertex(f.v[j], cList, tList, nList);
+            count = cList.size() / 3;
+            glGenBuffers(1, &vertices);
+            glBindBuffer(GL_ARRAY_BUFFER, vertices);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * count, cList.data(), GL_STATIC_DRAW);
+            if (hasNormals){
+                glGenBuffers(1, &normals);
+                glBindBuffer(GL_ARRAY_BUFFER, normals);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * count, nList.data(), GL_STATIC_DRAW);
+            }
+            if(hasTexCoords){
+                glGenBuffers(1, &texCoords);
+                glBindBuffer(GL_ARRAY_BUFFER, texCoords);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * count, tList.data(), GL_STATIC_DRAW);
+            }
+            GLenum error = glGetError();  
+            prepped = true;
         }
-        if(hasTexCoords){
-            glGenBuffers(1, &texCoords);
-            glBindBuffer(GL_ARRAY_BUFFER, texCoords);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * count, tList.data(), GL_STATIC_DRAW);
-        }
-        GLenum error = glGetError();  
     }
 
     void draw(){
