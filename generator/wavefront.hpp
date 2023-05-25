@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <string>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include "model.hpp"
 
 
@@ -32,9 +32,11 @@ public:
         for(auto& c: cs)
             s << "v " << std::noshowpoint << std::fixed << std::setprecision(6) << c.x << ' ' << c.y << ' ' << c.z << '\n';
         for(auto& t: ts)
-            s << "vt " << std::noshowpoint << std::fixed << std::setprecision(6) << t.x << ' ' << t.y << ' ' << t.z << '\n';
-        for(auto& n: ns)
+            s << "vt " << std::noshowpoint << std::fixed << std::setprecision(6) << t.x << ' ' << t.y << '\n';
+        for(auto& n: ns){
+            if (std::isnan(n.x)) n = vec3(0,1,0);
             s << "vn " << std::noshowpoint << std::fixed << std::setprecision(6) << n.x << ' ' << n.y << ' ' << n.z << '\n';
+        }
         for(auto& f: fs)
             s << "f " << f.v[0].coords   << "/" << f.v[0].texture   << "/" << f.v[0].normal  << 
                   " " << f.v[1].coords << "/" << f.v[1].texture << "/" << f.v[1].normal << 
