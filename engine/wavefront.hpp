@@ -23,7 +23,7 @@ std::vector<texture> texture_array;
 
 class model {
     private:
-        bool lines, axis, hasTexture = false, hasMaterial = false;
+        bool lines, axis, hasTexture = false, hasMaterial = false, forceMaterial = false;
         float axis_size;
         int vbo_id, texture_id;
         material mat;
@@ -77,6 +77,7 @@ class model {
             if (mat_node!=0)
             {
                 mat = material(mat_node);
+                forceMaterial = (mat_node->first_attribute("force") != 0);
                 hasMaterial = true;
             }
         }
@@ -88,9 +89,10 @@ class model {
         void drawModel(){
             glPushAttrib(GL_LIGHTING_BIT);
             if (axis) drawAxis(axis_size);
-            mat.apply();
+
             if (hasTexture) texture_array[texture_id].apply();
             else if (hasMaterial) mat.apply();
+            if (forceMaterial) mat.apply();
             vbo_array[vbo_id].draw();
             glBindTexture(GL_TEXTURE_2D, 0);
             glPopAttrib();
