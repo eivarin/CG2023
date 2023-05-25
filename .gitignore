@@ -1,6 +1,5 @@
 # ours
 .editorconfig
-*.3d
 triangle.*
 
 # Cmake

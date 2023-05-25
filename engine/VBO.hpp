@@ -80,19 +80,22 @@ public:
             glBindBuffer(GL_ARRAY_BUFFER, texCoords);
             glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * count, tList.data(), GL_STATIC_DRAW);
         }
+        GLenum error = glGetError();  
     }
 
     void draw(){
         glBindBuffer(GL_ARRAY_BUFFER,vertices);
         glVertexPointer(3,GL_FLOAT,0,0);
         if (hasNormals){
+            glEnableClientState(GL_NORMAL_ARRAY);
             glBindBuffer(GL_ARRAY_BUFFER,normals);
             glNormalPointer(GL_FLOAT,0,0);
-        }
+        } else glDisableClientState(GL_NORMAL_ARRAY);
         if(hasTexCoords){
+	        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
             glBindBuffer(GL_ARRAY_BUFFER,texCoords);
             glTexCoordPointer(2,GL_FLOAT,0,0);
-        }
+        } else glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDrawArrays(mode, 0, count);
     }
 };
