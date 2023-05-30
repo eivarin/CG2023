@@ -9,10 +9,11 @@ void drawAxis(float size){
     glBegin(GL_LINES);
     float redArr[4] = {1, 0, 0, 1.0};
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, redArr);
-    float specularArr[4] = {0, 0, 0, 1.0};
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specularArr);
+    float black[4] = {0, 0, 0, 1.0};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, black);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
     float emissiveArr[4] = {0, 0, 0, 1.0};
-    glMaterialfv(GL_FRONT, GL_EMISSION, emissiveArr);
+    glMaterialfv(GL_FRONT, GL_EMISSION, black);
     glMaterialf(GL_FRONT, GL_SHININESS, 0);
     glVertex3f(-size, 0.0f, 0.0f);
     glVertex3f( size, 0.0f, 0.0f);

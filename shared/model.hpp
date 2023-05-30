@@ -23,7 +23,7 @@ struct vec3 {
         z *= w;
     }
     void normalize(){
-        float vLen = sqrtf64(x*x+y*y+z*z);
+        float vLen = sqrtf(x*x+y*y+z*z);
         x = x / vLen;
         y = y / vLen;
         z = z / vLen;
