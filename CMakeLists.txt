@@ -12,10 +12,12 @@ add_executable(generator generator/main.cpp)
 target_compile_features(engine PUBLIC cxx_std_17)
 
 
+cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 link_directories(${OpenGL_LIBRARY_DIRS})
 add_definitions(${OpenGL_DEFINITIONS})
+
 
 if(NOT OPENGL_FOUND)
     message(ERROR " OPENGL not found!")

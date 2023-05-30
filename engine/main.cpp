@@ -158,12 +158,12 @@ void enableMultisample(int msaa)
         GLint iNumSamples = 0;
         glGetIntegerv(GL_SAMPLE_BUFFERS, &iMultiSample);
         glGetIntegerv(GL_SAMPLES, &iNumSamples);
-        printf("MSAA on, GL_SAMPLE_BUFFERS = %d, GL_SAMPLES = %d\n", iMultiSample, iNumSamples);
+        // printf("MSAA on, GL_SAMPLE_BUFFERS = %d, GL_SAMPLES = %d\n", iMultiSample, iNumSamples);
     }
     else
     {
         glDisable(GL_MULTISAMPLE);
-        printf("MSAA off\n");
+        // printf("MSAA off\n");
     }   
 }
 
