@@ -12,7 +12,7 @@ add_executable(generator generator/main.cpp)
 target_compile_features(engine PUBLIC cxx_std_17)
 
 
-cmake_policy(SET CMP0072 NEW)
+cmake_policy(SET CMP0072 OLD)
 find_package(OpenGL REQUIRED)
 include_directories(${OpenGL_INCLUDE_DIRS})
 link_directories(${OpenGL_LIBRARY_DIRS})

@@ -27,12 +27,13 @@ struct scene {
 	bool needsAxis, normal_keys[256], special_keys[1024], coordsMenu = false;
 	void prep(){
 		for (auto& l: lights) l.prep();
+		prepLines();
 		main_group.prepGroup();
 	}
 	void draw(){
 		cam.placeGlut();
-		for (auto& l: lights) l.apply();
 		if (needsAxis) drawAxis(1000000);
+		for (auto& l: lights) l.apply();
 		glPolygonMode(GL_FRONT, GL_FILL);
 		main_group.drawGroup();
 		if (coordsMenu) cam.drawCoords(wWidth,wHeight);

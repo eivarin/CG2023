@@ -176,9 +176,9 @@ int main(int argc, char **argv) {
 	animated_translation::at_vector = std::vector<animated_translation*>();
 	cena = loadScene(fname);
 	glutInit(&argc, argv);
-	glutSetOption(GLUT_MULTISAMPLE, 8);
+	glutSetOption(GLUT_MULTISAMPLE, 4);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA| GLUT_MULTISAMPLE);
-	enableMultisample(8);
+	enableMultisample(4);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(cena.wWidth, cena.wHeight);
 	cena.timebase = glutGet(GLUT_ELAPSED_TIME);
@@ -224,7 +224,8 @@ int main(int argc, char **argv) {
     }
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);\
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_CLAMP);
 
 
 	glEnable(GL_DEBUG_OUTPUT);
