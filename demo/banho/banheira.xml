@@ -17,11 +17,10 @@
 			</model>
 			<model file="../demo/banho/torneira.3d">
 				<color>
-					<ambient R="58.96875" G="58.96875" B="58.96875" />
-					<diffuse R="70.7625" G="70.7625" B="70.7625" />
-					<specular R="197.347305" G="197.347305" B="197.347305" />
-					<emissive R="0" G="0" B="0" />
-					<shininess value="89.6" />
+					<ambient R="63.75" G="63.75" B="63.75" />
+					<diffuse R="102" G="102" B="102" />
+					<specular R="197.522235" G="197.522235" B="197.522235" />
+					<shininess value="76.8" />
 				</color>
 			</model>
 		</models>
