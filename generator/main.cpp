@@ -24,8 +24,11 @@ void drawPlane(std::string const &file, std::size_t length, std::size_t division
     for (auto i = 0; i <= divisions; ++i)
         for (auto j = 0; j <= divisions; ++j){
             m.pushCoords(vec3(base_points[i], 0., base_points[j]));
-            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
+    m.pushTexture(vec3(0,0,0));
+    m.pushTexture(vec3(0,1,0));
+    m.pushTexture(vec3(1,0,0));
+    m.pushTexture(vec3(1,1,0));
     /*
     16 12 8  4
     15 11 7  3
@@ -38,8 +41,8 @@ void drawPlane(std::string const &file, std::size_t length, std::size_t division
         for (auto j = 1; j <= divisions; ++j)
         {
             auto index = (divisions + 1) * i + j;
-            m.pushFace(face(vertex_ref(index,1,index), vertex_ref(index + 1, 1, index + 1), vertex_ref(index + divisions + 1, 1, index + divisions + 1)));
-            m.pushFace(face(vertex_ref(index + 1, 1, index + 1), vertex_ref(index + divisions + 2, 1, index + divisions + 2), vertex_ref(index + divisions + 1, 1, index + divisions + 1)));
+            m.pushFace(face(vertex_ref(index,1,3), vertex_ref(index + 1, 1, 1), vertex_ref(index + divisions + 1, 1, 4)));
+            m.pushFace(face(vertex_ref(index + 1, 1, 1), vertex_ref(index + divisions + 2, 1, 2), vertex_ref(index + divisions + 1, 1, 4)));
         }
     }
     m.write(file);
