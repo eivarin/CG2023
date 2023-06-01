@@ -63,36 +63,42 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
             m.pushCoords(vec3(base_points[i],base_points[divisions],0 - base_points[j]));
+            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
     }
     // Topo
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
             m.pushCoords(vec3(base_points[i],0 - base_points[divisions],0 - base_points[j]));
+            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
             m.pushCoords(vec3(base_points[divisions],base_points[i],0 - base_points[j]));
+            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
             m.pushCoords(vec3(base_points[0],base_points[i],0 - base_points[j]));
+            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto
             m.pushCoords(vec3(base_points[i],(0 - base_points[j]),base_points[divisions]));
+            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
     }
 
     for (auto i = 0; i <= divisions; ++i) {   // -O2, melhora-me isto
         for (auto j = 0; j <= divisions; ++j) { // -O2, melhora-me isto // 5
             m.pushCoords(vec3(base_points[i],(0 - base_points[j]),base_points[0]));
+            m.pushTexture(vec3(i/(float)divisions,j/(float)divisions,0));
         }
     }
     for (auto k=0;k<6;++k){
@@ -100,8 +106,8 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    m.pushFace(face(vertex_ref(index, 0, 0),vertex_ref(index+1, 0, 0),vertex_ref(index+divisions+1, 0, 0)));
-                    m.pushFace(face(vertex_ref(index + 1, 0, 0),vertex_ref(index + divisions + 2, 0, 0),vertex_ref(index + divisions + 1, 0, 0)));
+                    m.pushFace(face(vertex_ref(index, 0, index),vertex_ref(index+1, 0, index+1),vertex_ref(index+divisions+1, 0,index+divisions+1)));
+                    m.pushFace(face(vertex_ref(index + 1, 0,index + 1),vertex_ref(index + divisions + 2, 0, index + divisions + 2),vertex_ref(index + divisions + 1, 0, index + divisions + 2)));
                 }
             }
         }
@@ -109,8 +115,8 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    m.pushFace(face(vertex_ref(index, 0, 0), vertex_ref(index + divisions + 1, 0, 0), vertex_ref(index + 1, 0, 0)));
-                    m.pushFace(face(vertex_ref(index + 1, 0, 0),vertex_ref(index + divisions + 1, 0, 0),vertex_ref(index + divisions + 2, 0, 0)));
+                    m.pushFace(face(vertex_ref(index, 0, index), vertex_ref(index + divisions + 1, 0, index + divisions + 1), vertex_ref(index + 1, 0, index + 1)));
+                    m.pushFace(face(vertex_ref(index + 1, 0, index + 1),vertex_ref(index + divisions + 1, 0, index + divisions + 1),vertex_ref(index + divisions + 2, 0, index + divisions + 2)));
                 }
             }
         }
@@ -119,13 +125,21 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
             // resultFaces.append(((index,index + divisions + 1,index+1)))
-                    m.pushFace(face(vertex_ref(index, 0, 0),vertex_ref(index + divisions + 1, 0, 0),vertex_ref(index+1, 0, 0)));
+                    m.pushFace(face(vertex_ref(index, 0, index),vertex_ref(index + divisions + 1, 0,index + divisions + 1 ),vertex_ref(index+1, 0, index+1)));
             // resultFaces.append(((index + 1,index + divisions + 1,index + divisions + 2)))
-                    m.pushFace(face(vertex_ref(index + 1, 0, 0),vertex_ref(index + divisions + 1, 0, 0),vertex_ref(index + divisions + 2, 0, 0) ));
+                    m.pushFace(face(vertex_ref(index + 1, 0, index + 1),vertex_ref(index + divisions + 1, 0, index + divisions + 1),vertex_ref(index + divisions + 2, 0, index + divisions + 2) ));
                 }
             }
         }
     }
+    // Normais do cubo
+    m.pushNormal(vec3(0,1,0));
+    m.pushNormal(vec3(0,-1,0));
+    m.pushNormal(vec3(1,0,0));
+    m.pushNormal(vec3(-1,0,0));
+    m.pushNormal(vec3(0,0,1));
+    m.pushNormal(vec3(0,0,-1));
+
     m.write(file);
 }
 
