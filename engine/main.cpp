@@ -185,15 +185,16 @@ int main(int argc, char **argv) {
 	glutCreateWindow("CG@DI-UM");
 	ilInit();
 	glewInit();
+	if (cena.hasLighting){
+		glEnable(GL_LIGHTING);
+		glEnable(GL_RESCALE_NORMAL);
+		glEnable(GL_TEXTURE_2D);
+		// controls global ambient light
+		float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
+	}
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_RESCALE_NORMAL);
-	glEnable(GL_TEXTURE_2D);
 
-
-	// controls global ambient light
-	float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);

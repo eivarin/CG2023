@@ -66,11 +66,15 @@ void drawAxis(int size){
     glMaterialf(GL_FRONT, GL_SHININESS, 0);
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glColor3f(1,0,0);
     drawBuf(0);
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, greenArr);
+    glColor3f(0,1,0);
     drawBuf(1);
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blueArr);
+    glColor3f(0,0,1);
     drawBuf(2);
+    glColor3f(1,1,1);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glPopMatrix();

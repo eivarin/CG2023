@@ -24,17 +24,20 @@ struct scene {
 	group main_group;
 	std::vector<light> lights;
 	int wHeight, wWidth, timebase, frames;
-	bool needsAxis, normal_keys[256], special_keys[1024], coordsMenu = false;
+	bool needsAxis, normal_keys[256], special_keys[1024], coordsMenu = false, hasLighting = false;
 	void prep(){
-		for (auto& l: lights) l.prep();
+		if (hasLighting) for (auto& l: lights) l.prep();
 		prepLines();
 		main_group.prepGroup();
 	}
 	void draw(){
 		cam.placeGlut();
 		if (needsAxis) drawAxis(1000000);
-		for (auto& l: lights) l.apply();
-		glPolygonMode(GL_FRONT, GL_FILL);
+		if (hasLighting) {
+			for (auto& l: lights) l.apply();
+			glPolygonMode(GL_FRONT, GL_FILL);
+		}
+		else glPolygonMode(GL_FRONT, GL_LINE);
 		main_group.drawGroup();
 		if (coordsMenu) cam.drawCoords(wWidth,wHeight);
 	}
@@ -70,8 +73,12 @@ scene loadScene(std::string const& fname){
 		.needsAxis = check_draw_axis(window)
 	};
 	rapidxml::xml_node<> *lights_node = world->first_node("lights");
-	rapidxml::xml_node<> *n = lights_node->first_node();
-	if (n) for (size_t i = 0; i < 8 && n; n = n->next_sibling()) s.lights.push_back(light(n, ls[i++]));
+	if (lights_node){
+		rapidxml::xml_node<> *n = lights_node->first_node();
+		s.hasLighting = true;
+		if (n) for (size_t i = 0; i < 8 && n; n = n->next_sibling()) s.lights.push_back(light(n, ls[i++]));
+		else s.hasLighting = false;
+	}
 	return s;
 }
 

@@ -142,6 +142,9 @@ class animated_translation : public transformation{
 
     
     void drawLine(){
+        glPushAttrib(GL_LIGHTING_BIT);
+        float whiteArr[4] = {1, 1, 1, 1.0};
+        glMaterialfv(GL_FRONT, GL_AMBIENT, whiteArr);
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glBindBuffer(GL_ARRAY_BUFFER, vertices);
@@ -149,6 +152,7 @@ class animated_translation : public transformation{
         glDrawArrays(GL_LINE_LOOP, 0, count);
         glEnableClientState(GL_NORMAL_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glPopAttrib();
     }
 
     bool check_align(rapidxml::xml_node<> *transf){
