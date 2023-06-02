@@ -106,20 +106,14 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    auto indexNorm=int(index/2);
-                    if (indexNorm == 0) {
-                        indexNorm= 1;
+                    if (k !=5){
+                        m.pushFace(face(vertex_ref(index, k+1, index+1),vertex_ref(index+1, k+1, index + divisions + 2),vertex_ref(index+divisions+1,k+1,index)));
+                        m.pushFace(face(vertex_ref(index + 1,k+1,index + divisions + 2),vertex_ref(index + divisions + 2, k+1, index + divisions + 1),vertex_ref(index + divisions + 1, k+1, index)));
                     }
-                    else if (indexNorm > 6){
-                        if (indexNorm % 2 == 0){
-                            indexNorm = 5;
-                        }
-                        else{
-                            indexNorm = 3;
-                        }
+                    else {
+                        m.pushFace(face(vertex_ref(index, k+1, index),vertex_ref(index+1, k+1, index + 1),vertex_ref(index+divisions+1,k+1,index+divisions+1)));
+                        m.pushFace(face(vertex_ref(index + 1,k+1,index + 1),vertex_ref(index + divisions + 2, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index+divisions + 1)));
                     }
-                    m.pushFace(face(vertex_ref(index, indexNorm, index+1),vertex_ref(index+1, indexNorm, index + divisions + 2),vertex_ref(index+divisions+1,indexNorm,index)));
-                    m.pushFace(face(vertex_ref(index + 1,indexNorm,index + divisions + 2),vertex_ref(index + divisions + 2, indexNorm, index + divisions + 1),vertex_ref(index + divisions + 1, indexNorm, index)));
                 }
             }
         }
@@ -127,12 +121,8 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    auto indexNorm=int(index/2);
-                    if (indexNorm == 0) {
-                        indexNorm= 1;
-                    }
-                    m.pushFace(face(vertex_ref(index, indexNorm, index+1), vertex_ref(index + divisions + 1, indexNorm, index), vertex_ref(index + 1, indexNorm, index + divisions + 2)));
-                    m.pushFace(face(vertex_ref(index + 1, indexNorm, index + divisions + 2),vertex_ref(index + divisions + 1, indexNorm, index),vertex_ref(index + divisions + 2, indexNorm, index + divisions + 1)));
+                    m.pushFace(face(vertex_ref(index, k+1, index+1), vertex_ref(index + divisions + 1, k+1, index), vertex_ref(index + 1, k+1, index + divisions + 2)));
+                    m.pushFace(face(vertex_ref(index + 1, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index),vertex_ref(index + divisions + 2, k+1, index + divisions + 1)));
                 }
             }
         }
@@ -140,20 +130,14 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    auto indexNorm=int(index/2);
-                    if (indexNorm == 0 ){
-                        indexNorm= 1;
+                    if (k == 2){ 
+                        m.pushFace(face(vertex_ref(index, k+1, index + 1),vertex_ref(index + divisions + 1, k+1,index),vertex_ref(index+1, k+1, index + divisions + 2)));
+                        m.pushFace(face(vertex_ref(index + 1, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index),vertex_ref(index + divisions + 2, k+1, index +divisions+ 1) ));
                     }
-                    else if (indexNorm > 6){
-                        if (indexNorm % 2 == 0){
-                            indexNorm = 3;
-                        }
-                        else{
-                            indexNorm = 5;
-                        }
+                    else if (k == 4){
+                        m.pushFace(face(vertex_ref(index, k+1, index + divisions + 1),vertex_ref(index + divisions + 1, k+1,index),vertex_ref(index+1, k+1, index + divisions + 2)));
+                        m.pushFace(face(vertex_ref(index + 1, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index),vertex_ref(index + divisions + 2, k+1, index + 1) ));
                     }
-                    m.pushFace(face(vertex_ref(index, indexNorm, index+1),vertex_ref(index + divisions + 1, indexNorm,index),vertex_ref(index+1, indexNorm, index + divisions + 2)));
-                    m.pushFace(face(vertex_ref(index + 1, indexNorm, index + divisions + 2),vertex_ref(index + divisions + 1, indexNorm, index),vertex_ref(index + divisions + 2, indexNorm, index + divisions + 1) ));
                 }
             }
         }
@@ -161,10 +145,10 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
     // Normais do cubo
     m.pushNormal(vec3(0,-1,0));
     m.pushNormal(vec3(0,1,0));
-    m.pushNormal(vec3(0,0,-1));
-    m.pushNormal(vec3(-1,0,0));
-    m.pushNormal(vec3(0,0,1));
     m.pushNormal(vec3(1,0,0));
+    m.pushNormal(vec3(0,0,1));
+    m.pushNormal(vec3(-1,0,0));
+    m.pushNormal(vec3(0,0,-1));
 
     m.write(file);
 }
