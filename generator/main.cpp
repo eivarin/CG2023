@@ -159,6 +159,7 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     float stack_angle = M_PI / stacks;
     float slice_angle = (2 * M_PI) / slices;
     m.pushCoords(vec3(0,radius,0));
+    m.pushNormal(vec3(0,radius,0));
     for (std::size_t i = 1; i < stacks; ++i) {
         for (std::size_t j = 0; j < slices; ++j) {
             float curr_b = i * stack_angle;
@@ -167,9 +168,11 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
             float y = cos(curr_b) * radius;
             float z = cos(j * slice_angle) * sinb * radius;
             m.pushCoords(vec3(x, y, z));
+            m.pushNormal(vec3(x, y, z));
         }
     }
     m.pushCoords(vec3(0,-radius,0));
+    m.pushNormal(vec3(0,-radius,0));
 
     /*
     esfera 1 4 4
@@ -181,22 +184,22 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     */
     // "base" 1
     for(std::size_t i = 0; i < slices; ++i) {
-        m.pushFace(face(vertex_ref(1, 0, 0),vertex_ref((i%slices) + 2, 0, 0),vertex_ref(((i+1)%slices) + 2, 0, 0)));
+        m.pushFace(face(vertex_ref(1, 1, 0),vertex_ref((i%slices) + 2, (i%slices) + 2, 0),vertex_ref(((i+1)%slices) + 2, ((i+1)%slices) + 2, 0)));
     }
     // "faces"
     for(std::size_t i = 0; i < stacks - 2; ++i) {
         for(std::size_t j = 0; j < slices; ++j) {
             std::size_t r = (j%slices) + 2 + (i * slices);
             std::size_t l = ((j+1)%slices) + 2 + (i * slices);
-            m.pushFace(face(vertex_ref(r, 0, 0),vertex_ref(l + slices, 0, 0),vertex_ref(l, 0, 0)));
-            m.pushFace(face(vertex_ref(r, 0, 0),vertex_ref(r+slices, 0, 0),vertex_ref(l+slices, 0, 0)));
+            m.pushFace(face(vertex_ref(r, r, 0),vertex_ref(l + slices,l + slices, 0),vertex_ref(l, l, 0)));
+            m.pushFace(face(vertex_ref(r, r, 0),vertex_ref(r+slices, r+slices, 0),vertex_ref(l+slices, l+slices, 0)));
 
         }
     }
     // "base" 2
     std::size_t bottom_most = slices*(stacks-1)+2;
     for(std::size_t i = 0; i < slices; ++i) {
-        m.pushFace(face(vertex_ref(bottom_most,0,0),vertex_ref(bottom_most - slices + (i+1)%slices,0,0),vertex_ref(bottom_most - slices + (i%slices),0,0)));
+        m.pushFace(face(vertex_ref(bottom_most,bottom_most,0),vertex_ref(bottom_most - slices + (i+1)%slices,bottom_most - slices + (i+1)%slices,0),vertex_ref(bottom_most - slices + (i%slices),bottom_most - slices + (i%slices),0)));
     }
     m.write(file);
 }
