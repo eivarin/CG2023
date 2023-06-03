@@ -200,6 +200,13 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     std::size_t bottom_most = slices*(stacks-1)+2;
     for(std::size_t i = 0; i < slices; ++i) {
         m.pushFace(face(vertex_ref(bottom_most,bottom_most,0),vertex_ref(bottom_most - slices + (i+1)%slices,bottom_most - slices + (i+1)%slices,0),vertex_ref(bottom_most - slices + (i%slices),bottom_most - slices + (i%slices),0)));
+        
+        // texturas
+        float stack_coords = 1. / stacks, slice_coords = 1. / slices;
+        for (auto j = 0; j < stacks; ++j) {
+            vec3 t(i * slice_coords, j * stack_coords, 0.);
+            m.pushTexture(t);
+        }
     }
     m.write(file);
 }
@@ -290,8 +297,7 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         curr_h -= stack_h;
         curr_r += stack_r;
     }
-    i = 0;
-    while (i < slices)
+    for (auto i = 0; i < slices; ++i) 
     {
         float aCil = delta * i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
@@ -302,14 +308,24 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         ++points;
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         ++points;
-        i++;
+
+        float stack_coords = 1. / stacks, slice_coords = 1. / slices;
+        // texturas
+        for (auto j = 0; j < stacks; ++j) {
+            vec3 t(i * slice_coords, j * stack_coords, 0.);
+            m.pushTexture(t);
+        }
     }
 
     for (auto i=1;i+3<=points;i=i+3){
         m.pushFace(face(vertex_ref(i,0,0),vertex_ref(i+1, 0, 0), vertex_ref(i+2, 0 ,0)));
     }
+
+    // normais
+
     m.write(file);
 }
+
 std::vector<std::string> split(const std::string &s, char delim)
 {
     std::vector<std::string> result;
