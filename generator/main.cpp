@@ -106,13 +106,17 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    if (k !=5){
+                    if (k == 0){
                         m.pushFace(face(vertex_ref(index, k+1, index+1),vertex_ref(index+1, k+1, index + divisions + 2),vertex_ref(index+divisions+1,k+1,index)));
                         m.pushFace(face(vertex_ref(index + 1,k+1,index + divisions + 2),vertex_ref(index + divisions + 2, k+1, index + divisions + 1),vertex_ref(index + divisions + 1, k+1, index)));
                     }
-                    else {
-                        m.pushFace(face(vertex_ref(index, k+1, index),vertex_ref(index+1, k+1, index + 1),vertex_ref(index+divisions+1,k+1,index+divisions+1)));
-                        m.pushFace(face(vertex_ref(index + 1,k+1,index + 1),vertex_ref(index + divisions + 2, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index+divisions + 1)));
+                    else if (k==3){
+                        m.pushFace(face(vertex_ref(index, k, index+1),vertex_ref(index+1, k, index + divisions + 2),vertex_ref(index+divisions+1,k,index)));
+                        m.pushFace(face(vertex_ref(index + 1,k,index + divisions + 2),vertex_ref(index + divisions + 2, k, index + divisions + 1),vertex_ref(index + divisions + 1, k, index)));
+                    }
+                    else{
+                        m.pushFace(face(vertex_ref(index, 4, index),vertex_ref(index+1,4, index + 1),vertex_ref(index+divisions+1,4,index+divisions+1)));
+                        m.pushFace(face(vertex_ref(index + 1,4,index + 1),vertex_ref(index + divisions + 2, 4, index + divisions + 2),vertex_ref(index + divisions + 1, 4, index+divisions + 1)));
                     }
                 }
             }
@@ -121,8 +125,8 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
             for(auto i = 0; i < divisions; ++i) {
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
-                    m.pushFace(face(vertex_ref(index, k+1, index+1), vertex_ref(index + divisions + 1, k+1, index), vertex_ref(index + 1, k+1, index + divisions + 2)));
-                    m.pushFace(face(vertex_ref(index + 1, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index),vertex_ref(index + divisions + 2, k+1, index + divisions + 1)));
+                    m.pushFace(face(vertex_ref(index, 2, index+1), vertex_ref(index + divisions + 1, 2, index), vertex_ref(index + 1, 2, index + divisions + 2)));
+                    m.pushFace(face(vertex_ref(index + 1, 2, index + divisions + 2),vertex_ref(index + divisions + 1, 2, index),vertex_ref(index + divisions + 2, 2, index + divisions + 1)));
                 }
             }
         }
@@ -131,12 +135,12 @@ void drawBox(std::string const &file, std::size_t length, std::size_t divisions)
                 for(auto j = 1; j <= divisions; ++j) {
                     auto index = (divisions+1) * i + j+ k*(divisions+1)*(divisions+1);
                     if (k == 2){ 
-                        m.pushFace(face(vertex_ref(index, k+1, index + 1),vertex_ref(index + divisions + 1, k+1,index),vertex_ref(index+1, k+1, index + divisions + 2)));
-                        m.pushFace(face(vertex_ref(index + 1, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index),vertex_ref(index + divisions + 2, k+1, index +divisions+ 1) ));
+                        m.pushFace(face(vertex_ref(index, 5, index + 1),vertex_ref(index + divisions + 1, 5,index),vertex_ref(index+1, 5, index + divisions + 2)));
+                        m.pushFace(face(vertex_ref(index + 1, 5, index + divisions + 2),vertex_ref(index + divisions + 1, 5, index),vertex_ref(index + divisions + 2, 5, index +divisions+ 1) ));
                     }
                     else if (k == 4){
-                        m.pushFace(face(vertex_ref(index, k+1, index + divisions + 1),vertex_ref(index + divisions + 1, k+1,index),vertex_ref(index+1, k+1, index + divisions + 2)));
-                        m.pushFace(face(vertex_ref(index + 1, k+1, index + divisions + 2),vertex_ref(index + divisions + 1, k+1, index),vertex_ref(index + divisions + 2, k+1, index + 1) ));
+                        m.pushFace(face(vertex_ref(index, 6, index + divisions + 1),vertex_ref(index + divisions + 1, 6,index),vertex_ref(index+1, 6, index + divisions + 2)));
+                        m.pushFace(face(vertex_ref(index + 1, 6, index + divisions + 2),vertex_ref(index + divisions + 1, 6, index),vertex_ref(index + divisions + 2, 6, index + 1) ));
                     }
                 }
             }
