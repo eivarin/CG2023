@@ -159,7 +159,9 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     float stack_angle = M_PI / stacks;
     float slice_angle = (2 * M_PI) / slices;
     m.pushCoords(vec3(0,radius,0));
-    m.pushNormal(vec3(0,radius,0));
+    auto vec = vec3(0,radius,0);
+    vec.normalize();
+    m.pushNormal(vec);
     for (std::size_t i = 1; i < stacks; ++i) {
         for (std::size_t j = 0; j < slices; ++j) {
             float curr_b = i * stack_angle;
@@ -168,11 +170,15 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
             float y = cos(curr_b) * radius;
             float z = cos(j * slice_angle) * sinb * radius;
             m.pushCoords(vec3(x, y, z));
-            m.pushNormal(vec3(x, y, z));
+            auto vec = vec3(x,y,z);
+            vec.normalize();
+            m.pushNormal(vec);
         }
     }
     m.pushCoords(vec3(0,-radius,0));
-    m.pushNormal(vec3(0,-radius,0));
+    vec = vec3(0,-radius,0);
+    vec.normalize();
+    m.pushNormal(vec);
 
     /*
     esfera 1 4 4
