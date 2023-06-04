@@ -77,7 +77,6 @@ scene loadScene(std::string const& fname){
 		rapidxml::xml_node<> *n = lights_node->first_node();
 		s.hasLighting = true;
 		if (n) for (size_t i = 0; i < 8 && n; n = n->next_sibling()) s.lights.push_back(light(n, ls[i++]));
-		else s.hasLighting = false;
 	}
 	return s;
 }

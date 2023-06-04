@@ -146,6 +146,15 @@ void glDebugOutput(GLenum source, GLenum type, unsigned int id, GLenum severity,
     std::cout << std::endl;
 };
 
+
+#if defined (__WIN32__)
+
+void initDisplayMode(){
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA| GLUT_MULTISAMPLE);
+}
+void enableVSYNC(){
+}
+#else
 void enableMultisample(int msaa)
 {
     if (msaa)
@@ -167,6 +176,24 @@ void enableMultisample(int msaa)
     }   
 }
 
+void initDisplayMode(){
+	glutSetOption(GLUT_MULTISAMPLE, 4);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA| GLUT_MULTISAMPLE);
+	enableMultisample(4);
+}
+
+void enableVSYNC(){
+	Display *dpy = glXGetCurrentDisplay();
+    GLXDrawable drawable = glXGetCurrentDrawable();
+    const int interval = -1;
+
+    if (drawable) {
+        glXSwapIntervalEXT(dpy, drawable, interval);
+    }
+}
+
+#endif
+
 int main(int argc, char **argv) {
 	// init GLUT and the window
 	std::string fname;
@@ -176,9 +203,7 @@ int main(int argc, char **argv) {
 	animated_translation::at_vector = std::vector<animated_translation*>();
 	cena = loadScene(fname);
 	glutInit(&argc, argv);
-	glutSetOption(GLUT_MULTISAMPLE, 4);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA| GLUT_MULTISAMPLE);
-	enableMultisample(4);
+	initDisplayMode();
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(cena.wWidth, cena.wHeight);
 	cena.timebase = glutGet(GLUT_ELAPSED_TIME);
@@ -216,13 +241,9 @@ int main(int argc, char **argv) {
 	glutPassiveMotionFunc(processMouse);
 	glutMotionFunc(processMouse);
 	glutSetCursor(GLUT_CURSOR_NONE);
-	Display *dpy = glXGetCurrentDisplay();
-    GLXDrawable drawable = glXGetCurrentDrawable();
-    const int interval = -1;
+	enableVSYNC();
 
-    if (drawable) {
-        glXSwapIntervalEXT(dpy, drawable, interval);
-    }
+
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
