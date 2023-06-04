@@ -11,6 +11,9 @@
 		<up x="0" y="1" z="0" />
 		<projection fov="90" near="1" far="100000" />
 	</camera>
+	<lights>
+		<light type="point" posx="0" posy="0" posz="0" />
+	</lights>
 	<group>
 		<group> <!-- cometa -->
 			<transform>
@@ -42,10 +45,9 @@
 				<scale x="40" y="40" z="40" />
 			</transform>
 			<models>
-				<model file="sphere.3d" > <!-- generator sphere 1 100 100 sphere.3d -->
-					<texture file = "../demo/planetas_imagens/sun_text.jpg" />
-					<color>
-						<emissive R="0" G="0" B="0" />
+				<model file="sphere.3d"> <!-- generator sphere 1 100 100 sphere.3d -->
+					<color force="true">
+						<emissive R="255" G="255" B="255" />
 					</color>
 				</model>
 			</models>
@@ -53,7 +55,7 @@
 		<group> <!-- Terra-->
 			<transform>
 				<!-- <translate x="150" y="0" z="0" /> -->
-				<translate time="300" align="true" segments="10000">
+				<translate time="3000" align="true" segments="10000">
 					<point x="153" y="0" z="0" />
 					<point x="107.64504168794771" y="0" z="104.46312746610643" />
 					<point x="0" y="0" z="147" />
@@ -64,14 +66,17 @@
 					<point x="107.64504168794771" y="0" z="-104.46312746610643" />
 				</translate>
 				<rotate angle="23.45" x="0" y="0" z="1" />
+				<rotate time="30" x="0" y="1" z="0" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0" g="0" b="1" lines="false" />
+				<model file="sphere.3d">
+					<texture file="../demo/planetas_imagens/terra_text.jpg" />
+				</model>
 			</models>
 			<!-- Lua -->
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="300" align="true" segments="10000">
 						<point x="9" y="0" z="0" />
 						<point x="6.161878771933119" y="0" z="5.1020829079896375" />
 						<point x="0" y="0" z="7" />
@@ -82,6 +87,7 @@
 						<point x="6.161878771933119" y="0" z="-5.1020829079896375" />
 					</translate>
 					<scale x="0.3" y="0.3" z="0.3" />
+					<rotate time="300" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -90,7 +96,7 @@
 		</group>
 		<group> <!-- Mercurio -->
 			<transform>
-				<translate time="132" align="true" segments="10000">
+				<translate time="1320" align="true" segments="10000">
 					<point x="87" y="0" z="0" />
 					<point x="61.15534703186824" y="0" z="59.034087859572836" />
 					<point x="0" y="0" z="83" />
@@ -102,6 +108,7 @@
 				</translate>
 				<rotate angle="0.5" x="0" y="1" z="1" />
 				<scale x="0.333333" y="0.333333" z="0.333333" />
+				<rotate time="100" x="0" y="1" z="0" />
 			</transform>
 			<models>
 				<model file="sphere.3d" r="0.5" g="0.5" b="0.5" lines="false" />
@@ -109,7 +116,7 @@
 		</group>
 		<group> <!-- Venus -->
 			<transform>
-				<translate time="265" align="true" segments="10000">
+				<translate time="2650" align="true" segments="10000">
 					<point x="126" y="0" z="0" />
 					<point x="88.36214603810285" y="0" z="84.1197429117623" />
 					<point x="0" y="0" z="118" />
@@ -120,6 +127,7 @@
 					<point x="88.36214603810285" y="0" z="-84.1197429117623" />
 				</translate>
 				<rotate angle="-2.6" x="1" y="0" z="1" />
+				<rotate time="2300" x="0" y="1" z="0" />
 			</transform>
 			<models>
 				<model file="sphere.3d" r="1" g="0.5" b="0" lines="false" />
@@ -127,7 +135,7 @@
 		</group>
 		<group> <!-- Marte -->
 			<transform>
-				<translate time="375" align="true" segments="10000">
+				<translate time="3750" align="true" segments="10000">
 					<point x="219" y="0" z="0" />
 					<point x="153.94919282660308" y="0" z="148.64604275942693" />
 					<point x="0" y="0" z="209" />
@@ -138,6 +146,7 @@
 					<point x="153.94919282660308" y="0" z="-148.64604275942693" />
 				</translate>
 				<rotate angle="25.19" x="0" y="0" z="1" />
+				<rotate time="385" x="0" y="1" z="0" />
 				<scale x="0.5" y="0.5" z="0.5" />
 			</transform>
 			<models>
@@ -146,7 +155,7 @@
 			<!-- Luas -->
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="22" y="0" z="0" />
 						<point x="15.162453627299245" y="0" z="13.042239071570494" />
 						<point x="0" y="0" z="18" />
@@ -157,6 +166,7 @@
 						<point x="15.162453627299245" y="0" z="-13.042239071570494" />
 					</translate>
 					<scale x="0.4" y="0.4" z="0.4" />
+					<rotate time="30" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -164,7 +174,7 @@
 			</group>
 			<group>
 				<transform>
-					<rotate angle="75" x="0.5" y="0" z="0.75" />
+					<rotate angle="300" x="0.5" y="0" z="0.75" />
 					<translate time="75" align="true" segments="10000">
 						<point x="22" y="0" z="0" />
 						<point x="15.162453627299245" y="0" z="13.042239071570494" />
@@ -176,6 +186,7 @@
 						<point x="15.162453627299245" y="0" z="-13.042239071570494" />
 					</translate>
 					<scale x="0.4" y="0.4" z="0.4" />
+					<rotate time="40" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -184,7 +195,7 @@
 		</group>
 		<group> <!-- Jupiter -->
 			<transform>
-				<translate time="700" align="true" segments="10000">
+				<translate time="7000" align="true" segments="10000">
 					<point x="555" y="0" z="0" />
 					<point x="390.63991255938464" y="0" z="380.03349683362956" />
 					<point x="0" y="0" z="535" />
@@ -195,6 +206,7 @@
 					<point x="390.63991255938464" y="0" z="-380.03349683362956" />
 				</translate>
 				<rotate angle="3.12" x="0.5" y="0" z="0.5" />
+				<rotate time="27" x="0" y="1" z="0" />
 				<scale x="11" y="11" z="11" />
 			</transform>
 			<models>
@@ -220,7 +232,7 @@
 			<!-- Lua -->
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="8" y="0" z="0" />
 						<point x="5.451081150953975" y="0" z="4.391550328268399" />
 						<point x="0" y="0" z="6" />
@@ -230,6 +242,7 @@
 						<point x="0" y="0" z="-6" />
 						<point x="5.451081150953975" y="0" z="-4.391550328268399" />
 					</translate>
+					<rotate time="20" x="0" y="1" z="0" />
 					<rotate angle="60" x="0.5" y="0" z="0" />
 					<scale x="0.2" y="0.2" z="0.2" />
 				</transform>
@@ -239,7 +252,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="7" y="0" z="0" />
 						<point x="4.73902240270431" y="0" z="3.6799003609699366" />
 						<point x="0" y="0" z="5" />
@@ -249,6 +262,7 @@
 						<point x="0" y="0" z="-5" />
 						<point x="4.73902240270431" y="0" z="-3.6799003609699366" />
 					</translate>
+					<rotate time="20" x="0" y="1" z="0" />
 					<scale x="0.05" y="0.05" z="0.05" />
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
 				</transform>
@@ -258,7 +272,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="10" align="true" segments="10000">
+					<translate time="100" align="true" segments="10000">
 						<point x="14" y="0" z="0" />
 						<point x="9.47804480540862" y="0" z="7.359800721939873" />
 						<point x="0" y="0" z="10" />
@@ -269,6 +283,7 @@
 						<point x="9.47804480540862" y="0" z="-7.359800721939873" />
 					</translate>
 					<rotate angle="80" x="0" y="0" z="1" />
+					<rotate time="10" x="0" y="1" z="0" />
 					<scale x="0.1" y="0.1" z="0.1" />
 				</transform>
 				<models>
@@ -277,7 +292,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="35" align="true" segments="10000">
+					<translate time="350" align="true" segments="10000">
 						<point x="21" y="0" z="0" />
 						<point x="14.453191233845391" y="0" z="12.333096251870199" />
 						<point x="0" y="0" z="17" />
@@ -288,6 +303,7 @@
 						<point x="14.453191233845391" y="0" z="-12.333096251870199" />
 					</translate>
 					<rotate angle="80" x="0.5" y="1" z="0.3" />
+					<rotate time="35" x="0" y="1" z="0" />
 					<scale x="0.18" y="0.18" z="0.18" />
 				</transform>
 				<models>
@@ -296,7 +312,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="50" align="true" segments="10000">
+					<translate time="500" align="true" segments="10000">
 						<point x="26" y="0" z="0" />
 						<point x="17.77516587093157" y="0" z="14.596008983995233" />
 						<point x="0" y="0" z="20" />
@@ -306,8 +322,9 @@
 						<point x="0" y="0" z="-20" />
 						<point x="17.77516587093157" y="0" z="-14.596008983995233" />
 					</translate>
-					<rotate angle="80" x="0.5" y="1" z="0" />
 					<scale x="0.18" y="0.18" z="0.18" />
+					<rotate angle="80" x="0.5" y="1" z="0" />
+					<rotate time="50" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="0.75" b="1" lines="false" />
@@ -316,7 +333,7 @@
 		</group>
 		<group> <!-- Saturno -->
 			<transform>
-				<translate time="3000" align="true" segments="10000">
+				<translate time="30000" align="true" segments="10000">
 					<point x="2036" y="0" z="0" />
 					<point x="1436.0943589947383" y="0" z="1414.8812642987016" />
 					<point x="0" y="0" z="1996" />
@@ -328,6 +345,7 @@
 				</translate>
 				<scale x="9" y="9" z="9" />
 				<rotate angle="27" x="0.5" y="0" z="0.75" />
+				<rotate time="15" x="0" y="1" z="0" />
 			</transform>
 			<models>
 				<model file="sphere.3d" r="0.75" g="0.5" b="0" lines="false" />
@@ -368,7 +386,7 @@
 			<!-- Luas -->
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="8" y="0" z="0" />
 						<point x="5.451081150953975" y="0" z="4.391550328268399" />
 						<point x="0" y="0" z="6" />
@@ -378,8 +396,9 @@
 						<point x="0" y="0" z="-6" />
 						<point x="5.451081150953975" y="0" z="-4.391550328268399" />
 					</translate>
-					<rotate angle="60" x="0.5" y="0" z="0" />
 					<scale x="0.2" y="0.2" z="0.2" />
+					<rotate angle="60" x="0.5" y="0" z="0" />
+					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -387,7 +406,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="7" y="0" z="0" />
 						<point x="4.73902240270431" y="0" z="3.6799003609699366" />
 						<point x="0" y="0" z="5" />
@@ -399,6 +418,7 @@
 					</translate>
 					<scale x="0.05" y="0.05" z="0.05" />
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
+					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -406,7 +426,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="10" align="true" segments="10000">
+					<translate time="100" align="true" segments="10000">
 						<point x="14" y="0" z="0" />
 						<point x="9.47804480540862" y="0" z="7.359800721939873" />
 						<point x="0" y="0" z="10" />
@@ -416,8 +436,9 @@
 						<point x="0" y="0" z="-10" />
 						<point x="9.47804480540862" y="0" z="-7.359800721939873" />
 					</translate>
-					<rotate angle="80" x="0" y="0" z="1" />
 					<scale x="0.1" y="0.1" z="0.1" />
+					<rotate angle="80" x="0" y="0" z="1" />
+					<rotate time="10" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -425,7 +446,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="35" align="true" segments="10000">
+					<translate time="350" align="true" segments="10000">
 						<point x="21" y="0" z="0" />
 						<point x="14.453191233845391" y="0" z="12.333096251870199" />
 						<point x="0" y="0" z="17" />
@@ -435,8 +456,9 @@
 						<point x="0" y="0" z="-17" />
 						<point x="14.453191233845391" y="0" z="-12.333096251870199" />
 					</translate>
-					<rotate angle="80" x="0.5" y="1" z="0.3" />
 					<scale x="0.18" y="0.18" z="0.18" />
+					<rotate angle="80" x="0.5" y="1" z="0.3" />
+					<rotate time="35" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="0.25" g="1" b="1" lines="false" />
@@ -445,7 +467,7 @@
 		</group>
 		<group> <!-- Urano -->
 			<transform>
-				<translate time="4100" align="true" segments="10000">
+				<translate time="41000" align="true" segments="10000">
 					<point x="3254" y="0" z="0" />
 					<point x="2276.4744289696564" y="0" z="2136.4803238614854" />
 					<point x="0" y="0" z="2990" />
@@ -457,6 +479,7 @@
 				</translate>
 				<scale x="4" y="4" z="4" />
 				<rotate angle="98" x="0.5" y="0" z="0.5" />
+				<rotate time="20" x="0" y="1" z="0" />
 			</transform>
 			<models>
 				<model file="sphere.3d" r="0" g="0.1" b="1" lines="false" />
@@ -489,7 +512,7 @@
 			<!-- Luas -->
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="8" y="0" z="0" />
 						<point x="5.451081150953975" y="0" z="4.391550328268399" />
 						<point x="0" y="0" z="6" />
@@ -499,8 +522,9 @@
 						<point x="0" y="0" z="-6" />
 						<point x="5.451081150953975" y="0" z="-4.391550328268399" />
 					</translate>
-					<rotate angle="60" x="0.5" y="0" z="0" />
 					<scale x="0.2" y="0.2" z="0.2" />
+					<rotate angle="60" x="0.5" y="0" z="0" />
+					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -508,7 +532,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="7" y="0" z="0" />
 						<point x="4.73902240270431" y="0" z="3.6799003609699366" />
 						<point x="0" y="0" z="5" />
@@ -520,6 +544,7 @@
 					</translate>
 					<scale x="0.05" y="0.05" z="0.05" />
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
+					<rotate time="20" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -527,7 +552,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="10" align="true" segments="10000">
+					<translate time="100" align="true" segments="10000">
 						<point x="14" y="0" z="0" />
 						<point x="9.47804480540862" y="0" z="7.359800721939873" />
 						<point x="0" y="0" z="10" />
@@ -537,8 +562,9 @@
 						<point x="0" y="0" z="-10" />
 						<point x="9.47804480540862" y="0" z="-7.359800721939873" />
 					</translate>
-					<rotate angle="80" x="0" y="0" z="1" />
 					<scale x="0.1" y="0.1" z="0.1" />
+					<rotate angle="80" x="0" y="0" z="1" />
+					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
@@ -547,7 +573,7 @@
 		</group>
 		<group> <!-- Neptuno -->
 			<transform>
-				<translate time="5000" align="true" segments="10000">
+				<translate time="50000" align="true" segments="10000">
 					<point x="3900" y="0" z="0" />
 					<point x="2730.0" y="0" z="2570.914234275426" />
 					<point x="0" y="0" z="3600" />
@@ -557,8 +583,9 @@
 					<point x="0" y="0" z="-3600" />
 					<point x="2730.0" y="0" z="-2570.914234275426" />
 				</translate>
-				<rotate angle="28" x="1" y="0" z="0" />
 				<scale x="4" y="4" z="4" />
+				<rotate angle="28" x="1" y="0" z="0" />
+				<rotate time="25" x="0" y="1" z="0" />
 			</transform>
 			<models>
 				<model file="sphere.3d" r="0.17" g="0.21" b="0.52" lines="false" />
@@ -599,7 +626,7 @@
 			<!-- luas -->
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="8" y="0" z="0" />
 						<point x="5.451081150953975" y="0" z="4.391550328268399" />
 						<point x="0" y="0" z="6" />
@@ -609,8 +636,9 @@
 						<point x="0" y="0" z="-6" />
 						<point x="5.451081150953975" y="0" z="-4.391550328268399" />
 					</translate>
-					<rotate angle="60" x="0.5" y="0" z="0" />
 					<scale x="0.2" y="0.2" z="0.2" />
+					<rotate angle="60" x="0.5" y="0" z="0" />
+					<rotate time="25" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="0.5" g="0.5" b="1" lines="false" />
@@ -618,7 +646,7 @@
 			</group>
 			<group>
 				<transform>
-					<translate time="20" align="true" segments="10000">
+					<translate time="200" align="true" segments="10000">
 						<point x="7" y="0" z="0" />
 						<point x="4.73902240270431" y="0" z="3.6799003609699366" />
 						<point x="0" y="0" z="5" />
@@ -630,6 +658,7 @@
 					</translate>
 					<scale x="0.05" y="0.05" z="0.05" />
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
+					<rotate time="25" x="0" y="1" z="0" />
 				</transform>
 				<models>
 					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
