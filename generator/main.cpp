@@ -269,6 +269,7 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     int points = 1;
     model m;
+    float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     float delta = (2 * M_PI) / (float)slices;
     float stack_h = height / (float)stacks;
     float curr_h = height;

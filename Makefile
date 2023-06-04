@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/acmota2/repos/CG2023/generator
+CMAKE_SOURCE_DIR = /home/acmota2/repos/CG2023
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/acmota2/repos/CG2023/generator
+CMAKE_BINARY_DIR = /home/acmota2/repos/CG2023
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/acmota2/repos/CG2023/generator/CMakeFiles /home/acmota2/repos/CG2023/generator//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/acmota2/repos/CG2023/CMakeFiles /home/acmota2/repos/CG2023//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/acmota2/repos/CG2023/generator/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/acmota2/repos/CG2023/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,6 +117,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named engine
+
+# Build rule for target.
+engine: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 engine
+.PHONY : engine
+
+# fast build rule for target.
+engine/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/build
+.PHONY : engine/fast
+
+#=============================================================================
 # Target rules for targets named generator
 
 # Build rule for target.
@@ -129,29 +142,53 @@ generator/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/build
 .PHONY : generator/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+engine/main.o: engine/main.cpp.o
+.PHONY : engine/main.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/main.cpp.o
-.PHONY : main.cpp.o
+engine/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/engine/main.cpp.o
+.PHONY : engine/main.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+engine/main.i: engine/main.cpp.i
+.PHONY : engine/main.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/main.cpp.i
-.PHONY : main.cpp.i
+engine/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/engine/main.cpp.i
+.PHONY : engine/main.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+engine/main.s: engine/main.cpp.s
+.PHONY : engine/main.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/main.cpp.s
-.PHONY : main.cpp.s
+engine/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/engine.dir/build.make CMakeFiles/engine.dir/engine/main.cpp.s
+.PHONY : engine/main.cpp.s
+
+generator/main.o: generator/main.cpp.o
+.PHONY : generator/main.o
+
+# target to build an object file
+generator/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/generator/main.cpp.o
+.PHONY : generator/main.cpp.o
+
+generator/main.i: generator/main.cpp.i
+.PHONY : generator/main.i
+
+# target to preprocess a source file
+generator/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/generator/main.cpp.i
+.PHONY : generator/main.cpp.i
+
+generator/main.s: generator/main.cpp.s
+.PHONY : generator/main.s
+
+# target to generate assembly for a file
+generator/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generator.dir/build.make CMakeFiles/generator.dir/generator/main.cpp.s
+.PHONY : generator/main.cpp.s
 
 # Help Target
 help:
@@ -161,10 +198,14 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... engine"
 	@echo "... generator"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... engine/main.o"
+	@echo "... engine/main.i"
+	@echo "... engine/main.s"
+	@echo "... generator/main.o"
+	@echo "... generator/main.i"
+	@echo "... generator/main.s"
 .PHONY : help
 
 
