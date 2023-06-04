@@ -1,12 +1,12 @@
 <!-- ./generator ring 20 100 1 ring_medium.3d -->
-<!-- ./generator ring 10 100 1 ring_thin.3d -->
-<!-- ./generator ring 30 100 1 ring_wide.3d -->
+<!-- ./generator ring 10 100 1 ring_wide.3d -->
+<!-- ./generator ring 30 100 1 ring_thin.3d -->
 <!-- ./generator sphere 1 100 100 sphere.3d -->
 <!-- ./generator patch ../demo/rubber_duck.patch 30 rubber.3d -->
 <world>
 	<window width="1200" height="1200" axis="false" />
 	<camera>
-		<position x="0" y="100" z="0" />
+		<position x="0" y="8000" z="0" />
 		<lookAt x="0" y="0" z="0" />
 		<up x="0" y="1" z="0" />
 		<projection fov="90" near="1" far="100000" />
@@ -37,18 +37,19 @@
 					</translate>
 					<rotate angle="180" x="0" y="1" z="0" />
 					<rotate angle="45" x="0" y="0" z="1" />
+					<scale x="10" y="10" z="10" />
 				</transform>
-				<models>
-					<model file="rubber.3d" r="1" g="0.5" b="0" lines="false" />
-				</models>
+				<group file="../demo/banho/duck.xml" />
 			</group>
 		</group>
 		<group> <!-- Sol-->
 			<transform>
 				<scale x="40" y="40" z="40" />
+				<rotate time="50000" x="0" y="1" z="0" />
 			</transform>
 			<models>
 				<model file="sphere.3d"> <!-- generator sphere 1 100 100 sphere.3d -->
+					<texture file="../demo/planetas_imagens/sun_text.jpg" />
 					<color force="true">
 						<emissive R="255" G="255" B="255" />
 					</color>
@@ -74,6 +75,9 @@
 			<models>
 <<<<<<< HEAD
 				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
 					<texture file="../demo/planetas_imagens/terra_text.jpg" />
 =======
 				<model file="sphere.3d" >
@@ -98,7 +102,12 @@
 					<rotate time="300" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/lua_text.jpg" />
+					</model>
 				</models>
 			</group>
 		</group>
@@ -119,7 +128,12 @@
 				<rotate time="100" x="0" y="1" z="0" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.5" g="0.5" b="0.5" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/mercury_text.jpg" />
+				</model>
 			</models>
 		</group>
 		<group> <!-- Venus -->
@@ -138,7 +152,12 @@
 				<rotate time="2300" x="0" y="1" z="0" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="1" g="0.5" b="0" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/venus_text.jpg" />
+				</model>
 			</models>
 		</group>
 		<group> <!-- Marte -->
@@ -158,7 +177,12 @@
 				<scale x="0.5" y="0.5" z="0.5" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.75" g="0" b="0" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/mars_text.jpg" />
+				</model>
 			</models>
 			<!-- Luas -->
 			<group>
@@ -177,7 +201,12 @@
 					<rotate time="30" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/phobos_text.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -197,7 +226,12 @@
 					<rotate time="40" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/deimos_text.jpg" />
+					</model>
 				</models>
 			</group>
 		</group>
@@ -218,7 +252,12 @@
 				<scale x="11" y="11" z="11" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="1" g="0.5" b="0" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/jupiter_text.jpg" />
+				</model>
 			</models>
 			<!-- aneis -->
 			<group>
@@ -226,7 +265,12 @@
 					<scale x="0.05" y="0.05" z="0.05" />
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.29" g="0.25" b="0.16" lines="false" />
+					<model file="ring_thin.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/jupiter-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -234,7 +278,12 @@
 					<scale x="0.053" y="0.053" z="0.053" />
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.16" g="0.15" b="0.13" lines="false" />
+					<model file="ring_thin.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/jupiter-ring.png" />
+					</model>
 				</models>
 			</group>
 			<!-- Lua -->
@@ -255,7 +304,12 @@
 					<scale x="0.2" y="0.2" z="0.2" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/europa_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -275,7 +329,12 @@
 					<rotate angle="45" x="0.5" y="0.5" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/io_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -295,7 +354,12 @@
 					<scale x="0.1" y="0.1" z="0.1" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/ganymede_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -315,27 +379,12 @@
 					<scale x="0.18" y="0.18" z="0.18" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="0.25" g="1" b="1" lines="false" />
-				</models>
-			</group>
-			<group>
-				<transform>
-					<translate time="500" align="true" segments="10000">
-						<point x="26" y="0" z="0" />
-						<point x="17.77516587093157" y="0" z="14.596008983995233" />
-						<point x="0" y="0" z="20" />
-						<point x="-17.77516587093157" y="0" z="14.596008983995233" />
-						<point x="-26" y="0" z="0" />
-						<point x="-17.77516587093157" y="0" z="-14.596008983995233" />
-						<point x="0" y="0" z="-20" />
-						<point x="17.77516587093157" y="0" z="-14.596008983995233" />
-					</translate>
-					<scale x="0.18" y="0.18" z="0.18" />
-					<rotate angle="80" x="0.5" y="1" z="0" />
-					<rotate time="50" x="0" y="1" z="0" />
-				</transform>
-				<models>
-					<model file="sphere.3d" r="1" g="0.75" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/callisto_text.jpg" />
+					</model>
 				</models>
 			</group>
 		</group>
@@ -356,7 +405,12 @@
 				<rotate time="15" x="0" y="1" z="0" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.75" g="0.5" b="0" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/saturn_text.jpg" />
+				</model>
 			</models>
 			<!-- Aneis -->
 			<group>
@@ -364,7 +418,12 @@
 					<scale x="0.15" y="0.15" z="0.15" /> <!-- este anel terá ~30, vindo de 10*9 -->
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.2" g="0.18" b="0.13" lines="false" />
+					<model file="ring_wide.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/saturno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -372,7 +431,12 @@
 					<scale x="0.08" y="0.08" z="0.08" /> <!-- este anel terá ~16, vindo de 20*9 -->
 				</transform>
 				<models>
-					<model file="ring_medium.3d" r="0.71" g="0.64" b="0.45" lines="false" />
+					<model file="ring_medium.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/saturno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -380,7 +444,12 @@
 					<scale x="0.06" y="0.06" z="0.06" /> <!-- este anel terá ~17, vindo de 30*9 -->
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.58" g="0.51" b="0.32" lines="false" />
+					<model file="ring_thin.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/saturno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -388,7 +457,12 @@
 					<scale x="0.21" y="0.21" z="0.21" /> <!-- este anel terá ~30, vindo de 10*9 -->
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.11" g="0.1" b="0.08" lines="false" />
+					<model file="ring_wide.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/saturno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<!-- Luas -->
@@ -409,7 +483,12 @@
 					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/enceladus_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -429,47 +508,12 @@
 					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
-				</models>
-			</group>
-			<group>
-				<transform>
-					<translate time="100" align="true" segments="10000">
-						<point x="14" y="0" z="0" />
-						<point x="9.47804480540862" y="0" z="7.359800721939873" />
-						<point x="0" y="0" z="10" />
-						<point x="-9.47804480540862" y="0" z="7.359800721939873" />
-						<point x="-14" y="0" z="0" />
-						<point x="-9.47804480540862" y="0" z="-7.359800721939873" />
-						<point x="0" y="0" z="-10" />
-						<point x="9.47804480540862" y="0" z="-7.359800721939873" />
-					</translate>
-					<scale x="0.1" y="0.1" z="0.1" />
-					<rotate angle="80" x="0" y="0" z="1" />
-					<rotate time="10" x="0" y="1" z="0" />
-				</transform>
-				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
-				</models>
-			</group>
-			<group>
-				<transform>
-					<translate time="350" align="true" segments="10000">
-						<point x="21" y="0" z="0" />
-						<point x="14.453191233845391" y="0" z="12.333096251870199" />
-						<point x="0" y="0" z="17" />
-						<point x="-14.453191233845391" y="0" z="12.333096251870199" />
-						<point x="-21" y="0" z="0" />
-						<point x="-14.453191233845391" y="0" z="-12.333096251870199" />
-						<point x="0" y="0" z="-17" />
-						<point x="14.453191233845391" y="0" z="-12.333096251870199" />
-					</translate>
-					<scale x="0.18" y="0.18" z="0.18" />
-					<rotate angle="80" x="0.5" y="1" z="0.3" />
-					<rotate time="35" x="0" y="1" z="0" />
-				</transform>
-				<models>
-					<model file="sphere.3d" r="0.25" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/tethys_text.jpg" />
+					</model>
 				</models>
 			</group>
 		</group>
@@ -490,7 +534,12 @@
 				<rotate time="20" x="0" y="1" z="0" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0" g="0.1" b="1" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/uranus_text.jpg" />
+				</model>
 			</models>
 			<!-- anéis -->
 			<group>
@@ -498,7 +547,12 @@
 					<scale x="0.095" y="0.095" z="0.095" />
 				</transform>
 				<models>
-					<model file="ring_medium.3d" r="0.31" g="0.35" b="0.35" lines="false" />
+					<model file="ring_medium.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/urano-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -506,7 +560,12 @@
 					<scale x="0.067" y="0.067" z="0.067" />
 				</transform>
 				<models>
-					<model file="ring_thin.3d" r="0.1" g="0.4" b="0.73" lines="false" />
+					<model file="ring_thin.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/urano-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -514,7 +573,12 @@
 					<scale x="0.23" y="0.23" z="0.23" />
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.67" g="0.78" b="0.81" lines="false" />
+					<model file="ring_wide.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/urano-ring.png" />
+					</model>
 				</models>
 			</group>
 			<!-- Luas -->
@@ -535,7 +599,12 @@
 					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/lua_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -555,7 +624,12 @@
 					<rotate time="20" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/tethys_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -575,7 +649,12 @@
 					<rotate time="15" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/phobos_text.png" />
+					</model>
 				</models>
 			</group>
 		</group>
@@ -596,7 +675,12 @@
 				<rotate time="25" x="0" y="1" z="0" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="0.17" g="0.21" b="0.52" lines="false" />
+				<model file="sphere.3d">
+					<color force="true">
+						<diffuse R="255" G="255" B="255" />
+					</color>
+					<texture file="../demo/planetas_imagens/neptune_text.jpg" />
+				</model>
 			</models>
 			<!-- aneis -->
 			<group>
@@ -604,7 +688,12 @@
 					<scale x="0.07" y="0.07" z="0.07" />
 				</transform>
 				<models>
-					<model file="ring_medium.3d" r="0.06" g="0.1" b="0.16" lines="false" />
+					<model file="ring_medium.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/neptuno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -612,7 +701,12 @@
 					<scale x="0.18" y="0.18" z="0.18" />
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.28" g="0.38" b="0.52" lines="false" />
+					<model file="ring_wide.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/neptuno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -620,7 +714,12 @@
 					<scale x="0.21" y="0.21" z="0.21" />
 				</transform>
 				<models>
-					<model file="ring_wide.3d" r="0.14" g="0.2" b="0.27" lines="false" />
+					<model file="ring_wide.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/neptuno-ring.png" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -649,7 +748,12 @@
 					<rotate time="25" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="0.5" g="0.5" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/callisto_text.jpg" />
+					</model>
 				</models>
 			</group>
 			<group>
@@ -669,7 +773,12 @@
 					<rotate time="25" x="0" y="1" z="0" />
 				</transform>
 				<models>
-					<model file="sphere.3d" r="1" g="1" b="1" lines="false" />
+					<model file="sphere.3d">
+						<color force="true">
+							<diffuse R="255" G="255" B="255" />
+						</color>
+						<texture file="../demo/planetas_imagens/enceladus_text.jpg" />
+					</model>
 				</models>
 			</group>
 		</group>
