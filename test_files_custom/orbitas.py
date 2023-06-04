@@ -1,5 +1,5 @@
 average = int(input("Inserir a distância média: "))
-dif = int(input("Inserir a diferença das distâncias: "))
+dif = float(input("Inserir a diferença das distâncias: "))
 time = int(input("Inserir o tempo a demorar: "))
 
 elipse_maj_ax = average + dif
