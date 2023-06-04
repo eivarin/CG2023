@@ -273,7 +273,6 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     int points = 1;
     model m;
-    float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     float delta = (2 * M_PI) / (float)slices;
     float stack_h = height / (float)stacks;
     float curr_h = height;
@@ -282,6 +281,7 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     int i = 0;
     curr_r += stack_r;
     int stck = 1;
+    float tan_alpha = tan(radius / height);
     while (i < slices)
     {
         float aCil = delta * i;
@@ -292,16 +292,21 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         vec3 t3((i+1) * slice_coords, stack_coords, 0.);
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         m.pushTexture(t1);
+        m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
         ++points;
         m.pushCoords(vec3(px1 * curr_r, curr_h - stack_h, py1  * curr_r));
         m.pushTexture(t2);
+        m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
         ++points;
         m.pushCoords(vec3(px2 * curr_r, curr_h - stack_h, py2  * curr_r));
         m.pushTexture(t3);
+        m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
         ++points;
         i++;
     }
     curr_h -= stack_h;
+    
+
     while (curr_h > 0)
     {
         i = 0;
@@ -317,22 +322,28 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
             
             m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
             m.pushTexture(a);
+            m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
             ++points;
             m.pushCoords(vec3(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r)));
             m.pushTexture(c);
+            m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
             ++points;
             m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             m.pushTexture(d);
+            m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
             ++points;
 
             m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
             m.pushTexture(a);
+            m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
             ++points;
             m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             m.pushTexture(d);
+            m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
             ++points;
             m.pushCoords(vec3(px2 * curr_r, curr_h, py2 * curr_r));
             m.pushTexture(b);
+            m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
 
             ++points;
             i++;
@@ -351,30 +362,20 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         vec3 t3((i+1) * slice_coords, 1, 0.);
         m.pushCoords(vec3(px1 * curr_r, curr_h, py1  * curr_r));
         m.pushTexture(t2);
+        m.pushNormal(vec3(0., -1., 0.));
         ++points;
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         m.pushTexture(t1);
+        m.pushNormal(vec3(0., -1., 0.));
         ++points;
         m.pushCoords(vec3(px2 * curr_r, curr_h, py2  * curr_r));
         m.pushTexture(t3);
+        m.pushNormal(vec3(0., -1., 0.));
         ++points;
     }
 
-    // texturas
-    for (auto j = 0; j < stacks; ++j) {
-        vec3 t(i * slice_coords, j * stack_coords, 0.);
-        m.pushTexture(t);
-    }
-    // normais
-    // o ângulo das slices é o delta, pelo que não é preciso calcular 2 vezes
-    m.pushNormal(vec3(0., -1., 0.));
-    float tan_alpha = tan(radius / height);
-    for (auto i = 0; i < slices; ++i) {
-        m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
-    }
-
     for (auto i=1;i+3<=points;i=i+3){
-        m.pushFace(face(vertex_ref(i,0,i),vertex_ref(i+1, 0, i+1), vertex_ref(i+2, 0 ,i+2)));
+        m.pushFace(face(vertex_ref(i,i,i),vertex_ref(i+1, i+1, i+1), vertex_ref(i+2, i+2, i+2)));
     }
 
     m.write(file);
