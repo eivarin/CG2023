@@ -268,6 +268,10 @@ void draw_ring(std::string const &file, ssize_t radius, ssize_t slices, ssize_t 
     m.write(file);
 }
 
+vec3 getConeNormal(float circleAngle, float coneAngle){
+    return vec3(cos(coneAngle) * sin(circleAngle), sin(coneAngle),cos(coneAngle) * cos(circleAngle) );
+}
+
 void drawCone(std::string const &file, int height, int radius, int slices, int stacks)
 {
     float stack_coords = 1. / stacks, slice_coords = 1. / slices;
@@ -281,26 +285,27 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     int i = 0;
     curr_r += stack_r;
     int stck = 1;
-    float tan_alpha = tan(radius / height);
+    float coneAngle = atan(radius / (float) height), circleAngle, nextCircleAngle;
     while (i < slices)
     {
-        float aCil = delta * i;
-        float px1 = (sin(aCil)), py1 = (cos(aCil));
-        float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        circleAngle = delta * i;
+        nextCircleAngle = delta * (i+1);
+        float px1 = (sin(circleAngle)), py1 = (cos(circleAngle));
+        float px2 = (sin(nextCircleAngle)), py2 = (cos(nextCircleAngle));
         vec3 t1(i * slice_coords, 0, 0.);
         vec3 t2(i * slice_coords, stack_coords, 0.);
         vec3 t3((i+1) * slice_coords, stack_coords, 0.);
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         m.pushTexture(t1);
-        m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
+        m.pushNormal(getConeNormal(circleAngle, coneAngle));
         ++points;
         m.pushCoords(vec3(px1 * curr_r, curr_h - stack_h, py1  * curr_r));
         m.pushTexture(t2);
-        m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
+        m.pushNormal(getConeNormal(circleAngle, coneAngle));
         ++points;
         m.pushCoords(vec3(px2 * curr_r, curr_h - stack_h, py2  * curr_r));
         m.pushTexture(t3);
-        m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
+        m.pushNormal(getConeNormal(nextCircleAngle, coneAngle));
         ++points;
         i++;
     }
@@ -312,9 +317,10 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         i = 0;
         while (i < slices)
         {
-            float aCil = delta * i;
-            float px1 = (sin(aCil)), py1 = (cos(aCil));
-            float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+            circleAngle = delta * i;
+            nextCircleAngle = delta * (i+1);
+            float px1 = (sin(circleAngle)), py1 = (cos(circleAngle));
+            float px2 = (sin(nextCircleAngle)), py2 = (cos(nextCircleAngle));
             vec3 a(i * slice_coords, stck * stack_coords, 0.);
             vec3 b((i+1) * slice_coords, stck * stack_coords, 0.);
             vec3 c(i * slice_coords, (stck+1) * stack_coords, 0.);
@@ -322,28 +328,28 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
             
             m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
             m.pushTexture(a);
-            m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
+            m.pushNormal(getConeNormal(circleAngle, coneAngle));
             ++points;
             m.pushCoords(vec3(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r)));
             m.pushTexture(c);
-            m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
+            m.pushNormal(getConeNormal(circleAngle, coneAngle));
             ++points;
             m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             m.pushTexture(d);
-            m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
+            m.pushNormal(getConeNormal(nextCircleAngle, coneAngle));
             ++points;
 
             m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
             m.pushTexture(a);
-            m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
+            m.pushNormal(getConeNormal(circleAngle, coneAngle));
             ++points;
             m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
             m.pushTexture(d);
-            m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
+            m.pushNormal(getConeNormal(nextCircleAngle, coneAngle));
             ++points;
             m.pushCoords(vec3(px2 * curr_r, curr_h, py2 * curr_r));
             m.pushTexture(b);
-            m.pushNormal(vec3(cos(delta * (i+1)), tan_alpha, sin(delta * (i+1))));
+            m.pushNormal(getConeNormal(nextCircleAngle, coneAngle));
 
             ++points;
             i++;
@@ -354,9 +360,10 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     }
     for (auto i = 0; i < slices; ++i) 
     {
-        float aCil = delta * i;
-        float px1 = (sin(aCil)), py1 = (cos(aCil));
-        float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        circleAngle = delta * i;
+        nextCircleAngle = delta * (i+1);
+        float px1 = (sin(circleAngle)), py1 = (cos(circleAngle));
+        float px2 = (sin(nextCircleAngle)), py2 = (cos(nextCircleAngle));
         vec3 t1(i * slice_coords, 0, 0.);
         vec3 t2(i * slice_coords, 1, 0.);
         vec3 t3((i+1) * slice_coords, 1, 0.);
@@ -595,7 +602,7 @@ int main(int argc, char **argv)
 {
     std::string s1 = "plane";
     std::string s2 = "box";
-    // char *bla[] = {"generator", "cone", "1", "2", "4", "3", "cone_1_2_4_3.3d"};
+    // char *bla[] = {"generator", "cone", "1", "2", "100", "100", "cone_1_2_4_3.3d"};
     // argc = 7;
     // argv = bla;
     // input line to draw a plane:  ./generator plane length divisions
