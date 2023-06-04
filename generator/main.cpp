@@ -266,6 +266,7 @@ void draw_ring(std::string const &file, ssize_t radius, ssize_t slices, ssize_t 
 
 void drawCone(std::string const &file, int height, int radius, int slices, int stacks)
 {
+    float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     int points = 1;
     model m;
     float delta = (2 * M_PI) / (float)slices;
@@ -275,16 +276,23 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     float curr_r = 0;
     int i = 0;
     curr_r += stack_r;
+    int stck = 1;
     while (i < slices)
     {
         float aCil = delta * i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
         float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+        vec3 t1(i * slice_coords, 0, 0.);
+        vec3 t2(i * slice_coords, stack_coords, 0.);
+        vec3 t3((i+1) * slice_coords, stack_coords, 0.);
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
+        m.pushTexture(t1);
         ++points;
         m.pushCoords(vec3(px1 * curr_r, curr_h - stack_h, py1  * curr_r));
+        m.pushTexture(t2);
         ++points;
         m.pushCoords(vec3(px2 * curr_r, curr_h - stack_h, py2  * curr_r));
+        m.pushTexture(t3);
         ++points;
         i++;
     }
@@ -297,23 +305,35 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
             float aCil = delta * i;
             float px1 = (sin(aCil)), py1 = (cos(aCil));
             float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
+            vec3 a(i * slice_coords, stck * stack_coords, 0.);
+            vec3 b((i+1) * slice_coords, stck * stack_coords, 0.);
+            vec3 c(i * slice_coords, (stck+1) * stack_coords, 0.);
+            vec3 d((i+1) * slice_coords, (stck+1) * stack_coords, 0.);
             
             m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
+            m.pushTexture(a);
             ++points;
             m.pushCoords(vec3(px1 * (curr_r+stack_r), curr_h - stack_h, py1 * (curr_r+stack_r)));
+            m.pushTexture(c);
             ++points;
             m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
+            m.pushTexture(d);
             ++points;
 
-            m.pushCoords(vec3(px2 * curr_r, curr_h, py2 * curr_r));
-            ++points;
             m.pushCoords(vec3(px1 * curr_r, curr_h, py1 * curr_r));
+            m.pushTexture(a);
             ++points;
             m.pushCoords(vec3(px2 * (curr_r+stack_r), curr_h - stack_h, py2 * (curr_r+stack_r)));
+            m.pushTexture(d);
+            ++points;
+            m.pushCoords(vec3(px2 * curr_r, curr_h, py2 * curr_r));
+            m.pushTexture(b);
+
             ++points;
             i++;
         }
         curr_h -= stack_h;
+        stck++;
         curr_r += stack_r;
     }
     for (auto i = 0; i < slices; ++i) 
@@ -321,22 +341,27 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         float aCil = delta * i;
         float px1 = (sin(aCil)), py1 = (cos(aCil));
         float px2 = (sin(aCil + delta)), py2 = (cos(aCil + delta));
-        m.pushCoords(vec3(px2 * curr_r, curr_h, py2  * curr_r));
-        ++points;
+        vec3 t1(i * slice_coords, 0, 0.);
+        vec3 t2(i * slice_coords, 1, 0.);
+        vec3 t3((i+1) * slice_coords, 1, 0.);
         m.pushCoords(vec3(px1 * curr_r, curr_h, py1  * curr_r));
+        m.pushTexture(t2);
         ++points;
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
+        m.pushTexture(t1);
+        ++points;
+        m.pushCoords(vec3(px2 * curr_r, curr_h, py2  * curr_r));
+        m.pushTexture(t3);
         ++points;
     }
 
-    float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     // texturas
     for (auto j = 0; j < stacks; ++j) {
         vec3 t(i * slice_coords, j * stack_coords, 0.);
         m.pushTexture(t);
     }
     for (auto i=1;i+3<=points;i=i+3){
-        m.pushFace(face(vertex_ref(i,0,0),vertex_ref(i+1, 0, 0), vertex_ref(i+2, 0 ,0)));
+        m.pushFace(face(vertex_ref(i,0,i),vertex_ref(i+1, 0, i+1), vertex_ref(i+2, 0 ,i+2)));
     }
 
     // normais
@@ -558,8 +583,8 @@ int main(int argc, char **argv)
 {
     std::string s1 = "plane";
     std::string s2 = "box";
-    // char *bla[] = {"generator", "sphere", "1", "100", "100", "sphere_1_8_8.3d"};
-    // argc = 6;
+    // char *bla[] = {"generator", "cone", "1", "2", "4", "3", "cone_1_2_4_3.3d"};
+    // argc = 7;
     // argv = bla;
     // input line to draw a plane:  ./generator plane length divisions
     // NameOfFileToOutput
