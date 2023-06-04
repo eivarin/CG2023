@@ -1,0 +1,19 @@
+<world>
+    <window width="512" height="512" axis="True"/>
+    <camera> 
+	    <position x="5" y="10" z="5" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="50" near="0.1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<lights> 
+		<light type="directional" dirx="0" diry="1" dirz="0"/>
+	</lights>
+	<group>
+		<models> 
+			<model file="ring_wide.3d" > <!-- ./generator ring 10 400 1 ring_wide.3d -->
+				<texture file = "../demo/planetas_imagens/jupiter-ring.png" />
+			</model>
+		</models>
+ 	</group>
+</world>

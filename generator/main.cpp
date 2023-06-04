@@ -234,7 +234,7 @@ void draw_ring(std::string const &file, ssize_t radius, ssize_t slices, ssize_t 
 {
     model m;
     float slice_angle = (2 * M_PI) / slices;
-
+    float slice_coords = 1. / slices;
     ssize_t dif = width > 0 || radius - width > 0 ? radius - width : 0;
     for (auto i = 0; i <= slices; ++i)
     {
@@ -243,23 +243,27 @@ void draw_ring(std::string const &file, ssize_t radius, ssize_t slices, ssize_t 
         float x1 = sin(angle) * radius;
         float z1 = cos(angle) * radius;
         m.pushCoords(vec3(x1, 0, z1));
+        m.pushTexture(vec3(i * slice_coords, 0, 0));
 
         float x2 = sin(angle) * dif;
         float z2 = cos(angle) * dif;
         m.pushCoords(vec3(x2, 0, z2));
+        m.pushTexture(vec3(i * slice_coords, 1, 0));
     }
     /*
     1 3 5 7
     2 4 6 8
     */
+    m.pushNormal(vec3(0,1,0));
+    m.pushNormal(vec3(0,-1,0));
     for (auto i = 0; i < slices; ++i)
     {
         // 1 2 3 e 3 2 1
-        m.pushFace(face(vertex_ref(2*i+1, 0, 0), vertex_ref(2*i+2, 0, 0), vertex_ref(2*i+3, 0, 0)));
-        m.pushFace(face(vertex_ref(2*i+3, 0, 0), vertex_ref(2*i+2, 0, 0), vertex_ref(2*i+1, 0, 0)));
+        m.pushFace(face(vertex_ref(2*i+1, 2, 2*i+1), vertex_ref(2*i+2, 2, 2*i+2), vertex_ref(2*i+3, 2, 2*i+3)));
+        m.pushFace(face(vertex_ref(2*i+3, 1, 2*i+3), vertex_ref(2*i+2, 1, 2*i+2), vertex_ref(2*i+1, 1, 2*i+1)));
         // 2 4 3 e 3 4 2
-        m.pushFace(face(vertex_ref(2*i+2,0,0), vertex_ref(2*i+4, 0, 0), vertex_ref(2*i+3, 0, 0)));
-        m.pushFace(face(vertex_ref(2*i+3,0,0), vertex_ref(2*i+4, 0, 0), vertex_ref(2*i+2, 0, 0)));
+        m.pushFace(face(vertex_ref(2*i+2,2,2*i+2), vertex_ref(2*i+4, 2, 2*i+4), vertex_ref(2*i+3, 2, 2*i+3)));
+        m.pushFace(face(vertex_ref(2*i+3,1,2*i+3), vertex_ref(2*i+4, 1, 2*i+4), vertex_ref(2*i+2, 1, 2*i+2)));
     }
     m.write(file);
 }
