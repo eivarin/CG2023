@@ -367,14 +367,15 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
     }
     // normais
     // o ângulo das slices é o delta, pelo que não é preciso calcular 2 vezes
+    m.pushNormal(vec3(0., -1., 0.));
     float tan_alpha = tan(radius / height);
     for (auto i = 0; i < slices; ++i) {
-        vec3 cur_normal(cos(delta * i), tan_alpha, sin(delta * i));
+        m.pushNormal(vec3(cos(delta * i), tan_alpha, sin(delta * i)));
     }
+
     for (auto i=1;i+3<=points;i=i+3){
         m.pushFace(face(vertex_ref(i,0,i),vertex_ref(i+1, 0, i+1), vertex_ref(i+2, 0 ,i+2)));
     }
-
 
     m.write(file);
 }
