@@ -143,10 +143,10 @@ class camera{
                 changed = true;
             }
             if(normal_keys['m']){
-                stepDimension +=0.01f;
+                stepDimension *= (stepDimension < 16) ? 2: 1;
             }
             if(normal_keys['n']){
-                stepDimension -= (stepDimension > 0.01f) ? 0.01f: 0;
+                stepDimension /= (stepDimension > 0.01f) ? 2: 1;
             }
             if(normal_keys['r']){
                 resetCamera();

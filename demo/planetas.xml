@@ -12,7 +12,10 @@
 		<projection fov="90" near="1" far="100000" />
 	</camera>
 	<lights>
+<<<<<<< HEAD
 		<light type="point" posx="0" posy="0" posz="0" />
+=======
+>>>>>>> 402bab0 (camera movement scaling changes)
 	</lights>
 	<group>
 		<group> <!-- cometa -->
@@ -69,8 +72,13 @@
 				<rotate time="30" x="0" y="1" z="0" />
 			</transform>
 			<models>
+<<<<<<< HEAD
 				<model file="sphere.3d">
 					<texture file="../demo/planetas_imagens/terra_text.jpg" />
+=======
+				<model file="sphere.3d" >
+					<texture file = "../demo/planetas_imagens/terra_text.jpg" />
+>>>>>>> 402bab0 (camera movement scaling changes)
 				</model>
 			</models>
 			<!-- Lua -->
