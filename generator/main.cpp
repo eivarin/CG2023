@@ -162,6 +162,7 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
     model m;
     float stack_angle = M_PI / stacks;
     float slice_angle = (2 * M_PI) / slices;
+    float stack_coords = 1. / stacks, slice_coords = 1. / slices;
     m.pushCoords(vec3(0,radius,0));
     auto vec = vec3(0,radius,0);
     vec.normalize();
@@ -177,46 +178,54 @@ void draw_sphere(std::string const &file, ssize_t radius, std::size_t slices, st
             auto vec = vec3(x,y,z);
             vec.normalize();
             m.pushNormal(vec);
+            vec3 t(j * slice_coords, i * stack_coords,0.);
+            m.pushTexture(t);
         }
+        vec3 t(1, i * stack_coords,0.);
+        m.pushTexture(t);
     }
     m.pushCoords(vec3(0,-radius,0));
     vec = vec3(0,-radius,0);
     vec.normalize();
     m.pushNormal(vec);
 
-    /*
-    esfera 1 4 4
-              1
-     5  4  3  2
-     9  8  7  6
-    13 12 11 10
-    14
-    */
+    std::size_t bottom_most = slices*(stacks-1)+2;
+    for(std::size_t i = 0; i < slices; ++i) {
+        vec3 t(i * slice_coords, 0, 0.);
+        m.pushTexture(t);
+    }
+
+    for(std::size_t i = 0; i < slices; ++i) {
+        vec3 t(i * slice_coords, 1, 0.);
+        m.pushTexture(t);
+    }
+
+    std::size_t top_tex_index = (slices+1)*(stacks-1)+2;
     // "base" 1
     for(std::size_t i = 0; i < slices; ++i) {
-        m.pushFace(face(vertex_ref(1, 1, 0),vertex_ref((i%slices) + 2, (i%slices) + 2, 0),vertex_ref(((i+1)%slices) + 2, ((i+1)%slices) + 2, 0)));
+        m.pushFace(face(vertex_ref(1, 1, top_tex_index - 1 + i),\
+        vertex_ref((i%slices) + 2, (i%slices) + 2, (i%slices) + 1),\
+        vertex_ref(((i+1)%slices) + 2, ((i+1)%slices) + 2, (i%slices) + 2)));
     }
     // "faces"
     for(std::size_t i = 0; i < stacks - 2; ++i) {
-        for(std::size_t j = 0; j < slices; ++j) {
-            std::size_t r = (j%slices) + 2 + (i * slices);
+        for(std::size_t j = 0; j < slices-1; ++j) {
+            std::size_t r = j + 2 + (i * slices);
             std::size_t l = ((j+1)%slices) + 2 + (i * slices);
-            m.pushFace(face(vertex_ref(r, r, 0),vertex_ref(l + slices,l + slices, 0),vertex_ref(l, l, 0)));
-            m.pushFace(face(vertex_ref(r, r, 0),vertex_ref(r+slices, r+slices, 0),vertex_ref(l+slices, l+slices, 0)));
-
+            m.pushFace(face(vertex_ref(r, r, r - 1 + i),vertex_ref(l + slices,l + slices, l + slices + i),vertex_ref(l, l, l - 1 + i)));
+            m.pushFace(face(vertex_ref(r, r, r - 1 + i),vertex_ref(r+slices, r+slices, r+slices + i),vertex_ref(l+slices, l+slices, l+slices + i)));
         }
+        std::size_t j = slices-1;
+        std::size_t r = j + 2 + (i * slices);
+        std::size_t l = ((j+1)%slices) + 2 + (i * slices);
+        m.pushFace(face(vertex_ref(r, r, r - 1 + i),vertex_ref(l + slices,l + slices, (slices + 1) * (i+2)),vertex_ref(l, l, r + i)));
+        m.pushFace(face(vertex_ref(r, r, r - 1 + i),vertex_ref(r+slices, r+slices,(slices + 1) * (i+2) - 1),vertex_ref(l+slices, l+slices, (slices + 1) * (i+2))));
     }
     // "base" 2
-    std::size_t bottom_most = slices*(stacks-1)+2;
     for(std::size_t i = 0; i < slices; ++i) {
-        m.pushFace(face(vertex_ref(bottom_most,bottom_most,0),vertex_ref(bottom_most - slices + (i+1)%slices,bottom_most - slices + (i+1)%slices,0),vertex_ref(bottom_most - slices + (i%slices),bottom_most - slices + (i%slices),0)));
-        
-        // texturas
-        float stack_coords = 1. / stacks, slice_coords = 1. / slices;
-        for (auto j = 0; j < stacks; ++j) {
-            vec3 t(i * slice_coords, j * stack_coords, 0.);
-            m.pushTexture(t);
-        }
+        m.pushFace(face(vertex_ref(bottom_most,bottom_most,top_tex_index - 1 + i + slices),\
+        vertex_ref(bottom_most - slices + (i+1)%slices,bottom_most - slices + (i+1)%slices,bottom_most - 1 - slices + (i+1)%slices),\
+        vertex_ref(bottom_most - slices + (i%slices),bottom_most - slices + (i%slices),bottom_most - 1 - slices + (i%slices))));
     }
     m.write(file);
 }
@@ -318,15 +327,14 @@ void drawCone(std::string const &file, int height, int radius, int slices, int s
         ++points;
         m.pushCoords(vec3(0.0f, curr_h, 0.0f));
         ++points;
-
-        float stack_coords = 1. / stacks, slice_coords = 1. / slices;
-        // texturas
-        for (auto j = 0; j < stacks; ++j) {
-            vec3 t(i * slice_coords, j * stack_coords, 0.);
-            m.pushTexture(t);
-        }
     }
 
+    float stack_coords = 1. / stacks, slice_coords = 1. / slices;
+    // texturas
+    for (auto j = 0; j < stacks; ++j) {
+        vec3 t(i * slice_coords, j * stack_coords, 0.);
+        m.pushTexture(t);
+    }
     for (auto i=1;i+3<=points;i=i+3){
         m.pushFace(face(vertex_ref(i,0,0),vertex_ref(i+1, 0, 0), vertex_ref(i+2, 0 ,0)));
     }
@@ -550,6 +558,9 @@ int main(int argc, char **argv)
 {
     std::string s1 = "plane";
     std::string s2 = "box";
+    // char *bla[] = {"generator", "sphere", "1", "100", "100", "sphere_1_8_8.3d"};
+    // argc = 6;
+    // argv = bla;
     // input line to draw a plane:  ./generator plane length divisions
     // NameOfFileToOutput
     if (argc == 5 && s1.compare(argv[1]) == 0)

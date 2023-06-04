@@ -34,7 +34,7 @@ public:
         for(auto& t: ts)
             s << "vt " << std::noshowpoint << std::fixed << std::setprecision(6) << t.x << ' ' << t.y << '\n';
         for(auto& n: ns){
-            if (std::isnan(n.x)) n = vec3(0,1,0);
+            if (std::isnan(n.x) || std::isnan(n.y) || std::isnan(n.z)) n = vec3(0,1,0);
             s << "vn " << std::noshowpoint << std::fixed << std::setprecision(6) << n.x << ' ' << n.y << ' ' << n.z << '\n';
         }
         for(auto& f: fs)
