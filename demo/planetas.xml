@@ -42,8 +42,11 @@
 				<scale x="40" y="40" z="40" />
 			</transform>
 			<models>
-				<model file="sphere_1_8_8.3d" > <!-- generator sphere 1 100 100 sphere_1_8_8.3d -->
+				<model file="sphere.3d" > <!-- generator sphere 1 100 100 sphere.3d -->
 					<texture file = "../demo/planetas_imagens/sun_text.jpg" />
+					<color>
+						<emissive R="0" G="0" B="0" />
+					</color>
 				</model>
 			</models>
 		</group>

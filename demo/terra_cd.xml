@@ -12,7 +12,7 @@
 	<group>
 		<models> 
 			<model file="ring_wide.3d" > <!-- ./generator ring 8 400 5 ring_wide.3d -->
-				<texture file = "earth.jpg" />
+				<texture file = "../demo/planetas_imagens/terra_text.jpg" />
 			</model>
 		</models>
  	</group>
