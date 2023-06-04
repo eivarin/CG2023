@@ -45,7 +45,8 @@ class group{
             auto attr = node->first_attribute("file");
             if (attr!=0) {
                 rapidxml::xml_document<> doc;
-                std::ifstream file(attr->value());
+                auto fname = attr->value();
+                std::ifstream file(fname);
                 std::stringstream buffer;
                 buffer << file.rdbuf();
                 file.close();

@@ -4,7 +4,7 @@
 	    <position x="3" y="2" z="3" />
 	    <lookAt x="0" y="0" z="0" />
 	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
-        <projection fov="45" near="1" far="1000" /> <!-- optional, use these values as default-->
+        <projection fov="45" near="0.1" far="1000" /> <!-- optional, use these values as default-->
     </camera>
 	<lights> 
 		<light type="directional" dirx="1" diry="0.7" dirz="0.5"/>
@@ -12,9 +12,6 @@
 	</lights>
     <group> 
 		<models>
-			<model file="../demo/banho/banheira.3d">
-				<texture file="../demo/banho/Banheira_madeira.jpg"/>
-			</model>
 			<model file="../demo/banho/torneira.3d">
 				<color>
 					<ambient R="63.75" G="63.75" B="63.75" />
@@ -25,13 +22,21 @@
 			</model>
 		</models>
 		<group> 
+			<transform>
+				<scale x="2" y="1" z="2" />
+			</transform>
+			<models>
+				<model file="../demo/banho/banheira.3d">
+					<texture file="../demo/banho/Banheira_madeira.jpg"/>
+				</model>
+			</models>
 			<group> 
 				<transform>
 					<translate x="0.55" y="0.5" z="0" />
 					<scale x="0.55" y="1" z="0.65" />
 				</transform>
 				<models>
-					<model file="plane_1_3.3d"> <!-- generator plane 1  plane_1_3.3d -->
+					<model file="plane_1_3.3d"> <!-- generator plane 1 3 plane_1_3.3d -->
 						<texture file="../demo/banho/water.png"/>
 					</model>
 				</models>
@@ -42,7 +47,7 @@
 					<scale x="0.55" y="1" z="0.65" />
 				</transform>
 				<models>
-					<model file="plane_1_3.3d"> <!-- generator plane 1  plane_1_3.3d -->
+					<model file="plane_1_3.3d"> <!-- generator plane 1 3 plane_1_3.3d -->
 						<texture file="../demo/banho/water.png"/>
 					</model>
 				</models>
@@ -53,11 +58,12 @@
 					<scale x="0.55" y="1" z="0.65" />
 				</transform>
 				<models>
-					<model file="plane_1_3.3d"> <!-- generator plane 1  plane_1_3.3d -->
+					<model file="plane_1_3.3d"> <!-- generator plane 1 3 plane_1_3.3d -->
 						<texture file="../demo/banho/water.png"/>
 					</model>
 				</models>
 			</group>
+			
 		</group>
 	</group>
 </world>

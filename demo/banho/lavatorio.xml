@@ -1,0 +1,27 @@
+<world>
+    <window width="512" height="512" />
+    <camera> 
+	    <position x="3" y="2" z="3" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="45" near="0.1" far="1000" /> <!-- optional, use these values as default-->
+    </camera>
+	<lights> 
+		<light type="directional" dirx="1" diry="0.7" dirz="0.5"/>
+	</lights>
+    <group> 
+		<transform> 
+			<scale x="0.5" y="0.5" z="0.5" />
+		</transform>
+		<models>
+			<model file="../demo/banho/lavatorio.3d">
+				<texture file="../demo/banho/branco.jpg"/>
+				<color force="true">
+					<diffuse R="150" G="150" B="150" />
+					<specular R="255" G="255" B="255" />
+					<shininess value="100" />
+				</color>
+			</model>
+		</models>
+	</group>
+</world>

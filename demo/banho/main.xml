@@ -1,5 +1,5 @@
 <world>
-    <window width="512" height="512" axis="false"/>
+    <window width="512" height="512" axis="true"/>
     <camera> 
 	    <position x="3" y="2" z="3" />
 	    <lookAt x="0" y="0" z="0" />
@@ -7,17 +7,120 @@
         <projection fov="45" near="1" far="1000" /> <!-- optional, use these values as default-->
     </camera>
 	<lights> 
-		<light type="directional" dirx="1" diry="0.7" dirz="0.5"/>
+		<light type="point" posx="2.25" posy="4" posz="3.5" />
 	</lights>
 	<group>
 		<group>
 			<transform>
-				<translate x="0.4" y="0.5" z="0.1" />
-				<rotate angle="45" x="0" y="1" z="0"/>
-				<scale x="0.1" y="0.1" z="0.1" />
+				<translate x="1.5" y="0" z="0" />
+				<rotate angle="180" x="0" y="1" z="0"/>
 			</transform>
-			<group file="../demo/banho/duck.xml" axis="1000000"/>
+			<group>
+				<transform>
+					<translate x="0.4" y="0.5" z="0.1" />
+					<rotate angle="45" x="0" y="1" z="0"/>
+					<scale x="0.1" y="0.1" z="0.1" />
+				</transform>
+				<group file="../demo/banho/duck.xml"/>
+			</group>
+			<group>
+				<group file="../demo/banho/banheira.xml"/>
+			</group>
 		</group>
-		<group file="../demo/banho/banheira.xml"/>
+		<group>
+			<transform>
+				<translate x="3" y="0" z="5" />
+				<rotate angle="-90" x="0" y="1" z="0"/>
+			</transform>
+			<group file="../demo/banho/lavatorio.xml"/>
+		</group>
+		<group>
+			<transform>
+				<translate x="0" y="0" z="5" />
+				<rotate angle="90" x="0" y="1" z="0"/>
+			</transform>
+			<group file="../demo/banho/sanita.xml"/>
+		</group>
+		<group><!-- BAIXO -->
+			<transform>
+				<translate x="1.5" y="0" z="2.5" />
+				<rotate angle="90" x="0" y="1" z="0"/>
+				<scale x="7" y="0.1" z="4.5" />
+			</transform>
+			<group>
+				<transform>
+					<rotate angle="90" x="0" y="1" z="0"/>
+				</transform>
+				<group file="../demo/banho/parede.xml"/>
+			</group>
+		</group>
+		<group><!-- cIMA -->
+			<transform>
+				<translate x="1.5" y="4" z="2.5" />
+				<rotate angle="90" x="0" y="1" z="0"/>
+				<scale x="7" y="1" z="4.5" />
+				<rotate angle="180" x="1" y="0" z="0"/>
+			</transform>
+			<group>
+				<transform>
+					<rotate angle="90" x="0" y="1" z="0"/>
+				</transform>
+				<group file="../demo/banho/parede.xml"/>
+			</group>
+		</group>
+		<group><!-- DIREITA -->
+			<transform>
+				<translate x="3.75" y="2" z="2.5" />
+				<rotate angle="90" x="0" y="1" z="0"/>
+				<rotate angle="-90" x="1" y="0" z="0"/>
+				<scale x="7" y="1" z="4" />
+			</transform>
+			<group>
+				<transform>
+					<rotate angle="90" x="0" y="1" z="0"/>
+				</transform>
+				<group file="../demo/banho/parede.xml"/>
+			</group>
+		</group>
+		<group><!-- ESQUERDA -->
+			<transform>
+				<translate x="-0.75" y="2" z="2.5" />
+				<rotate angle="90" x="0" y="1" z="0"/>
+				<rotate angle="90" x="1" y="0" z="0"/>
+				<scale x="7" y="1" z="4" />
+			</transform>
+			<group>
+				<transform>
+					<rotate angle="90" x="0" y="1" z="0"/>
+				</transform>
+				<group file="../demo/banho/parede.xml"/>
+			</group>
+		</group>
+		<group><!-- Fremte -->
+			<transform>
+				<translate x="1.5" y="2" z="-1" />
+				<rotate angle="90" x="1" y="0" z="0"/>
+				<scale x="4.5" y="1" z="4" />
+			</transform>
+			<group>
+				<transform>
+					<rotate angle="90" x="0" y="1" z="0"/>
+				</transform>
+				<group file="../demo/banho/parede.xml"/>
+			</group>
+		</group>
+		<group><!-- Tras -->
+			<transform>
+				<translate x="1.5" y="2" z="6" />
+				<rotate angle="-90" x="1" y="0" z="0"/>
+				<scale x="4.5" y="1" z="4" />
+			</transform>
+			<group>
+				<transform>
+					<rotate angle="90" x="0" y="1" z="0"/>
+				</transform>
+				<group file="../demo/banho/parede.xml"/>
+			</group>
+		</group>
 	</group>
 </world>
