@@ -42,7 +42,9 @@
 				<scale x="40" y="40" z="40" />
 			</transform>
 			<models>
-				<model file="sphere.3d" r="1" g="1" b="0" lines="false" />
+				<model file="sphere_1_8_8.3d" > <!-- generator sphere 1 100 100 sphere_1_8_8.3d -->
+					<texture file = "../demo/planetas_imagens/sun_text.jpg" />
+				</model>
 			</models>
 		</group>
 		<group> <!-- Terra-->
