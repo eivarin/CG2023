@@ -22,6 +22,14 @@
                     <shininess value="128" />
                 </color>
 			</model>
+			<model file="duck_olhos.3d"> <!-- generator patch ../demo/banho/duck_olhos.patch 30 duck_olhos.3d -->
+				<texture file="../demo/banho/olho.png"/>
+				<color force="true">
+					<diffuse R="150" G="150" B="150" />
+                    <specular R="255" G="255" B="255" />
+                    <shininess value="128" />
+                </color>
+			</model>
 			<model file="duck_bico.3d">  <!-- generator patch ../demo/banho/duck_bico.patch 30 duck_bico.3d -->
 				<texture file="../demo/banho/orange.png"/>
 				<color force="true">
